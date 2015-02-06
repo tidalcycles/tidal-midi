@@ -1,5 +1,5 @@
 name:                tidal-midi
-version:             0.0.1
+version:             0.0.2
 synopsis:            MIDI support for tidal
 -- description:         
 homepage:            http://tidal.lurk.org/
@@ -13,10 +13,9 @@ category:            Sound
 build-type:          Simple
 cabal-version:       >=1.4
 
-Description: Initial MIDI support for Tidal. Currently only supports
-Volca Keys synth, and interface is likely to change significantly.
+Description: Initial MIDI support for Tidal. Currently only supports Volca Keys and Bass synths, and interface is likely to change significantly.
 
 library
-  Exposed-modules:     Sound.Tidal.VolcaKeys
+  Exposed-modules:     Sound.Tidal.VolcaKeys, Sound.Tidal.VolcaBass
 
   Build-depends: base < 5, tidal, alsa-core, alsa-seq, process, hashable, containers, hosc
