@@ -1,0 +1,22 @@
+name:                tidal-midi
+version:             0.0.1
+synopsis:            MIDI support for tidal
+-- description:         
+homepage:            http://tidal.lurk.org/
+license:             GPL-3
+license-file:        LICENSE
+author:              Alex McLean
+maintainer:          Alex McLean <alex@slab.org>, Mike Hodnick <mike.hodnick@gmail.com>
+Stability:           Experimental
+Copyright:           (c) Alex McLean and other contributors, 2015
+category:            Sound
+build-type:          Simple
+cabal-version:       >=1.4
+
+Description: Initial MIDI support for Tidal. Currently only supports
+Volca Keys synth, and interface is likely to change significantly.
+
+library
+  Exposed-modules:     Sound.Tidal.VolcaKeys
+
+  Build-depends: base < 5, tidal, alsa-core, alsa-seq, process, hashable, containers, hosc
