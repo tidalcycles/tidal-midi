@@ -1,4 +1,4 @@
-  
+
 module Sound.Tidal.SimpleSynth where
 
 import qualified Sound.PortMidi as PM
@@ -104,18 +104,21 @@ keyproxy latency midiport = do
                       let note' = (fromJust $ d_get note) :: Int
                           dur' = (fromJust $ d_get dur) :: Float
                           ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
+                      -- putStrLn ("Message received")
                       sendmidi latency conn (fromIntegral note', dur') ctrls'
                       return()
 
-sendmidi latency stream (note,dur) ctrls = 
+sendmidi latency stream (note,dur) ctrls =
   do forkIO $ do threadDelay latency
                  let msg = PM.PMMsg 0x90 note 60
-                     offMsg = PM.PMMsg 0x90 note 0
+                     offMsg = PM.PMMsg 0x80 note 60
                      evt = PM.PMEvent msg 0
-                     offEvt = PM.PMEvent msg 0
+                     offEvt = PM.PMEvent offMsg 0
                  result <- PM.writeShort stream evt
+                --  putStrLn ("Send On Msg: " ++ show result)
                  threadDelay (floor $ 1000000 * dur)
                  result <- PM.writeShort stream offEvt
+                --  putStrLn ("Send Off Msg: " ++ show result)
                  return ()
      let ctrls' = map (floor . (* 127)) ctrls
          ctrls'' = filter ((>=0) . snd) (zip keynames ctrls')
@@ -146,16 +149,16 @@ ctrlN s _               = error $ "no match for " ++ s
 
 
 -- noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
--- noteOn conn val vel = 
---   Event.forConnection conn 
+-- noteOn conn val vel =
+--   Event.forConnection conn
 --   $ Event.NoteEv Event.NoteOn
 --   $ Event.simpleNote channel
 --                      (Event.Pitch (val))
 --                      (Event.Velocity vel)
 
 -- noteOff :: Connect.T -> Word8 -> Event.T
--- noteOff conn val = 
---   Event.forConnection conn 
+-- noteOff conn val =
+--   Event.forConnection conn
 --   $ Event.NoteEv Event.NoteOff
 --   $ Event.simpleNote channel
 --                      (Event.Pitch (val))
