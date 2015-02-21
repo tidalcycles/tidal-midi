@@ -88,26 +88,10 @@ withPortMidi = bracket_ PM.initialize PM.terminate
 test :: IO (Maybe a) -> IO a
 test = (>>= maybe (ioError $ userError "oops") return)
 
-getDefaultOutputFromEnv :: IO Int
-getDefaultOutputFromEnv = do
-  a <- catchIOError (getEnv "PM_RECOMMENDED_OUTPUT_DEVICE") missingHandler
-  case a of
-    [] -> do
-      edev <- (test PM.getDefaultOutputDeviceID)
-      putStrLn ("Using default Device with ID: " ++ show edev)
-      return edev
-    x -> return (read a)
-    where
-      missingHandler e = if isDoesNotExistError e
-        then return ""
-        else ioError e
-
-
-keyproxy latency midiport = do
+keyproxy latency deviceID = do
   PM.initialize
   do
-    dev <- getDefaultOutputFromEnv
-    result <- PM.openOutput dev 0
+    result <- PM.openOutput deviceID 0
     case result of
       Right err -> putStrLn ("Failed opening Midi Output Port: " ++ show err)
       Left conn ->
