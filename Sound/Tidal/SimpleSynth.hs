@@ -20,6 +20,9 @@ import Sound.Tidal.Stream
 import Sound.Tidal.Pattern
 import Sound.Tidal.Parse
 
+import System.Environment
+import System.IO.Error
+
 import Control.Exception
 
 -- channel = Event.Channel 0
@@ -85,40 +88,52 @@ withPortMidi = bracket_ PM.initialize PM.terminate
 test :: IO (Maybe a) -> IO a
 test = (>>= maybe (ioError $ userError "oops") return)
 
+getDefaultOutputFromEnv :: IO Int
+getDefaultOutputFromEnv = do
+  a <- catchIOError (getEnv "PM_RECOMMENDED_OUTPUT_DEVICE") missingHandler
+  case a of
+    [] -> do
+      edev <- (test PM.getDefaultOutputDeviceID)
+      putStrLn ("Using default Device with ID: " ++ show edev)
+      return edev
+    x -> return (read a)
+    where
+      missingHandler e = if isDoesNotExistError e
+        then return ""
+        else ioError e
+
+
 keyproxy latency midiport = do
   PM.initialize
-  edev <- test PM.getDefaultOutputDeviceID
-  result <- PM.openOutput edev 0
-  case result of
-    Right err -> putStrLn ("Failed opening Midi Output Port: " ++ show err)
-    Left conn ->
-      do
-        x <- udpServer "127.0.0.1" 7303
-        forkIO $ loop conn x
-        return ()
-          where loop conn x = do m <- recvMessage x
-                                 act conn m
-                                 loop conn x
-                act conn (Just (Message "/note" (note:dur:ctrls))) =
-                    do
-                      let note' = (fromJust $ d_get note) :: Int
-                          dur' = (fromJust $ d_get dur) :: Float
-                          ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
-                      -- putStrLn ("Message received")
-                      sendmidi latency conn (fromIntegral note', dur') ctrls'
-                      return()
+  do
+    dev <- getDefaultOutputFromEnv
+    result <- PM.openOutput dev 0
+    case result of
+      Right err -> putStrLn ("Failed opening Midi Output Port: " ++ show err)
+      Left conn ->
+        do
+          x <- udpServer "127.0.0.1" 7303
+          forkIO $ loop conn x
+          return ()
+            where loop conn x = do m <- recvMessage x
+                                   act conn m
+                                   loop conn x
+                  act conn (Just (Message "/note" (note:dur:ctrls))) =
+                      do
+                        let note' = (fromJust $ d_get note) :: Int
+                            dur' = (fromJust $ d_get dur) :: Float
+                            ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
+                        -- putStrLn ("Message received")
+                        sendmidi latency conn (fromIntegral note', dur') ctrls'
+                        return()
 
 sendmidi latency stream (note,dur) ctrls =
   do forkIO $ do threadDelay latency
-                 let msg = PM.PMMsg 0x90 note 60
-                     offMsg = PM.PMMsg 0x80 note 60
-                     evt = PM.PMEvent msg 0
-                     offEvt = PM.PMEvent offMsg 0
-                 result <- PM.writeShort stream evt
-                --  putStrLn ("Send On Msg: " ++ show result)
+                 noteOn stream note 60
+                 --  putStrLn ("Send On Msg: " ++ show result)
                  threadDelay (floor $ 1000000 * dur)
-                 result <- PM.writeShort stream offEvt
-                --  putStrLn ("Send Off Msg: " ++ show result)
+                 noteOff stream note
+                 --  putStrLn ("Send Off Msg: " ++ show result)
                  return ()
      let ctrls' = map (floor . (* 127)) ctrls
          ctrls'' = filter ((>=0) . snd) (zip keynames ctrls')
@@ -146,23 +161,15 @@ ctrlN "dfeedback" v     = (53, v)
 ctrlN s _               = error $ "no match for " ++ s
 
 
+noteOn :: PM.PMStream -> CLong -> CLong -> IO PM.PMError
+noteOn conn val vel = PM.writeShort conn evt
+    where msg = PM.PMMsg 0x90 val vel
+          evt = PM.PMEvent msg 0
 
-
--- noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
--- noteOn conn val vel =
---   Event.forConnection conn
---   $ Event.NoteEv Event.NoteOn
---   $ Event.simpleNote channel
---                      (Event.Pitch (val))
---                      (Event.Velocity vel)
-
--- noteOff :: Connect.T -> Word8 -> Event.T
--- noteOff conn val =
---   Event.forConnection conn
---   $ Event.NoteEv Event.NoteOff
---   $ Event.simpleNote channel
---                      (Event.Pitch (val))
---                      (Event.normalVelocity)
+noteOff :: PM.PMStream -> CLong -> IO PM.PMError
+noteOff conn val = PM.writeShort conn evt
+    where msg = PM.PMMsg 0x80 val 60
+          evt = PM.PMEvent msg 0
 
 makeCtrl :: PM.PMStream -> (CLong, CLong) -> IO PM.PMError
 makeCtrl conn (c, n) = PM.writeShort conn evt
