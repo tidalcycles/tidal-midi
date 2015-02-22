@@ -43,7 +43,9 @@ keys = OscShape {path = "/note",
                             F "sub1vol" (Just (-1)),
                             F "sub2vol" (Just (-1)),
                             F "noise" (Just (-1)),
-                            F "fpoles" (Just (-1))
+                            F "fpoles" (Just (-1)),
+                            F "kmode" (Just (-1)),
+                            F "ksplitpoint" (Just (-1))
                           ],
                  timestamp = NoStamp,
                  latency = 0,
@@ -79,6 +81,13 @@ fpoles    = makeF keys "fpoles"
 twopole = fpoles (p "0")
 fourpole = fpoles (p "1")
 
+kmode     = makeF keys "kmode"
+knormal   = kmode (p "0")
+kstack   = kmode (p "1")
+ksplit   = kmode (p "2")
+
+ksplitpoint   = makeF keys "ksplitpoint"
+
 -- dur          = makeF keys "dur"
 -- portamento   = makeF keys "portamento"
 -- expression   = makeF keys "expression"
@@ -110,7 +119,9 @@ paramRanges = [
               127, -- sub1vol
               127, -- sub2vol
               127, -- noise
-              1 -- fpoles
+              1, -- fpoles
+              2, -- kmode
+              127 -- ksplitpoint
               ]
 
 keynames = map name (tail $ tail $ params keys)
@@ -179,6 +190,9 @@ ctrlN "noise" v         = (14, v)
 
 ctrlN "fpoles" v         = (19, v)
 
+ctrlN "kmode" v         = (119, v)
+
+ctrlN "ksplitpoint" v         = (118, v)
 
 ctrlN s _             = error $ "no match for " ++ s
 
