@@ -225,28 +225,3 @@ makeCtrl conn (c, n) = do
           evtMSBVal = PM.PMEvent msgMSBVal 0
           msgLSBVal = PM.PMMsg 0xB0 0x26 (n .&. 0x7F)
           evtLSBVal = PM.PMEvent msgLSBVal 0
-
-
--- noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
--- noteOn conn val vel =
---   Event.forConnection conn
---   $ Event.NoteEv Event.NoteOn
---   $ Event.simpleNote channel
---                      (Event.Pitch (val))
---                      (Event.Velocity vel)
---
--- noteOff :: Connect.T -> Word8 -> Event.T
--- noteOff conn val =
---   Event.forConnection conn
---   $ Event.NoteEv Event.NoteOff
---   $ Event.simpleNote channel
---                      (Event.Pitch (val))
---                      (Event.normalVelocity)
---
--- makeCtrl :: Connect.T -> (Word32, GHC.Int.Int32) -> Event.T
--- makeCtrl conn (c, n) =
---   Event.forConnection conn
---   $ Event.CtrlEv Event.NonRegParam $ Event.Ctrl
---                                     channel
---                                     (Event.Parameter c)
---                                     (Event.Value n)
