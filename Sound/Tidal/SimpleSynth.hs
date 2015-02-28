@@ -2,6 +2,9 @@ module Sound.Tidal.SimpleSynth where
 
 import qualified Sound.PortMidi as PM
 
+import Data.Time (getCurrentTime, UTCTime, diffUTCTime)
+import Data.Time.Clock.POSIX
+
 import Sound.OSC.FD
 
 import Control.Monad
@@ -16,6 +19,7 @@ import Foreign.C
 import Sound.Tidal.Stream
 import Sound.Tidal.Pattern
 import Sound.Tidal.Parse
+import Sound.Tidal.Tempo
 
 import System.IO.Error
 
@@ -41,8 +45,8 @@ keys = OscShape {path = "/note",
                             F "dtime" (Just (-1)),
                             F "dfeedback" (Just (-1))
                           ],
-                 timestamp = NoStamp,
-                 latency = 0,
+                 timestamp = MessageStamp,
+                 latency = 0.1,
                  namedParams = False,
                  preamble = []
                 }
@@ -73,35 +77,56 @@ keynames = map name (tail $ tail $ params keys)
 
 data Output = Output {
                        conn :: PM.PMStream,
-                       lock :: MVar ()
+                       lock :: MVar (),
+                       offset :: (Integer, Integer)
                      }
 
-outputDevice :: PM.DeviceID -> IO (Either Output PM.PMError)
-outputDevice deviceID = do
+outputDevice :: PM.DeviceID -> Int -> IO (Either Output PM.PMError)
+outputDevice deviceID latency = do
   PM.initialize
-  result <- PM.openOutput deviceID 0
+  result <- PM.openOutput deviceID 1
   case result of
     Left dev ->
       do
         sem <- newEmptyMVar
         putMVar sem () -- initially fill MVar to be taken by the first user of this output
-        return (Left Output { conn=dev, lock=sem })
+        midiOffset <- PM.time -- in milliseconds
+
+        now <- getCurrentTime
+        let posixNow = realToFrac $ utcTimeToPOSIXSeconds now
+            syncedNow = posixNow - ((0.001*) $ fromIntegral midiOffset)
+            sec = floor syncedNow
+            usec = floor $ 1000000 * (syncedNow - (realToFrac sec))
+        return (Left Output { conn=dev, lock=sem, offset=(sec, usec) })
     Right err -> return (Right err)
 
-messageLoop oStream oLatency oChannel iPort = do
+timeDiff :: (Datum, Datum) -> (Integer, Integer) -> Integer
+timeDiff (ds, du) (s, u) = diff d i
+    where diff a b = floor ((a - b) * 1000) -- as millis
+          d = asFrac jds jdu
+          i = asFrac s u
+          jds = (fromJust $ d_get ds) :: Integer
+          jdu = (fromJust $ d_get du) :: Integer
+          asFrac a b = (fromIntegral a) + ((fromIntegral b) * 0.000001)
+
+
+messageLoop oStream oChannel iPort = do
   putStrLn ("Starting message loop on port " ++ show iPort ++ " for MIDI channel " ++ show oChannel)
   x <- udpServer "127.0.0.1" iPort
   forkIO $ loop oStream x oChannel
     where loop oStream x oChannel = do m <- recvMessage x
                                        act oStream m oChannel
                                        loop oStream x oChannel
-          act oStream (Just (Message "/note" (note:dur:ctrls))) oChannel =
+          act oStream (Just (Message "/note" (sec:usec:note:dur:ctrls))) oChannel =
               do
-                let note' = (fromJust $ d_get note) :: Int
+                let diff = timeDiff (sec, usec) (offset oStream)
+                    note' = (fromJust $ d_get note) :: Int
                     dur' = (fromJust $ d_get dur) :: Float
                     ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
-                -- putStrLn ("Message received")
-                sendmidi oLatency oStream oChannel (fromIntegral note', dur') ctrls'
+
+                -- currentTime <- PM.time
+                -- putStrLn ("Will play MIDI note in " ++ show (diff - fromIntegral currentTime) ++ "ms")
+                sendmidi oStream oChannel (fromIntegral note', dur') (diff) ctrls'
                 return()
 
 
@@ -110,31 +135,27 @@ makeStream keys port = stream "127.0.0.1" port keys
 keyproxy latency deviceID channels = do
   let ports = (map (+ 7303) channels)
       keyStreams = map (makeStream keys) ports
-  econn <- outputDevice deviceID
+  econn <- outputDevice deviceID latency
 
   case econn of
     Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
     Left conn ->
       do
-        zipWithM_ (messageLoop conn latency) channels ports
+        zipWithM_ (messageLoop conn) channels ports
+        currentTime <- getCurrentTime
+
+        putStrLn ("Output Device: " ++ show (offset conn) ++ " - " ++ show (utcTimeToPOSIXSeconds currentTime))
         return keyStreams
 
 
-sendmidi latency stream channel (note,dur) ctrls =
-  do forkIO $ do threadDelay latency
-                 noteOn stream channel note 60
-                 --  putStrLn ("Send On Msg: " ++ show result)
-                 threadDelay (floor $ 1000000 * dur)
-                 noteOff stream channel note
-                 --  putStrLn ("Send Off Msg: " ++ show result)
+sendmidi stream channel (note,dur) t ctrls =
+  do forkIO $ do noteOn stream channel note 60 t
+                 noteOff stream channel note (t + (floor $ 1000 * dur))
                  return ()
      let ctrls' = map (floor . (* 127)) ctrls
          ctrls'' = filter ((>=0) . snd) (zip keynames ctrls')
-         --ctrls''' = map (\x -> (x, fromJust $ lookup x ctrls'')) usectrls
-     --putStrLn $ show ctrls''
-     sequence_ $ map (\(name, ctrl) -> makeCtrl stream channel (ctrlN name ctrl)) ctrls''
+     sequence_ $ map (\(name, ctrl) -> makeCtrl stream channel (ctrlN name ctrl) t) ctrls''
      return ()
-
 
 ctrlN "portamento" v    = (5, v)
 ctrlN "expression" v    = (11, v)
@@ -175,18 +196,18 @@ encodeChannel :: (Bits a, Integral a, Integral b) => a -> a -> b
 encodeChannel ch cc = fromIntegral (((-) ch 1) .|. cc)
 
 -- MIDI Messages
-noteOn :: (Bits a, Integral a, Integral b) => Output -> a -> b -> b -> IO (Maybe IOError)
-noteOn o ch val vel = do
-  let evt = makeEvent 0x90 val ch vel 0
+noteOn :: (Bits a, Integral a, Integral b) => Output -> a -> b -> b -> b -> IO (Maybe IOError)
+noteOn o ch val vel t = do
+  let evt = makeEvent 0x90 val ch vel t
   sendEvent o evt
 
-noteOff :: (Bits a, Integral a, Integral b) => Output -> a -> b -> IO (Maybe IOError)
-noteOff o ch val = do
-  let evt = makeEvent 0x80 val ch 60 0
+noteOff :: (Bits a, Integral a, Integral b) => Output -> a -> b -> b -> IO (Maybe IOError)
+noteOff o ch val t = do
+  let evt = makeEvent 0x80 val ch 60 t
   sendEvent o evt
 
 -- This is sending NRPN
-makeCtrl :: (Bits a, Integral a) => Output -> a -> (CLong, CLong) -> IO (Maybe IOError)
-makeCtrl o ch (c, n) = do
-  let evt = makeEvent 0xB0 c ch n 0
+makeCtrl :: (Bits a, Integral a, Integral b) => Output -> a -> (b, b) -> b -> IO (Maybe IOError)
+makeCtrl o ch (c, n) t = do
+  let evt = makeEvent 0xB0 c ch n t
   sendEvent o evt

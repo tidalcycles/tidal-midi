@@ -18,4 +18,4 @@ Description: Initial MIDI support for Tidal. Currently only supports Volca Keys 
 library
   Exposed-modules:  Sound.Tidal.SimpleSynth, Sound.Tidal.Tetra
 
-  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc
+  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time
