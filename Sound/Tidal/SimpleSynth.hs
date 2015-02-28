@@ -190,15 +190,3 @@ makeCtrl :: (Bits a, Integral a) => Output -> a -> (CLong, CLong) -> IO (Maybe I
 makeCtrl o ch (c, n) = do
   let evt = makeEvent 0xB0 c ch n 0
   sendEvent o evt
-  --
-  -- let nrpn = makeEvent 0xB0
-  --     evts = [nrpn 0x63 ch (shift (c .&. 0x3F80) (-7)) 0,
-  --             nrpn 0x62 ch (c .&. 0x7F)  0,
-  --             nrpn 0x06 ch (shift (n .&. 0x3F80) (-7)) 0,
-  --             nrpn 0x26 ch (n .&. 0x7F) 0
-  --            ]
-  -- maybeErrors <- mapM (sendEvent o) evts
-  -- let errors = catMaybes maybeErrors
-  -- case (length errors) of
-  --   0 -> return Nothing
-  --   x -> return $ Just $ userError (show x ++ " errors occurred while sending NRPN Event" ++ show evts)
