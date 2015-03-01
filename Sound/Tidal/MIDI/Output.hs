@@ -69,7 +69,6 @@ keyproxy latency deviceID shape channels = do
         zipWithM_ (messageLoop conn shape) channels ports
         currentTime <- getCurrentTime
 
-        putStrLn ("Output Device: " ++ show (offset conn) ++ " - " ++ show (utcTimeToPOSIXSeconds currentTime))
         return keyStreams
 
 
@@ -141,7 +140,7 @@ makeNRPN o ch c n t = do
 outputDevice :: PM.DeviceID -> Int -> IO (Either Output PM.PMError)
 outputDevice deviceID latency = do
   PM.initialize
-  result <- PM.openOutput deviceID 1
+  result <- PM.openOutput deviceID latency
   case result of
     Left dev ->
       do
