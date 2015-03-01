@@ -3,6 +3,7 @@ module Sound.Tidal.MIDI.Control where
 import qualified Sound.Tidal.Stream as S
 
 data Param = CC { name :: String, midi :: Int }
+           | RPN { name :: String, midi :: Int } -- passes through value as Integer (using floor)
            | NRPN { name :: String, midi :: Int, range :: (Int, Int) }
            | SysEx { name :: String, midi :: Int, range :: (Int, Int) }
 

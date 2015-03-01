@@ -108,10 +108,13 @@ noteOff o ch val t = do
 makeCtrl :: (Bits a, Integral a, RealFrac b, Integral c) => Output -> a -> C.Param -> b -> c -> IO (Maybe IOError)
 makeCtrl o ch (C.CC {C.midi=midi}) n t = makeCC o ch (fromIntegral midi) scaledN t
   where scaledN = floor . (* 127) $ n
+makeCtrl o ch (C.RPN {C.midi=midi}) n t = makeCC o ch (fromIntegral midi) scaledN t
+  where scaledN = floor n
 makeCtrl o ch (C.NRPN {C.midi=midi, C.range=range}) n t = makeNRPN o ch (fromIntegral midi) scaledN t
-  where scaledN = floor . (+ (fromIntegral lowerBound)) . (* ratio) $ n
-        ratio = fromIntegral $ upperBound - lowerBound
-        (lowerBound, upperBound) = range
+  where scaledN = mapRange range n
+
+mapRange (low, high) = floor . (+ (fromIntegral low)) . (* ratio)
+  where ratio = fromIntegral $ high - low
 
 
 -- This is sending CC
