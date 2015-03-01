@@ -17,7 +17,7 @@ keyStreams <- keyproxy 100000 1 [1]
 [k1] <- sequence keyStreams
 ```
 
-`keyproxy` accepts three arguments, first is latency for MIDI signals. Adjust to match your other playbacks. Second is the PortMIDI device ID, up to now you have to trial and error the device ID. Third is a list of MIDI channels to create keyStreams for.
+`keyproxy` accepts three arguments, first is latency for MIDI signals. Adjust to match your other playbacks. Second is the PortMIDI device ID (`tidal-midi-outputs` comes with this library to list PortMIDI Device ids). Third is a list of MIDI channels to create keyStreams for.
 
 Then as usual with Tidal run `ghci -XOverloadedStrings` and send MIDI commands to a compliant device (software synth).
 
