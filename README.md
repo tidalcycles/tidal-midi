@@ -36,13 +36,59 @@ k1 $ note "50*4" |+| slow 2 (kcutoff (scale 0.2 0.9 tri1))
 
 ### Korg Volca Keys
 
+Example:
+```haskell
+import Sound.Tidal.MIDI.Output
+import Sound.Tidal.VolcaKeys
+
+keyStreams <- keyproxy 1 12 keys [1]
+
+[k1] <- sequence keyStreams
+```
+
 ### Korg Volca Bass
+
+Example:
+```haskell
+import Sound.Tidal.MIDI.Output
+import Sound.Tidal.VolcaBass
+
+bassStreams <- keyproxy 1 12 bass [1]
+
+[k1] <- sequence bassStreams
+```
 
 ### Waldorf Blofeld
 
+Example:
+
+```haskell
+import Sound.Tidal.MIDI.Output
+import Sound.Tidal.Blofeld
+
+keyStreams <- keyproxy 1 12 keys [1]
+
+[k1] <- sequence keyStreams
+```
 
 ### DSI Tetra
 
+#### Example
+
+assumes the following Tetra Global parameters:
+
+* `Multi mode`: __On__
+* `M Param Rec`: __NRPN__
+* `MIDI Channel`: __1__
+
+```haskell
+import Sound.Tidal.MIDI.Output
+import Sound.Tidal.Tetra
+
+keyStreams <- keyproxy 1 12 keys [1,2,3,4]
+
+[k1,k2,k3,k4] <- sequence keyStreams
+```
 
 ## Known issues and limitations
 
