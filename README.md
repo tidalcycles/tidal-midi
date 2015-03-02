@@ -29,8 +29,17 @@ Channels can be multiple, e.g. for polyphonic synthesizers this makes it possibl
 Eventually run `ghci -XOverloadedStrings` and send __MIDI__ commands to a compliant device (software synth).
 
 ```haskell
-k1 $ note "50*4" |+| slow 2 (kcutoff (scale 0.2 0.9 tri1))
+k1 $ note "50*4" |+| slow 2 (modwheel (scale 0.2 0.9 tri1))
 ```
+
+The simple synth comes with _simple_ MIDI parameters, that any device should understand:
+
+* modwheel
+* balance
+* expression
+* sustainpedal
+
+all of these parameters map the given values from __0..1__ to MIDI values ranging from __0..127__.
 
 ## Supported Synths
 
