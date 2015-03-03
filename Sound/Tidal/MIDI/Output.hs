@@ -74,6 +74,7 @@ keyproxy latency deviceID shape channels = do
 
 sendmidi stream shape ch (note,dur) t ctrls =
   do forkIO $ do noteOn stream ch note 60 t
+                 threadDelay $ floor $ (1000000 *) $ (realToFrac dur) - (realToFrac (C.latency shape))
                  noteOff stream ch note (t + (floor $ 1000 * dur))
                  return ()
      let ctrls' = filter ((>=0) . snd) (zip (C.toKeynames shape) ctrls)
