@@ -30,3 +30,5 @@ executable tidal-midi-outputs
   Main-Is: Main.hs
   Hs-Source-Dirs: Utils
   Build-depends: base < 5, PortMidi
+  if os(linux)
+    Extra-Libraries: pthread
