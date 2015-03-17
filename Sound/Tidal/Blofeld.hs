@@ -16,9 +16,11 @@ keys = ControllerShape {params = [
                           CC "semitone" 28 (52, 76) 0.5 passThru, -- 52 .. 76 - -12 - +12 semitones
                           mCC "detune" 29,
                           mCC "osc1fm" 30,
+                          SysEx "osc1fmsrc" 6 (0, 11) 0 passThru,
                           CC "osc1shape" 31 (0, 5) 0 passThru, -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
                           mCC "osc1pw" 33,
                           mCC "osc1pwm" 34,
+                          SysEx "osc1pwmsrc" 10 (0, 30) 0 passThru,
                           mCC "osc1vol" 52,
                           mCC "osc1pan" 53,
                           mCC "ringmod" 54,
@@ -59,9 +61,11 @@ sustain      = makeF oscKeys "sustain"
 release      = makeF oscKeys "release"
 
 osc1fm = makeF oscKeys "osc1fm"
+osc1fmsrc = makeF oscKeys "osc1fmsrc"
 osc1shape = makeF oscKeys "osc1shape"
 osc1pw = makeF oscKeys "osc1pw"
 osc1pwm = makeF oscKeys "osc1pwm"
+osc1pwmsrc = makeF oscKeys "osc1pwmsrc"
 osc1vol = makeF oscKeys "osc1vol"
 osc1pan = makeF oscKeys "osc1pan"
 

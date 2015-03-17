@@ -127,10 +127,10 @@ polysynth = ControllerShape { params = [
                                   NRPN "arp" 100 (0, 1) 0 passThru,
                                   NRPN "sqn" 101 (0, 1) 0 passThru,
 
-                                  mrNRPN "mcr1" 105 (0, 183) 0,
-                                  mrNRPN "mcr2" 106 (0, 183) 0,
-                                  mrNRPN "mcr3" 107 (0, 183) 0,
-                                  mrNRPN "mcr4" 108 (0, 183) 0,
+                                  NRPN "mcr1" 105 (0, 183) 0 passThru,
+                                  NRPN "mcr2" 106 (0, 183) 0 passThru,
+                                  NRPN "mcr3" 107 (0, 183) 0 passThru,
+                                  NRPN "mcr4" 108 (0, 183) 0 passThru,
 
                                   mNRPN "fbgain" 110,
 
