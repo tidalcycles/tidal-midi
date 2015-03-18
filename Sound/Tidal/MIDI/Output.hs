@@ -37,9 +37,7 @@ data Output = Output {
                        conn :: PM.PMStream,
                        lock :: MVar (),
                        offset :: (Int, Int),
-                       buffer :: MVar [PM.PMEvent],
-                       starttime :: UTCTime,
-                       midistart :: CULong
+                       buffer :: MVar [PM.PMEvent]
                      }
 
 
@@ -62,21 +60,12 @@ messageLoop stream shape ch port = do
                     dur' = (fromJust $ d_get dur) :: Float
                     ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
 
-
-                -- now <- getCurrentTime
-                -- putStrLn ("The time is now: " ++ show (floor $ (1000*) $ realToFrac $ diffUTCTime now (starttime stream)))
-                -- currentTime <- PM.time
-                -- putStrLn (show ch ++ ": at " ++ show usec ++ " - diff " ++ show diff)
-                -- putStrLn ("Will play MIDI note in " ++ show (diff - fromIntegral currentTime) ++ "ms (" ++ show (currentTime - (midistart stream)))
                 sendmidi stream shape ch (fromIntegral note', realToFrac dur') (diff) ctrls'
                 return()
 
 
 makeStream shape port = S.stream "127.0.0.1" port shape
 
--- ctrlN s _               = error $ "no match for " ++ s
-
--- keyproxy :: Bits b => a -> a -> a -> [b]
 keyproxy latency deviceID shape channels = do
   let ports = (map (+ 7303) channels)
       keyStreams = map (makeStream (C.toOscShape shape)) ports
@@ -105,14 +94,14 @@ sendevents stream = do
               0 ->  do
                 return Nothing
               x -> do
-                -- putStrLn ("Will write " ++ show ecount ++ " events")
+                currentTime <- PM.time
                 let evts' = sortBy (comparing PM.timestamp) evts
-                -- putStrLn ("evts: " ++ show evts')
+                    (evts'',later) = span (\x -> ((PM.timestamp x) > (currentTime + 1000))) evts'
                 err <- PM.writeEvents o evts'
                 case err of
                   PM.NoError -> return Nothing
                   e -> return $ Just (userError ("Error '" ++ show e ++ "' sending Events: " ++ show evts))
-          delay = threadDelay 40000
+          delay = threadDelay 1000
 
 
 sendctrls stream shape ch t ctrls = do
@@ -128,7 +117,6 @@ sendmidi stream shape ch (note,dur) t ctrls =
      sendctrls stream shape ch t ctrls
      return ()
 
--- timeDiff :: Integral a => (Datum, Datum) -> (Int, Int) -> a
 timeDiff (ds, du) (s, u) = diff d i
     where diff a b = floor ((a - b) * 1000) -- as millis
           d = asFrac jds jdu
@@ -139,40 +127,31 @@ timeDiff (ds, du) (s, u) = diff d i
 
 
 -- MIDI Utils
--- encodeChannel :: (Bits a, Integral a, Integral b) => a -> a -> b
 encodeChannel ch cc = (((-) ch 1) .|. cc)
 
 -- MIDI Messages
--- noteOn :: (Bits a, Integral a, Integral b) => Output -> a -> a -> a -> b -> IO (Maybe IOError)
 noteOn o ch val vel t = do
   let evt = makeEvent 0x90 val ch vel t
   sendEvent o evt
 
--- noteOff :: (Bits a, Integral a, Integral b) => Output -> a -> a -> b -> IO (Maybe IOError)
 noteOff o ch val t = do
   let evt = makeEvent 0x80 val ch 60 t
   sendEvent o evt
 
--- makeCtrl :: (Bits a, Integral a, RealFrac b, Integral c) => Output -> a -> C.Param -> b -> c -> IO (Maybe IOError)
 makeCtrl o ch (C.CC {C.midi=midi, C.range=range, C.scalef=f}) n t = makeCC o ch (fromIntegral midi) scaledN t
   where scaledN = fromIntegral (f range (n))
--- makeCtrl o ch (C.RPN {C.midi=midi}) n t = makeCC o ch (fromIntegral midi) scaledN t
---   where scaledN = floor n
 makeCtrl o ch (C.NRPN {C.midi=midi, C.range=range, C.scalef=f}) n t = makeNRPN o ch (fromIntegral midi) scaledN t
   where scaledN = fromIntegral $ (f range (n))
-
 makeCtrl o ch (C.SysEx {C.midi=midi, C.range=range, C.scalef=f}) n t = makeSysEx o ch (fromIntegral midi) scaledN t
   where scaledN = fromIntegral $ (f range (n))
 
 
 -- This is sending CC
--- makeCC :: (Bits a, Integral a, Integral b) => Output -> a -> a -> a -> b -> IO (Maybe IOError)
 makeCC o ch c n t = do
   let evt = makeEvent 0xB0 c ch n t
   sendEvent o evt
 
 -- This is sending NRPN
--- makeNRPN :: (Bits a, Integral a, Integral b) => Output -> a -> a -> a -> b -> IO (Maybe IOError)
 makeNRPN o ch c n t = do
   let nrpn = makeEvent 0xB0
       evts = [nrpn 0x63 ch (shift (c .&. 0x3F80) (-7)) t,
@@ -180,13 +159,8 @@ makeNRPN o ch c n t = do
               nrpn 0x06 ch (shift (n .&. 0x3F80) (-7)) t,
               nrpn 0x26 ch (n .&. 0x7F) t
              ]
-  --maybeErrors <-
   mapM (sendEvent o) evts
   return Nothing
-  -- let errors = catMaybes maybeErrors
-  -- case (length errors) of
-  --   0 -> return Nothing
-  --   x -> return $ Just $ userError (show x ++ " errors occurred while sending NRPN Event" ++ show evts)
 
 makeSysEx o ch c n t = do
   let bytes = [0xF0, -- SysEx Start
@@ -207,7 +181,6 @@ makeSysEx o ch c n t = do
 
 -- PortMIDI Wrapper
 
--- outputDevice :: PM.DeviceID -> Int -> IO (Either Output PM.PMError)
 outputDevice deviceID latency = do
   PM.initialize
   result <- PM.openOutput deviceID latency
@@ -226,10 +199,9 @@ outputDevice deviceID latency = do
             syncedNow = posixNow - ((0.001*) $ fromIntegral midiOffset)
             sec = floor syncedNow
             usec = floor $ 1000000 * (syncedNow - (realToFrac sec))
-        return (Left Output { conn=dev, lock=sem, offset=(sec, usec), starttime=now, midistart=midiOffset, buffer=buffer })
+        return (Left Output { conn=dev, lock=sem, offset=(sec, usec), buffer=buffer })
     Right err -> return (Right err)
 
--- makeEvent :: (Bits a, Integral a, Integral b) => a -> a -> a -> a -> b -> PM.PMEvent
 makeEvent st n ch v t = PM.PMEvent msg (t)
   where msg = PM.PMMsg (encodeChannel ch st) (n) (v)
 
@@ -239,21 +211,11 @@ sendSysEx o t msg = do
   err <- PM.writeSysEx (conn o) t msg
   putMVar sem ()
   return Nothing
-  -- case err of
-  --   PM.NoError -> return Nothing
-  --   e -> return $ Just (userError ("Error '" ++ show e ++ "' sending SysEx " ++ show msg ++ "(" ++ show t ++ ")"))
 
 -- now with a semaphore since PortMIDI is NOT thread safe
--- sendEvent :: Output -> PM.PMEvent -> IO (Maybe IOError)
 sendEvent o evt = do
   let sem = lock o
       buf = buffer o
-  -- takeMVar sem
   cbuf <- takeMVar buf
   putMVar buf (cbuf ++ [evt])
   return Nothing
-  -- err <- PM.writeShort (conn o) evt
-  -- putMVar sem ()
-  -- case err of
-  --   PM.NoError -> return Nothing
-  --   e -> return $ Just (userError ("Error '" ++ show e ++ "' sending Event: " ++ show evt))

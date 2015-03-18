@@ -19,6 +19,7 @@ toOscShape cs =
   in S.OscShape {S.path = "/note",
                  S.params = oscparams,
                  S.timestamp = S.MessageStamp,
+                 S.cpsStamp = False,
                  S.latency = latency cs,
                  S.namedParams = False,
                  S.preamble = []
