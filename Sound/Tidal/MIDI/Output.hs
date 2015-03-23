@@ -60,6 +60,8 @@ messageLoop stream shape ch port = do
                     dur' = (fromJust $ d_get dur) :: Float
                     ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
 
+                -- mTime <- PM.time
+                -- putStrLn ("MIDI in: " ++ (show (diff - mTime)))
                 sendmidi stream shape ch (fromIntegral note', realToFrac dur') (diff) ctrls'
                 return()
 
@@ -85,23 +87,28 @@ sendevents stream = do
                            delay
                            loop stream
           act stream = do
-            let evtsM = buffer stream
+            let buf = buffer stream
                 o = conn stream
-            evts <- takeMVar evtsM
-            putMVar evtsM []
-            let ecount = length evts
-            case ecount of
-              0 ->  do
+            buf' <- tryTakeMVar buf
+            case buf' of
+              Nothing ->  do
                 return Nothing
-              x -> do
-                currentTime <- PM.time
+              Just [] -> do
+                putMVar buf []
+                return Nothing
+              (Just evts@(x:xs)) -> do
+                midiTime <- PM.time
                 let evts' = sortBy (comparing PM.timestamp) evts
-                    (evts'',later) = span (\x -> ((PM.timestamp x) > (currentTime + 1000))) evts'
-                err <- PM.writeEvents o evts'
+                    nextTick = fromIntegral $ midiTime + 1 -- advance on millisecond, i.e. the next call of this loop
+                    (evts'',later) = span (\x -> (((PM.timestamp x) < midiTime)) || ((PM.timestamp x) < nextTick)) evts'
+                putMVar buf later
+
+                err <- PM.writeEvents o evts''
                 case err of
                   PM.NoError -> return Nothing
                   e -> return $ Just (userError ("Error '" ++ show e ++ "' sending Events: " ++ show evts))
-          delay = threadDelay 1000
+
+          delay = threadDelay 1000 -- in microseconds, i.e. one millisecond
 
 
 sendctrls stream shape ch t ctrls = do
@@ -111,7 +118,6 @@ sendctrls stream shape ch t ctrls = do
 
 sendmidi stream shape ch (note,dur) t ctrls =
   do forkIO $ do noteOn stream ch note 60 t
-                 threadDelay $ floor $ (1000000 *) $ (dur) - ((C.latency shape))
                  noteOff stream ch note (t + (floor $ 1000 * dur))
                  return ()
      sendctrls stream shape ch t ctrls
@@ -183,6 +189,7 @@ makeSysEx o ch c n t = do
 
 outputDevice deviceID latency = do
   PM.initialize
+  now <- getCurrentTime
   result <- PM.openOutput deviceID latency
   case result of
     Left dev ->
@@ -192,9 +199,9 @@ outputDevice deviceID latency = do
         sem <- newEmptyMVar
         putMVar sem () -- initially fill MVar to be taken by the first user of this output
         buffer <- newMVar []
-        midiOffset <- PM.time -- in milliseconds
 
-        now <- getCurrentTime
+        midiOffset <- PM.time
+
         let posixNow = realToFrac $ utcTimeToPOSIXSeconds now
             syncedNow = posixNow - ((0.001*) $ fromIntegral midiOffset)
             sec = floor syncedNow
