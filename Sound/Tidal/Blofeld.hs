@@ -6,31 +6,33 @@ import Sound.Tidal.MIDI.Control
 
 keys :: ControllerShape
 keys = ControllerShape {params = [
-                          CC "portamento" 5,
-                          CC "expression" 11,
-                          RPN "lfoshape" 15, -- 0..5 - sine,triangle,square,saw,random,sample&hold
-                          CC "lforate" 16,
-                          RPN "lfosync" 17, -- 0 off, 1 on
-                          CC "lfodelay" 18,
-                          RPN "octave" 27, -- 16, 28, 40 .. 112 - 128' .. 1/2'
-                          RPN "semitone" 28, -- 52 .. 76 - -12 - +12 semitones
-                          CC "detune" 29,
-                          CC "osc1fm" 30,
-                          RPN "osc1shape" 31, -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
-                          CC "osc1pw" 33,
-                          CC "osc1pwm" 34,
-                          CC "osc1vol" 52,
-                          CC "osc1pan" 53,
-                          CC "ringmod" 54,
-                          CC "ringpan" 55,
-                          CC "noise" 60,
-                          CC "noisepan" 61,
-                          CC "noisecol" 62,
-                          CC "kcutoff" 69,
-                          CC "attack" 101,
-                          CC "decay" 102,
-                          CC "sustain" 103,
-                          CC "release" 106
+                          mCC "portamento" 5,
+                          mCC "expression" 11,
+                          CC "lfoshape" 15 (0, 5) 0 passThru, -- 0..5 - sine,triangle,square,saw,random,sample&hold
+                          mCC "lforate" 16,
+                          CC "lfosync" 17 (0, 1) 0 passThru, -- 0 off, 1 on
+                          mCC "lfodelay" 18,
+                          CC "octave" 27 (16, 112) 0 passThru, -- 16, 28, 40 .. 112 - 128' .. 1/2'
+                          CC "semitone" 28 (52, 76) 0.5 passThru, -- 52 .. 76 - -12 - +12 semitones
+                          mCC "detune" 29,
+                          mCC "osc1fm" 30,
+                          SysEx "osc1fmsrc" 6 (0, 11) 0 passThru,
+                          CC "osc1shape" 31 (0, 5) 0 passThru, -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
+                          mCC "osc1pw" 33,
+                          mCC "osc1pwm" 34,
+                          SysEx "osc1pwmsrc" 10 (0, 30) 0 passThru,
+                          mCC "osc1vol" 52,
+                          mCC "osc1pan" 53,
+                          mCC "ringmod" 54,
+                          mCC "ringpan" 55,
+                          mCC "noise" 60,
+                          mCC "noisepan" 61,
+                          mCC "noisecol" 62,
+                          mCC "kcutoff" 69,
+                          mCC "attack" 101,
+                          mCC "decay" 102,
+                          mCC "sustain" 103,
+                          mCC "release" 106
                         ],
                         duration = ("dur", 0.05),
                         latency = 0.1}
@@ -59,9 +61,11 @@ sustain      = makeF oscKeys "sustain"
 release      = makeF oscKeys "release"
 
 osc1fm = makeF oscKeys "osc1fm"
+osc1fmsrc = makeF oscKeys "osc1fmsrc"
 osc1shape = makeF oscKeys "osc1shape"
 osc1pw = makeF oscKeys "osc1pw"
 osc1pwm = makeF oscKeys "osc1pwm"
+osc1pwmsrc = makeF oscKeys "osc1pwmsrc"
 osc1vol = makeF oscKeys "osc1vol"
 osc1pan = makeF oscKeys "osc1pan"
 

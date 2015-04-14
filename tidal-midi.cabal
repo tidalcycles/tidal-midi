@@ -24,7 +24,7 @@ library
                    Sound.Tidal.Blofeld
                    Sound.Tidal.Tetra
 
-  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time
+  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
 
 executable tidal-midi-outputs
   Main-Is: Main.hs

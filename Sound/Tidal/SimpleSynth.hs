@@ -6,10 +6,10 @@ import Sound.Tidal.MIDI.Control
 
 keys :: ControllerShape
 keys = ControllerShape {params = [
-                          CC "modwheel" 1,
-                          CC "balance" 10,
-                          CC "expression" 11,
-                          CC "sustainpedal" 64
+                          mCC "modwheel" 1,
+                          mCC "balance" 10,
+                          mCC "expression" 11,
+                          mCC "sustainpedal" 64
                         ],
                         duration = ("dur", 0.05),
                         latency = 0.1}

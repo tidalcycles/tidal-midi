@@ -6,22 +6,22 @@ import Sound.Tidal.MIDI.Control
 
 keys :: ControllerShape
 keys = ControllerShape { params = [
-                            CC "portamento" 5,
-                            CC "expression" 11,
-                            CC "voice" 40,
-                            CC "octave" 41,
-                            CC "detune" 42,
-                            CC "vcoegint" 43,
-                            CC "kcutoff" 44,
-                            CC "vcfegint" 45,
-                            CC "lforate" 46,
-                            CC "lfopitchint" 47,
-                            CC "lfocutoffint" 48,
-                            CC "attack" 49,
-                            CC "decay" 50,
-                            CC "sustain" 51,
-                            CC "dtime" 52,
-                            CC "dfeedback" 53
+                            mCC "portamento" 5,
+                            mCC "expression" 11,
+                            mCC "voice" 40,
+                            mCC "octave" 41,
+                            mCC "detune" 42,
+                            mCC "vcoegint" 43,
+                            mCC "kcutoff" 44,
+                            mCC "vcfegint" 45,
+                            mCC "lforate" 46,
+                            mCC "lfopitchint" 47,
+                            mCC "lfocutoffint" 48,
+                            mCC "attack" 49,
+                            mCC "decay" 50,
+                            mCC "sustain" 51,
+                            mCC "dtime" 52,
+                            mCC "dfeedback" 53
                           ],
                          duration = ("dur", 0.05),
                          latency = 0.1

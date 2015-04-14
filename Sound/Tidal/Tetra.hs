@@ -1,154 +1,154 @@
 module Sound.Tidal.Tetra where
 
-import Sound.Tidal.Stream (makeI, makeF)
+import Sound.Tidal.Stream (makeI, makeF, (|+|), merge, OscPattern)
 
 import Sound.Tidal.MIDI.Control
 
 import Sound.Tidal.Parse
-
+import Sound.Tidal.Pattern
 
 polysynth :: ControllerShape
 polysynth = ControllerShape { params = [
-                                  NRPN "osc1freq" 0 (0, 120),
-                                  NRPN "osc1detune" 1 (0, 100),
-                                  NRPN "osc1shape" 2 (0, 103),
-                                  NRPN "osc1glide" 3 (0, 127),
-                                  NRPN "osc1kbd" 4 (0, 1),
+                                  mrNRPN "osc1freq" 0 (0, 120) 0.2,
+                                  mrNRPN "osc1detune" 1 (0, 100) 0.5,
+                                  NRPN "osc1shape" 2 (0, 103) 0 passThru,
+                                  mNRPN "osc1glide" 3,
+                                  NRPN "osc1kbd" 4 (0, 1) 0 passThru,
 
-                                  NRPN "osc2freq" 5 (0, 120),
-                                  NRPN "osc2detune" 6 (0, 100),
-                                  NRPN "osc2shape" 7 (0, 103),
-                                  NRPN "osc2glide" 8 (0, 127),
-                                  NRPN "osc2kbd" 9 (0, 1),
+                                  mrNRPN "osc2freq" 5 (0, 120) 0,
+                                  mrNRPN "osc2detune" 6 (0, 100) 0.5,
+                                  NRPN "osc2shape" 7 (0, 103) 0 passThru,
+                                  mNRPN "osc2glide" 8,
+                                  NRPN "osc2kbd" 9 (0, 1) 0 passThru,
 
-                                  NRPN "oscsync" 10 (0, 1),
-                                  NRPN "glidemode" 11 (0, 3),
-                                  NRPN "oscslop" 12 (0, 5),
-                                  NRPN "oscmix" 13 (0, 127),
+                                  NRPN "oscsync" 10 (0, 1) 0 passThru,
+                                  NRPN "glidemode" 11 (0, 3) 0 passThru,
+                                  NRPN "oscslop" 12 (0, 5) 0 passThru,
+                                  mrNRPN "oscmix" 13 (0, 127) 0.5,
 
-                                  NRPN "noise" 14 (0, 127),
-                                  NRPN "kcutoff" 15 (0, 164),
-                                  NRPN "kresonance" 16 (0, 127),
-                                  NRPN "kamt" 17 (0, 127),
-                                  NRPN "audiomod" 18 (0, 127),
-                                  NRPN "fpoles" 19 (0, 1),
+                                  mNRPN "noise" 14,
+                                  mrNRPN "kcutoff" 15 (0, 164) 1,
+                                  mNRPN "kresonance" 16,
+                                  mNRPN "kamt" 17,
+                                  mNRPN "audiomod" 18,
+                                  NRPN "fpoles" 19 (0, 1) 0 passThru,
 
                                   -- filter envelope
-                                  NRPN "famt" 20 (0, 254),
-                                  NRPN "fvel" 21 (0, 127),
-                                  NRPN "fdel" 22 (0, 127),
-                                  NRPN "fatk" 23 (0, 127),
-                                  NRPN "fdcy" 24 (0, 127),
-                                  NRPN "fsus" 25 (0, 127),
-                                  NRPN "frel" 26 (0, 127),
+                                  mrNRPN "famt" 20 (0, 254) 0.5,
+                                  mNRPN "fvel" 21,
+                                  mNRPN "fdel" 22,
+                                  mNRPN "fatk" 23,
+                                  mNRPN "fdcy" 24,
+                                  mNRPN "fsus" 25,
+                                  mNRPN "frel" 26,
 
 
-                                  NRPN "vcavol" 27 (0, 127),
-                                  NRPN "outspread" 28 (0, 127),
-                                  NRPN "vol" 29 (0, 127),
+                                  mNRPN "vcavol" 27,
+                                  mNRPN "outspread" 28,
+                                  mrNRPN "vol" 29 (0, 127) 1, -- max volume by default
 
-                                  NRPN "vamt" 30 (0, 127),
-                                  NRPN "vvel" 31 (0, 127),
-                                  NRPN "vdel" 32 (0, 127),
-                                  NRPN "vatk" 33 (0, 127),
-                                  NRPN "vdcy" 34 (0, 127),
-                                  NRPN "vsus" 35 (0, 127),
-                                  NRPN "vrel" 36 (0, 127),
+                                  mrNRPN "vamt" 30 (0, 127) 1, -- max vca envelope amount
+                                  mNRPN "vvel" 31,
+                                  mNRPN "vdel" 32,
+                                  mNRPN "vatk" 33,
+                                  mNRPN "vdcy" 34,
+                                  mNRPN "vsus" 35,
+                                  mNRPN "vrel" 36,
 
-                                  NRPN "lfo1rate" 37 (0, 150), -- unsynced
-                                  NRPN "lfo1step" 37 (151, 166), -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo1shape" 38 (0, 4),
-                                  NRPN "lfo1amt" 39 (0, 127),
-                                  NRPN "lfo1dest" 40 (0, 43),
-                                  NRPN "lfo1sync" 41 (0, 1),
+                                  mrNRPN "lfo1rate" 37 (0, 150) 0, -- unsynced
+                                  -- mrNRPN "lfo1step" 37 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                                  NRPN "lfo1shape" 38 (0, 4) 0 passThru,
+                                  mNRPN "lfo1amt" 39,
+                                  NRPN "lfo1dest" 40 (0, 43) 0 passThru,
+                                  NRPN "lfo1sync" 41 (0, 1) 0 passThru,
 
-                                  NRPN "lfo2rate" 42 (0, 150), -- unsynced
-                                  NRPN "lfo2step" 42 (151, 166), -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo2shape" 43 (0, 4),
-                                  NRPN "lfo2amt" 44 (0, 127),
-                                  NRPN "lfo2dest" 45 (0, 43),
-                                  NRPN "lfo2sync" 46 (0, 1),
+                                  mrNRPN "lfo2rate" 42 (0, 150) 0, -- unsynced
+                                  -- mrNRPN "lfo2step" 42 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                                  NRPN "lfo2shape" 43 (0, 4) 0 passThru,
+                                  mNRPN "lfo2amt" 44,
+                                  NRPN "lfo2dest" 45 (0, 43) 0 passThru,
+                                  NRPN "lfo2sync" 46 (0, 1) 0 passThru,
 
-                                  NRPN "lfo3rate" 47 (0, 150), -- unsynced
-                                  NRPN "lfo3step" 47 (151, 166), -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo3shape" 48 (0, 4),
-                                  NRPN "lfo3amt" 49 (0, 127),
-                                  NRPN "lfo3dest" 50 (0, 43),
-                                  NRPN "lfo3sync" 51 (0, 1),
+                                  mrNRPN "lfo3rate" 47 (0, 150) 0 , -- unsynced
+                                  -- mrNRPN "lfo3step" 47 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                                  NRPN "lfo3shape" 48 (0, 4) 0 passThru,
+                                  mNRPN "lfo3amt" 49,
+                                  NRPN "lfo3dest" 50 (0, 43) 0 passThru,
+                                  NRPN "lfo3sync" 51 (0, 1) 0 passThru,
 
-                                  NRPN "lfo4rate" 52 (0, 150), -- unsynced
-                                  NRPN "lfo4step" 52 (151, 166), -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo4shape" 53 (0, 4),
-                                  NRPN "lfo4amt" 54 (0, 127),
-                                  NRPN "lfo4dest" 55 (0, 43),
-                                  NRPN "lfo4sync" 56 (0, 1),
+                                  mrNRPN "lfo4rate" 52 (0, 150) 0, -- unsynced
+                                  -- mrNRPN "lfo4step" 52 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                                  NRPN "lfo4shape" 53 (0, 4) 0 passThru,
+                                  mNRPN "lfo4amt" 54,
+                                  NRPN "lfo4dest" 55 (0, 43) 0 passThru,
+                                  NRPN "lfo4sync" 56 (0, 1) 0 passThru,
 
-                                  NRPN "emod" 57 (0, 43),
-                                  NRPN "eamt" 58 (0, 254),
-                                  NRPN "evel" 59 (0, 127),
-                                  NRPN "edel" 60 (0, 127),
-                                  NRPN "eatk" 61 (0, 127),
-                                  NRPN "edcy" 62 (0, 127),
-                                  NRPN "esus" 63 (0, 127),
-                                  NRPN "erel" 64 (0, 127),
+                                  NRPN "emod" 57 (0, 43) 0 passThru,
+                                  mrNRPN "eamt" 58 (0, 254) 0.5,
+                                  mNRPN "evel" 59,
+                                  mNRPN "edel" 60,
+                                  mNRPN "eatk" 61,
+                                  mNRPN "edcy" 62,
+                                  mNRPN "esus" 63,
+                                  mNRPN "erel" 64,
 
-                                  NRPN "mod1src" 65 (0, 20),
-                                  NRPN "mod1amt" 66 (0, 254),
-                                  NRPN "mod1dst" 67 (0, 47),
+                                  NRPN "mod1src" 65 (0, 20) 0 passThru,
+                                  mrNRPN "mod1amt" 66 (0, 254) 0.5,
+                                  NRPN "mod1dst" 67 (0, 47) 0 passThru,
 
-                                  NRPN "mod2src" 68 (0, 20),
-                                  NRPN "mod2amt" 69 (0, 254),
-                                  NRPN "mod2dst" 70 (0, 47),
+                                  NRPN "mod2src" 68 (0, 20) 0 passThru,
+                                  mrNRPN "mod2amt" 69 (0, 254) 0.5,
+                                  NRPN "mod2dst" 70 (0, 47) 0 passThru,
 
-                                  NRPN "mod3src" 71 (0, 20),
-                                  NRPN "mod3amt" 72 (0, 254),
-                                  NRPN "mod3dst" 73 (0, 47),
+                                  NRPN "mod3src" 71 (0, 20) 0 passThru,
+                                  mrNRPN "mod3amt" 72 (0, 254) 0.5,
+                                  NRPN "mod3dst" 73 (0, 47) 0 passThru,
 
-                                  NRPN "mod4src" 74 (0, 20),
-                                  NRPN "mod4amt" 75 (0, 254),
-                                  NRPN "mod4dst" 76 (0, 47),
+                                  NRPN "mod4src" 74 (0, 20) 0 passThru,
+                                  mrNRPN "mod4amt" 75 (0, 254) 0.5,
+                                  NRPN "mod4dst" 76 (0, 47) 0 passThru,
 
                                   -- left out: modwheel, breath, footctrl, pressure, velocity
 
-                                  NRPN "kbpm" 91 (30, 250),
-                                  NRPN "clockdiv" 92 (0, 12),
+                                  NRPN "kbpm" 91 (30, 250) 0 passThru,
+                                  NRPN "clockdiv" 92 (0, 12) 0 passThru, -- TODO: document values
 
                                   -- left out: pitchbend range
 
-                                  NRPN "sqntrig" 94 (0, 4),
-                                  NRPN "unisonkey" 95 (0, 5),
-                                  NRPN "unisonmode" 96 (0, 4),
-                                  NRPN "arpmode" 97 (0, 14),
+                                  NRPN "sqntrig" 94 (0, 4) 0 passThru, -- TODO: document values
+                                  NRPN "unisonkey" 95 (0, 5) 0 passThru, -- TODO: document values
+                                  NRPN "unisonmode" 96 (0, 4) 0 passThru, -- TODO: document values
+                                  NRPN "arpmode" 97 (0, 14) 0 passThru,
 
-                                  NRPN "erepeat" 98 (0, 1),
-                                  NRPN "unison" 99 (0, 1),
+                                  NRPN "erepeat" 98 (0, 1) 0 passThru,
+                                  NRPN "unison" 99 (0, 1) 0 passThru,
 
 
-                                  NRPN "arp" 100 (0, 1),
-                                  NRPN "sqn" 101 (0, 1),
+                                  NRPN "arp" 100 (0, 1) 0 passThru,
+                                  NRPN "sqn" 101 (0, 1) 0 passThru,
 
-                                  NRPN "mcr1" 105 (0, 183),
-                                  NRPN "mcr2" 106 (0, 183),
-                                  NRPN "mcr3" 107 (0, 183),
-                                  NRPN "mcr4" 108 (0, 183),
+                                  NRPN "mcr1" 105 (0, 183) 0 passThru,
+                                  NRPN "mcr2" 106 (0, 183) 0 passThru,
+                                  NRPN "mcr3" 107 (0, 183) 0 passThru,
+                                  NRPN "mcr4" 108 (0, 183) 0 passThru,
 
-                                  NRPN "fbgain" 110 (0, 127),
+                                  mNRPN "fbgain" 110,
 
-                                  NRPN "btnfreq" 111 (0, 127),
-                                  NRPN "btnvel" 112 (0, 127),
-                                  NRPN "btnmode" 113 (0, 1),
+                                  mrNRPN "btnfreq" 111 (0, 127) 0.25,
+                                  mrNRPN "btnvel" 112 (0, 127) 1,
+                                  NRPN "btnmode" 113 (0, 1) 0 passThru,
 
-                                  NRPN "sub1vol" 114 (0, 127),
-                                  NRPN "sub2vol" 115 (0, 127),
+                                  mNRPN "sub1vol" 114,
+                                  mNRPN "sub2vol" 115,
 
-                                  NRPN "fbvol" 116 (0, 127),
+                                  mNRPN "fbvol" 116,
 
                                   -- left out: editor byte,
 
-                                  NRPN "ksplitpoint" 118 (0, 127),
-                                  NRPN "kmode" 119 (0, 2)
+                                  mrNRPN "ksplitpoint" 118 (0, 127) 0.5,
+                                  NRPN "kmode" 119 (0, 2) 0 passThru -- TODO: document values
                           ],
-                         duration = ("dur", 0.05),
+                         duration = ("dur", 0.2),
                          latency = 0.04
                        }
 
@@ -208,28 +208,28 @@ vsus      = makeF oscPolysynth "vsus"
 vrel      = makeF oscPolysynth "vrel"
 
 lfo1rate      = makeF oscPolysynth "lfo1rate"
-lfo1step      = makeF oscPolysynth "lfo1step"
+-- lfo1step      = makeF oscPolysynth "lfo1step"
 lfo1shape     = makeF oscPolysynth "lfo1shape"
 lfo1amt     = makeF oscPolysynth "lfo1amt"
 lfo1dest      = makeF oscPolysynth "lfo1dest"
 lfo1sync      = makeF oscPolysynth "lfo1sync"
 
 lfo2rate      = makeF oscPolysynth "lfo2rate"
-lfo2step      = makeF oscPolysynth "lfo2step"
+-- lfo2step      = makeF oscPolysynth "lfo2step"
 lfo2shape     = makeF oscPolysynth "lfo2shape"
 lfo2amt     = makeF oscPolysynth "lfo2amt"
 lfo2dest      = makeF oscPolysynth "lfo2dest"
 lfo2sync      = makeF oscPolysynth "lfo2sync"
 
 lfo3rate      = makeF oscPolysynth "lfo3rate"
-lfo3step      = makeF oscPolysynth "lfo3step"
+-- lfo3step      = makeF oscPolysynth "lfo3step"
 lfo3shape     = makeF oscPolysynth "lfo3shape"
 lfo3amt     = makeF oscPolysynth "lfo3amt"
 lfo3dest      = makeF oscPolysynth "lfo3dest"
 lfo3sync      = makeF oscPolysynth "lfo3sync"
 
 lfo4rate      = makeF oscPolysynth "lfo4rate"
-lfo4step      = makeF oscPolysynth "lfo4step"
+-- lfo4step      = makeF oscPolysynth "lfo4step"
 lfo4shape     = makeF oscPolysynth "lfo4shape"
 lfo4amt     = makeF oscPolysynth "lfo4amt"
 lfo4dest      = makeF oscPolysynth "lfo4dest"
@@ -300,3 +300,26 @@ kmode     = makeF oscPolysynth "kmode"
 knormal         = kmode (p "0")
 kstack          = kmode (p "0.5")
 ksplit          = kmode (p "1")
+
+
+
+snare d p' = note p'
+  |+| osc1shape zero |+| osc1kbd zero
+  |+| osc2shape zero |+| osc2kbd zero
+  |+| noise one
+  |+| vrel zero |+| vsus zero |+| vdcy d
+  |+| kcutoff (p "1")
+  |+| dur d
+  where zero = p "0"
+        one = p "1"
+
+
+kick blp p' = note p'
+  |+| fourpole
+  |+| osc1shape zero |+| osc1kbd zero
+  |+| osc2shape zero |+| osc2kbd zero
+  |+| vsus zero |+| vdcy (p "0.95") |+| vrel (p "0.5")
+  |+| kresonance (p "0.99") |+| kcutoff zero
+  |+| eamt (p "0.8") |+| emod (p "9") |+| edcy blp
+  |+| dur (p "0.2")
+  where zero = p "0"
