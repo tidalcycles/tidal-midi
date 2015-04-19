@@ -23,6 +23,8 @@ library
                    Sound.Tidal.VolcaBass
                    Sound.Tidal.Blofeld
                    Sound.Tidal.Tetra
+                   Sound.Tidal.Rytm
+                   Sound.Tidal.Synthino
 
   Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
 
