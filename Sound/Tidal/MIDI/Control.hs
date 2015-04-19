@@ -18,7 +18,6 @@ toOscShape cs =
       (durn, durv) = duration cs
   in S.OscShape {S.path = "/note",
                  S.params = oscparams,
-                 S.cpsStamp = False,
                  S.timestamp = S.MessageStamp,
                  S.cpsStamp = False,
                  S.latency = latency cs,
