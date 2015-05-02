@@ -2,6 +2,8 @@ module Sound.Tidal.MIDI.Output where
 
 import qualified Sound.PortMidi as PM
 
+import Sound.Tidal.MIDI.Device
+
 import Data.Time (getCurrentTime, UTCTime, diffUTCTime)
 import Data.Time.Clock.POSIX
 import qualified Data.ByteString as B
@@ -68,18 +70,19 @@ messageLoop stream shape ch port = do
 
 makeStream shape port = S.stream "127.0.0.1" port shape
 
-keyproxy latency deviceID shape channels = do
+keyproxy latency deviceName shape channels = do
   let ports = (map (+ 7303) channels)
       keyStreams = map (makeStream (C.toOscShape shape)) ports
-  econn <- outputDevice deviceID latency
-
-  case econn of
-    Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
-    Left conn ->
-      do
-        sendevents conn
-        zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
-        return keyStreams
+  deviceID <- getIDForDeviceName deviceName
+  case deviceID of
+    Nothing -> error ("Device '" ++ show deviceName ++ "' not found")
+    Just id -> do econn <- outputDevice id latency
+                  case econn of
+                       Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
+                       Left conn -> do
+                         sendevents conn
+                         zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
+                         return keyStreams
 
 sendevents stream = do
   forkIO $ do loop stream

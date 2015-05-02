@@ -1,3 +1,4 @@
+module Sound.Tidal.MIDI.Device where
 import qualified Sound.PortMidi as PM
 import Control.Exception
 import Data.List
@@ -27,5 +28,13 @@ getDevices = withPortMidi $ do
   count <- PM.countDevices
   mapM PM.getDeviceInfo [0..(count - 1)]
 
-main = do
-  putStrLn =<< displayOutputDevices
+
+getIDForDeviceName name = do
+  odevs <- fmap getOutputDevices getIndexedDevices
+  let res = filter (\n -> (PM.name . snd) n == name) odevs
+  case res of
+    [] -> return Nothing
+    [dev] -> return $ Just $ fromIntegral $ fst dev
+
+--main = do
+--  putStrLn =<< displayOutputDevices

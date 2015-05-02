@@ -17,6 +17,7 @@ Description: Initial MIDI support for Tidal. Currently only supports Volca Keys 
 
 library
   Exposed-modules: Sound.Tidal.MIDI.Output
+                   Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Control
                    Sound.Tidal.SimpleSynth
                    Sound.Tidal.VolcaKeys
@@ -27,10 +28,3 @@ library
                    Sound.Tidal.Synthino
 
   Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
-
-executable tidal-midi-outputs
-  Main-Is: Main.hs
-  Hs-Source-Dirs: Utils
-  Build-depends: base < 5, PortMidi
-  if os(linux)
-    Extra-Libraries: pthread
