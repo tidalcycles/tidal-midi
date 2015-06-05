@@ -42,32 +42,26 @@ data Output = Output {
                        buffer :: MVar [PM.PMEvent]
                      }
 
-
 messageLoop stream shape ch port = do
   putStrLn ("Starting message loop on port " ++ show port ++ " for MIDI channel " ++ show ch)
   x <- udpServer "127.0.0.1" port
-  -- send defaults to reset controllers
-
-  -- let defaults = map (realToFrac . C.vdefault) (C.params shape)
-  -- sendctrls stream shape ch 0 defaults
 
   forkIO $ loop stream x ch
     where loop stream x ch = do m <- recvMessage x
                                 act stream m ch
                                 loop stream x ch
-          act stream (Just (Message "/note" (sec:usec:note:dur:ctrls))) ch =
+          act stream (Just (Message "/note" (sec:usec:note:dur:vel:ctrls))) ch =
               do
                 let diff = timeDiff (sec, usec) (offset stream)
                     note' = (fromJust $ d_get note) :: Int
+                    vel' = (fromJust $ d_get vel) :: Float
                     dur' = (fromJust $ d_get dur) :: Float
                     ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
 
                 -- mTime <- PM.time
                 -- putStrLn ("MIDI in: " ++ (show (diff - mTime)))
-                sendmidi stream shape ch (fromIntegral note', realToFrac dur') (diff) ctrls'
+                sendmidi stream shape ch (fromIntegral note', fromIntegral $ C.mapRange (0, 127) (realToFrac vel'), realToFrac dur') (diff) ctrls'
                 return()
-
-
 makeStream shape port = S.stream "127.0.0.1" port shape
 
 keyproxy latency deviceName shape channels = do
@@ -75,14 +69,16 @@ keyproxy latency deviceName shape channels = do
       keyStreams = map (makeStream (C.toOscShape shape)) ports
   deviceID <- getIDForDeviceName deviceName
   case deviceID of
-    Nothing -> error ("Device '" ++ show deviceName ++ "' not found")
+    Nothing -> do putStrLn "List of Available Device Names"
+                  putStrLn =<< displayOutputDevices
+                  error ("Device '" ++ show deviceName ++ "' not found")
     Just id -> do econn <- outputDevice id latency
                   case econn of
                        Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
                        Left conn -> do
                          sendevents conn
                          zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
-                         return keyStreams
+                         return $ keyStreams
 
 sendevents stream = do
   forkIO $ do loop stream
@@ -119,8 +115,8 @@ sendctrls stream shape ch t ctrls = do
   sequence_ $ map (\(name, ctrl) -> makeCtrl stream ch (C.paramN shape name) ctrl t) ctrls'
   return ()
 
-sendmidi stream shape ch (note,dur) t ctrls =
-  do forkIO $ do noteOn stream ch note 60 t
+sendmidi stream shape ch (note,vel,dur) t ctrls =
+  do forkIO $ do noteOn stream ch note vel t
                  noteOff stream ch note (t + (floor $ 1000 * dur))
                  return ()
      sendctrls stream shape ch t ctrls

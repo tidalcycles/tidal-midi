@@ -12,12 +12,14 @@ keys = ControllerShape {params = [
                           mCC "sustainpedal" 64
                         ],
                         duration = ("dur", 0.05),
+                        velocity = ("vel", 0.5),
                         latency = 0.1}
 
 oscKeys = toOscShape keys
 
 note         = makeI oscKeys "note"
 dur          = makeF oscKeys "dur"
+vel          = makeF oscKeys "vel"
 modwheel     = makeF oscKeys "modwheel"
 balance          = makeF oscKeys "balance"
 expression   = makeF oscKeys "expression"

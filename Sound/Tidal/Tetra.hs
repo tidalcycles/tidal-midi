@@ -149,6 +149,7 @@ polysynth = ControllerShape { params = [
                                   NRPN "kmode" 119 (0, 2) 0 passThru -- TODO: document values
                           ],
                          duration = ("dur", 0.2),
+                         velocity = ("vel", 0.5),
                          latency = 0.04
                        }
 
@@ -157,6 +158,7 @@ oscPolysynth = toOscShape polysynth
 note            = makeI oscPolysynth "note"
 
 dur             = makeF oscPolysynth "dur"
+vel             = makeF oscPolysynth "vel"
 
 
 osc1freq      = makeF oscPolysynth "osc1freq"
