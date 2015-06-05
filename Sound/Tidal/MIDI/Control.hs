@@ -13,7 +13,7 @@ data ControllerShape = ControllerShape {params :: [Param],duration :: (String, D
 
 toOscShape :: ControllerShape -> S.OscShape
 toOscShape cs =
-  let oscparams = [S.F "note" Nothing] ++ [S.F durn (Just durv), S.F veln (Just velv)] ++ oscparams'
+  let oscparams = [S.I "note" Nothing] ++ [S.F durn (Just durv), S.F veln (Just velv)] ++ oscparams'
       oscparams' = [S.F (name p) (Just (-1)) | p <- (params cs)]
       (durn, durv) = duration cs
       (veln, velv) = velocity cs
