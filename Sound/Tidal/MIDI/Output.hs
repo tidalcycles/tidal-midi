@@ -78,7 +78,7 @@ keyproxy latency deviceName shape channels = do
                        Left conn -> do
                          sendevents conn
                          zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
-                         return $ keyStreams
+                         return keyStreams
 
 sendevents stream = do
   forkIO $ do loop stream
