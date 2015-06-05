@@ -24,6 +24,15 @@ keys = ControllerShape { params = [
                             mCC "revlpf" 29,
                             mCC "revvol" 31,
 
+                            mCC "samptune" 24,
+                            mCC "sampfinetune" 25,
+                            mCC "sampbitreduction" 26,
+                            mCC "sampslot" 27,
+                            mCC "sampstart" 28,
+                            mCC "sampend" 29,
+                            mCC "samploop" 30,
+                            mCC "samplevel" 31,
+
                             mCC "machtype" 15,
 
                             mCC "filtatk" 70,
@@ -182,3 +191,13 @@ perf5        = makeF oscKeys "perf5"
 perf6        = makeF oscKeys "perf6"
 perf7        = makeF oscKeys "perf7"
 perf8        = makeF oscKeys "perf8"
+
+-- sample
+samptune         = makeF oscKeys "samptune"
+sampfinetune     = makeF oscKeys "sampfinetune"
+sampbitreduction = makeF oscKeys "sampbitreduction"
+sampslot         = makeF oscKeys "sampslot"
+sampstart        = makeF oscKeys "sampstart"
+sampend          = makeF oscKeys "sampend"
+samploop         = makeF oscKeys "samploop"
+samplevel        = makeF oscKeys "samplevel"

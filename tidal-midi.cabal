@@ -22,6 +22,7 @@ library
                    Sound.Tidal.SimpleSynth
                    Sound.Tidal.VolcaKeys
                    Sound.Tidal.VolcaBass
+                   Sound.Tidal.VolcaBeats
                    Sound.Tidal.Blofeld
                    Sound.Tidal.Tetra
                    Sound.Tidal.Rytm
