@@ -77,8 +77,21 @@ keyproxy latency deviceName shape channels = do
                        Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
                        Left conn -> do
                          sendevents conn
+                         midiclock conn
                          zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
                          return keyStreams
+
+midiclock stream = do
+  forkIO $ do clockedTick 1 $ onClockTick stream
+
+onClockTick stream current ticks = do
+  -- schedule MIDI Clock Ticks ahead of time to avoid jumps in timing
+  -- e.g. if one tick per cycle
+  -- schedule 24 ticks ahead of time starting now with PM.time and incrementing each timestamp by ((1/cycle per seconds)/24)*1000 for ms for each tick
+  time <- PM.time
+  mapM_ (makeMidiClockTick stream) (map ((+time).round.(/(24*(cps current))).(*1000)) [0..23])
+  return ()
+
 
 sendevents stream = do
   forkIO $ do loop stream
@@ -166,6 +179,9 @@ makeNRPN o ch c n t = do
              ]
   mapM (sendEvent o) evts
   return Nothing
+
+makeMidiClockTick o t = do
+  sendEvent o $ PM.PMEvent (PM.PMMsg 0xF8 0x00 0x00) t
 
 makeSysEx o ch c n t = do
   let bytes = [0xF0, -- SysEx Start
