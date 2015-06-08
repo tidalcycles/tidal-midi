@@ -128,12 +128,18 @@ sendctrls stream shape ch t ctrls = do
   sequence_ $ map (\(name, ctrl) -> makeCtrl stream ch (C.paramN shape name) ctrl t) ctrls'
   return ()
 
-sendmidi stream shape ch (note,vel,dur) t ctrls =
+sendnote stream shape ch (note,vel, dur) t =
   do forkIO $ do noteOn stream ch note vel t
                  noteOff stream ch note (t + (floor $ 1000 * dur))
                  return ()
-     sendctrls stream shape ch t ctrls
-     return ()
+
+sendmidi stream shape ch (128,vel,dur) t ctrls = do
+  sendctrls stream shape ch t ctrls
+  return ()
+sendmidi stream shape ch (note,vel,dur) t ctrls = do
+  sendnote stream shape ch (note,vel,dur) t
+  sendctrls stream shape ch t ctrls
+  return ()
 
 timeDiff (ds, du) (s, u) = diff d i
     where diff a b = floor ((a - b) * 1000) -- as millis
