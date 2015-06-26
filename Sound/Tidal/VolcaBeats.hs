@@ -29,6 +29,7 @@ beats = ControllerShape { params = [
                             mCC "hatGrain" 59
                           ],
                          duration = ("dur", 0.05),
+                         velocity = ("vel", 0.5),
                          latency = 0.1
                        }
 
@@ -58,7 +59,7 @@ doh = makeF oscBeats "opHatDecay"
 dhg = makeF oscBeats "hatGrain"
 
 noteN :: String -> Int
-noteN "bd"  = 36 
+noteN "bd"  = 36
 noteN "sn"  = 38
 noteN "lt"  = 43
 noteN "ht"  = 50

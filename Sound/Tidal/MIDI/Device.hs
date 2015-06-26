@@ -4,7 +4,7 @@ import Control.Exception
 import Data.List
 
 
-withPortMidi = bracket_ PM.initialize PM.terminate
+--withPortMidi = bracket_ PM.initialize PM.terminate
 
 displayOutputDevices = do
   devices <- getIndexedDevices
@@ -24,7 +24,8 @@ getIndexedDevices = do
   return $ zip [0..] rawDevices
 
 getDevices :: IO ([PM.DeviceInfo])
-getDevices = withPortMidi $ do
+getDevices = do
+  PM.initialize
   count <- PM.countDevices
   mapM PM.getDeviceInfo [0..(count - 1)]
 

@@ -9,13 +9,14 @@ data Param = CC { name :: String, midi :: Int, range :: (Int, Int), vdefault :: 
            | NRPN { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
            | SysEx { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
 
-data ControllerShape = ControllerShape {params :: [Param],duration :: (String, Double), latency :: Double}
+data ControllerShape = ControllerShape {params :: [Param],duration :: (String, Double), velocity :: (String, Double), latency :: Double}
 
 toOscShape :: ControllerShape -> S.OscShape
 toOscShape cs =
-  let oscparams = [S.I "note" Nothing] ++ [S.F durn (Just durv)] ++ oscparams'
+  let oscparams = [S.I "note" Nothing] ++ [S.F durn (Just durv), S.F veln (Just velv)] ++ oscparams'
       oscparams' = [S.F (name p) (Just (-1)) | p <- (params cs)]
       (durn, durv) = duration cs
+      (veln, velv) = velocity cs
   in S.OscShape {S.path = "/note",
                  S.params = oscparams,
                  S.timestamp = S.MessageStamp,

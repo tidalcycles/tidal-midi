@@ -20,6 +20,7 @@ bass = ControllerShape { params = [
                             mCC "gate" 49
                           ],
                          duration = ("dur", 0.05),
+                         velocity = ("vel", 0.5),
                          latency = 0.1
                        }
 
