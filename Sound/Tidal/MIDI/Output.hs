@@ -70,9 +70,8 @@ messageLoop stream shape ch port = do
 
 makeStream shape port = S.stream "127.0.0.1" port shape
 
-keyproxy latency deviceName shape channels = do
-  let ports = (map (+ 7303) channels)
-      keyStreams = map (makeStream (C.toOscShape shape)) ports
+keyproxy latency deviceName targets = do
+  let keyStreams = map (\(shape, channel) -> makeStream (C.toOscShape shape) (channel + 7303)) targets
   deviceID <- getIDForDeviceName deviceName
   case deviceID of
     Nothing -> error ("Device '" ++ show deviceName ++ "' not found")
@@ -81,7 +80,9 @@ keyproxy latency deviceName shape channels = do
                        Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
                        Left conn -> do
                          sendevents conn
-                         zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
+                         mapM_ (\(shape,channel) -> messageLoop conn shape (fromIntegral channel) (channel + 7303)) targets
+--messageLoop stream shape ch port = do
+                         --zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
                          return keyStreams
 
 sendevents stream = do
