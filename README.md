@@ -34,7 +34,7 @@ after
 Additionally you will have to add lines to import the synth you want to control via MIDI, e.g. `(tidal-send-string "import Sound.Tidal.SimpleSynth")` as well as the initialization commands for streams:
 
 ```emacs
-(tidal-send-string "keyStreams <- keyproxy 1 \"SimpleSynth virtual input\" keys [1]")
+(tidal-send-string "keyStreams <- keyproxy 1 \"SimpleSynth virtual input\" [(keys, 1)]")
 (tidal-send-string "[t1] <- sequence keyStreams")
 ```
 For adding the MIDI device "SimpleSynth virtual input" and control it via MIDI channel 1. With this set up you will be able to use it via e.g. `t1 $ note "50"`
@@ -49,7 +49,7 @@ in your `.ghci` add the following, given you need an _additional_ latency of __1
 import Sound.Tidal.MIDI.Output
 import Sound.Tidal.SimpleSynth
 
-keyStreams <- keyproxy 1 "SimpleSynth virtual input" keys [1]
+keyStreams <- keyproxy 1 "SimpleSynth virtual input" [(keys, 1)]
 
 [k1] <- sequence keyStreams
 ```
@@ -86,7 +86,7 @@ Example:
 import Sound.Tidal.MIDI.Output
 import Sound.Tidal.VolcaKeys
 
-keyStreams <- keyproxy 1 "VolcaKeys" keys [1]
+keyStreams <- keyproxy 1 "VolcaKeys" [(keys, 1)]
 
 [k1] <- sequence keyStreams
 ```
@@ -98,9 +98,22 @@ Example:
 import Sound.Tidal.MIDI.Output
 import Sound.Tidal.VolcaBass
 
-bassStreams <- keyproxy 1 "VolcaBass" bass [1]
+bassStreams <- keyproxy 1 "VolcaBass" [(bass, 1)]
 
 [k1] <- sequence bassStreams
+```
+
+
+### Korg Volca Beats
+
+Example:
+```haskell
+import Sound.Tidal.MIDI.Output
+import Sound.Tidal.VolcaBeats
+
+beatStreams <- keyproxy 1 "VolcaBeats" [(beats, 1)]
+
+[k1] <- sequence beatStreams
 ```
 
 ### Waldorf Blofeld
@@ -111,7 +124,7 @@ Example:
 import Sound.Tidal.MIDI.Output
 import Sound.Tidal.Blofeld
 
-keyStreams <- keyproxy 1 "Waldorf Blofeld" keys [1]
+keyStreams <- keyproxy 1 "Waldorf Blofeld" [(keys, 1)]
 
 [k1] <- sequence keyStreams
 ```
@@ -130,11 +143,11 @@ assumes the following Tetra Global parameters:
 import Sound.Tidal.MIDI.Output
 import Sound.Tidal.Tetra
 
-keyStreams <- keyproxy 1 "DSI Tetra" keys [1,2,3,4]
+keyStreams <- keyproxy 1 "DSI Tetra" [(keys 1),(keys, 2),(keys, 3),(keys, 4)]
 
 [k1,k2,k3,k4] <- sequence keyStreams
 ```
 
 ## Known issues and limitations
 
-- SysEx support is missing but possible
+- SysEx support is there but really limited to work with the Waldorf Blofeld
