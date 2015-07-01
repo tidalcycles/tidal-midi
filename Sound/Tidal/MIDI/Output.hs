@@ -64,9 +64,8 @@ messageLoop stream shape ch port = do
                 return()
 makeStream shape port = S.stream "127.0.0.1" port shape
 
-keyproxy latency deviceName shape channels = do
-  let ports = (map (+ 7303) channels)
-      keyStreams = map (makeStream (C.toOscShape shape)) ports
+keyproxy latency deviceName targets = do
+  let keyStreams = map (\(shape, channel) -> makeStream (C.toOscShape shape) (channel + 7303)) targets
   deviceID <- getIDForDeviceName deviceName
   case deviceID of
     Nothing -> do putStrLn "List of Available Device Names"
@@ -78,7 +77,7 @@ keyproxy latency deviceName shape channels = do
                        Left conn -> do
                          sendevents conn
                          midiclock conn
-                         zipWithM_ (messageLoop conn shape) (map fromIntegral channels) ports
+                         mapM_ (\(shape,channel) -> messageLoop conn shape (fromIntegral channel) (channel + 7303)) targets
                          return keyStreams
 
 midiclock stream = do
