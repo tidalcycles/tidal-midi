@@ -27,5 +27,6 @@ library
                    Sound.Tidal.Tetra
                    Sound.Tidal.Rytm
                    Sound.Tidal.Synthino
+                   Sound.Tidal.MBase01
 
   Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
