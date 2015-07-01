@@ -395,114 +395,116 @@ asr a d r = atk a |+| dcy d |+| rel r
 
 -- lfo
 
-lfotri = 0
-lforsaw = 1
-lfosaw = 2
-lfopulse = 3
-lforand = 4
+lfotri = doublePattern 0
+lforsaw = doublePattern 1
+lfosaw = doublePattern 2
+lfopulse = doublePattern 3
+lforand = doublePattern 4
 
 lrate r = ((min 150) . (max 0)) <$> p r
 lstep s = ((min 166) . (max 151) . (+150)) <$> p s
 
-lfo1 s d r a = lfo1shape s |+| lfo1dest (p $ show d) |+| lfo1rate r |+| lfo1amt a
-lfo2 s d r a = lfo2shape s |+| lfo2dest (p $ show d) |+| lfo2rate r |+| lfo2amt a
-lfo3 s d r a = lfo3shape s |+| lfo3dest (p $ show d) |+| lfo3rate r |+| lfo3amt a
-lfo4 s d r a = lfo4shape s |+| lfo4dest (p $ show d) |+| lfo4rate r |+| lfo4amt a
+lfo1 s d r a = lfo1shape s |+| lfo1dest d |+| lfo1rate r |+| lfo1amt a
+lfo2 s d r a = lfo2shape s |+| lfo2dest d |+| lfo2rate r |+| lfo2amt a
+lfo3 s d r a = lfo3shape s |+| lfo3dest d |+| lfo3rate r |+| lfo3amt a
+lfo4 s d r a = lfo4shape s |+| lfo4dest d |+| lfo4rate r |+| lfo4amt a
 
 --lfo = lfo1
 
 -- mod
 
-mod1 s d a = mod1src (p $ show s) |+| mod1dst (p $ show d) |+| mod1amt a
-mod2 s d a = mod2src (p $ show s) |+| mod2dst (p $ show d) |+| mod2amt a
-mod3 s d a = mod3src (p $ show s) |+| mod3dst (p $ show d) |+| mod3amt a
-mod4 s d a = mod4src (p $ show s) |+| mod4dst (p $ show d) |+| mod4amt a
+mod1 s d a = mod1src s |+| mod1dst d |+| mod1amt a
+mod2 s d a = mod2src s |+| mod2dst d |+| mod2amt a
+mod3 s d a = mod3src s |+| mod3dst d |+| mod3amt a
+mod4 s d a = mod4src s |+| mod4dst d |+| mod4amt a
 
 -- mod destination
 
-dosc1 = 1
-dosc2 = 2
-dosc = 3
-dmix = 4
-dnoise = 5
-dpw1 = 6
-dpw2 = 7
-dpw = 8
-dcut = 9
-dres = 10
-damod = 11
-dvca = 12
-dspread = 13
+doublePattern d = (p $ show d) :: Pattern Double
 
-dlfo1f = 14
-dlfo2f = 15
-dlfo3f = 16
-dlfo4f = 17
-dlfof = 18
+dosc1 = doublePattern 1
+dosc2 = doublePattern 2
+dosc = doublePattern 3
+dmix = doublePattern 4
+dnoise = doublePattern 5
+dpw1 = doublePattern 6
+dpw2 = doublePattern 7
+dpw = doublePattern 8
+dcut = doublePattern 9
+dres = doublePattern 10
+damod = doublePattern 11
+dvca = doublePattern 12
+dspread = doublePattern 13
 
-dlfo1a = 19
-dlfo2a = 20
-dlfo3a = 21
-dlfo4a = 22
-dlfoa = 23
+dlfo1f = doublePattern 14
+dlfo2f = doublePattern 15
+dlfo3f = doublePattern 16
+dlfo4f = doublePattern 17
+dlfof = doublePattern 18
 
-dfamt = 24
-dvamt = 25
-deamt = 26
-damt = 27
+dlfo1a = doublePattern 19
+dlfo2a = doublePattern 20
+dlfo3a = doublePattern 21
+dlfo4a = doublePattern 22
+dlfoa = doublePattern 23
 
-dfatk = 28
-dvatk = 29
-deatk = 30
-datk = 31
+dfamt = doublePattern 24
+dvamt = doublePattern 25
+deamt = doublePattern 26
+damt = doublePattern 27
 
-dfdcy = 32
-dvdcy = 33
-dedcy = 34
-ddcy = 35
+dfatk = doublePattern 28
+dvatk = doublePattern 29
+deatk = doublePattern 30
+datk = doublePattern 31
 
-dfrel = 36
-dvrel = 37
-derel = 38
-drel = 39
+dfdcy = doublePattern 32
+dvdcy = doublePattern 33
+dedcy = doublePattern 34
+ddcy = doublePattern 35
 
-dmod1 = 40
-dmod2 = 41
-dmod3 = 42
-dmod4 = 43
+dfrel = doublePattern 36
+dvrel = doublePattern 37
+derel = doublePattern 38
+drel = doublePattern 39
 
-dfb = 44
-dsub1 = 45
-dsub2 = 46
-dfbgain = 47
-dslew = 48
+dmod1 = doublePattern 40
+dmod2 = doublePattern 41
+dmod3 = doublePattern 42
+dmod4 = doublePattern 43
+
+dfb = doublePattern 44
+dsub1 = doublePattern 45
+dsub2 = doublePattern 46
+dfbgain = doublePattern 47
+dslew = doublePattern 48
 
 -- mod sources
 
-sseq1 = 1
-sseq2 = 2
-sseq3 = 3
-sseq4 = 4
+sseq1 = doublePattern 1
+sseq2 = doublePattern 2
+sseq3 = doublePattern 3
+sseq4 = doublePattern 4
 
-slfo1 = 5
-slfo2 = 6
-slfo3 = 7
-slfo4 = 8
+slfo1 = doublePattern 5
+slfo2 = doublePattern 6
+slfo3 = doublePattern 7
+slfo4 = doublePattern 8
 
-sfenv = 9
-svenv = 10
-seenv = 11
+sfenv = doublePattern 9
+svenv = doublePattern 10
+seenv = doublePattern 11
 
-spitchb = 12
-smodwh = 13
-saftert = 14
-sbreath = 15
-sfoot = 16
-sexpr = 17
+spitchb = doublePattern 12
+smodwh = doublePattern 13
+saftert = doublePattern 14
+sbreath = doublePattern 15
+sfoot = doublePattern 16
+sexpr = doublePattern 17
 
-svel = 18
-snote = 19
-snoise = 20
+svel = doublePattern 18
+snote = doublePattern 19
+snoise = doublePattern 20
 -- drums
 
 
@@ -510,9 +512,9 @@ snare d p' = note p'
   |+| osc1shape zero |+| osc1kbd zero
   |+| osc2shape zero |+| osc2kbd zero
   |+| noise one
-  |+| vrel zero |+| vsus zero |+| vdcy d
+  |+| vrel d |+| vsus zero |+| vdcy d
   |+| kcutoff (p "1")
-  |+| dur d
+  |+| dur (p "0.01")
   where zero = p "0"
         one = p "1"
 
