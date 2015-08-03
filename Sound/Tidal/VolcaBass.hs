@@ -44,6 +44,7 @@ bass = OscShape {path = "/note",
                             F "cutoff" (Just (-1)),
                             F "gate" (Just (-1))
                           ],
+                 cpsStamp = False,
                  timestamp = NoStamp,
                  latency = 0,
                  namedParams = False,

@@ -32,6 +32,7 @@ keys :: OscShape
 keys = OscShape {path = "/note",
                  params = [ I "note" Nothing,
                             F "dur" (Just (0.05)),
+                            F "vel" (Just (0.5)),
                             F "portamento" (Just (-1)),
                             F "expression" (Just (-1)),
                             F "voice" (Just (-1)),
@@ -49,6 +50,7 @@ keys = OscShape {path = "/note",
                             F "dtime" (Just (-1)),
                             F "dfeedback" (Just (-1))
                           ],
+                 cpsStamp = False,
                  timestamp = NoStamp,
                  latency = 0,
                  namedParams = False,
@@ -59,6 +61,7 @@ keyStream = stream "127.0.0.1" 7303 keys
 
 note         = makeI keys "note"
 dur          = makeF keys "dur"
+vel          = makeF keys "vel"
 portamento   = makeF keys "portamento"
 expression   = makeF keys "expression"
 octave       = makeF keys "octave"
@@ -92,18 +95,19 @@ keyproxy latency midiport =
          where loop h conn x = do m <- recvMessage x
                                   act h conn m
                                   loop h conn x
-               act h conn (Just (Message "/note" (note:dur:ctrls))) = 
+               act h conn (Just (Message "/note" (note:dur:vel:ctrls))) = 
                    do -- print $ "Got note " ++ show note
                       let note' = (fromJust $ d_get note) :: Int
                           dur' = (fromJust $ d_get dur) :: Float
+                          vel' = (fromJust $ d_get vel) :: Float
                           ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
-                      sendmidi latency h conn (fromIntegral note', dur') ctrls'
+                      sendmidi latency h conn (fromIntegral note', dur', vel') ctrls'
                       return ()
 
 
-sendmidi latency h conn (note,dur) ctrls = 
+sendmidi latency h conn (note,dur,vel) ctrls =
   do forkIO $ do threadDelay latency
-                 Event.outputDirect h $ noteOn conn note 60
+                 Event.outputDirect h $ noteOn conn note (fromIntegral . floor . (* 127) $ vel)
                  threadDelay (floor $ 1000000 * dur)
                  Event.outputDirect h $ noteOff conn note
                  return ()
