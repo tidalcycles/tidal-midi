@@ -32,7 +32,7 @@ keys :: OscShape
 keys = OscShape {path = "/note",
                  params = [ I "note" Nothing,
                             F "dur" (Just (0.05)),
-                            I "vel" (Just (60)),
+                            F "vel" (Just (0.5)),
                             F "portamento" (Just (-1)),
                             F "expression" (Just (-1)),
                             F "voice" (Just (-1)),
@@ -61,7 +61,7 @@ keyStream = stream "127.0.0.1" 7303 keys
 
 note         = makeI keys "note"
 dur          = makeF keys "dur"
-vel          = makeI keys "vel"
+vel          = makeF keys "vel"
 portamento   = makeF keys "portamento"
 expression   = makeF keys "expression"
 octave       = makeF keys "octave"
@@ -99,15 +99,15 @@ keyproxy latency midiport =
                    do -- print $ "Got note " ++ show note
                       let note' = (fromJust $ d_get note) :: Int
                           dur' = (fromJust $ d_get dur) :: Float
-                          vel' = (fromJust $ d_get vel) :: Int
+                          vel' = (fromJust $ d_get vel) :: Float
                           ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
-                      sendmidi latency h conn (fromIntegral note', dur', fromIntegral vel') ctrls'
+                      sendmidi latency h conn (fromIntegral note', dur', vel') ctrls'
                       return ()
 
 
-sendmidi latency h conn (note,dur,vel) ctrls = 
+sendmidi latency h conn (note,dur,vel) ctrls =
   do forkIO $ do threadDelay latency
-                 Event.outputDirect h $ noteOn conn note vel
+                 Event.outputDirect h $ noteOn conn note (fromIntegral . floor . (* 127) $ vel)
                  threadDelay (floor $ 1000000 * dur)
                  Event.outputDirect h $ noteOff conn note
                  return ()
