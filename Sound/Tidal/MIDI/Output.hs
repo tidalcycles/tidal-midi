@@ -76,7 +76,7 @@ midiproxy latency deviceName targets = do
                        Right err -> error ("Failed opening MIDI Output on Device ID: " ++ show deviceID ++ " - " ++ show err)
                        Left conn -> do
                          sendevents conn
-                         midiclock conn
+                         --midiclock conn
                          mapM_ (\(shape,channel) -> messageLoop conn shape (fromIntegral channel) (channel + 7303)) targets
                          return keyStreams
 
