@@ -16,7 +16,7 @@ bass = ControllerShape { params = [
                             mCC "pitch3" 45,
                             mCC "attack" 46,
                             mCC "decay" 47,
-                            mCC "cutoff" 48,
+                            mCC "cutoffegint" 48,
                             mCC "gate" 49
                           ],
                          duration = ("dur", 0.05),
@@ -38,5 +38,5 @@ pitch2       = makeF oscBass "pitch2"
 pitch3       = makeF oscBass "pitch3"
 attack       = makeF oscBass "attack"
 decay        = makeF oscBass "decay"
-cutoff       = makeF oscBass "cutoff"
+cutoffegint  = makeF oscBass "cutoffegint"
 gate         = makeF oscBass "gate"
