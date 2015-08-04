@@ -1,7 +1,7 @@
 name:                tidal-midi
 version:             0.0.2
 synopsis:            MIDI support for tidal
--- description:         
+-- description:
 homepage:            http://tidal.lurk.org/
 license:             GPL-3
 license-file:        LICENSE
@@ -13,9 +13,20 @@ category:            Sound
 build-type:          Simple
 cabal-version:       >=1.4
 
-Description: Initial MIDI support for Tidal. Currently only supports Volca Keys and Bass synths, and interface is likely to change significantly.
+Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and other synths. Interface is likely to change significantly.
 
 library
-  Exposed-modules:     Sound.Tidal.VolcaKeys, Sound.Tidal.VolcaBass
+  Exposed-modules: Sound.Tidal.MIDI.Output
+                   Sound.Tidal.MIDI.Device
+                   Sound.Tidal.MIDI.Control
+                   Sound.Tidal.SimpleSynth
+                   Sound.Tidal.VolcaKeys
+                   Sound.Tidal.VolcaBass
+                   Sound.Tidal.VolcaBeats
+                   Sound.Tidal.Blofeld
+                   Sound.Tidal.Tetra
+                   Sound.Tidal.Rytm
+                   Sound.Tidal.Synthino
+                   Sound.Tidal.MBase01
 
-  Build-depends: base < 5, tidal, alsa-core, alsa-seq, process, hashable, containers, hosc
+  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring

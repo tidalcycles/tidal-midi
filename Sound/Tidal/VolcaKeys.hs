@@ -1,164 +1,50 @@
-  
 module Sound.Tidal.VolcaKeys where
 
-import qualified Sound.ALSA.Sequencer.Address as Addr
-import qualified Sound.ALSA.Sequencer.Client as Client
-import qualified Sound.ALSA.Sequencer.Port as Port
-import qualified Sound.ALSA.Sequencer.Event as Event
-import qualified Sound.ALSA.Sequencer as SndSeq
-import qualified Sound.ALSA.Exception as AlsaExc
-import qualified Sound.ALSA.Sequencer.Connect as Connect
-import GHC.Word
-import GHC.Int
+import Sound.Tidal.Stream (makeI, makeF)
 
-import Sound.OSC.FD
-import qualified Data.Map as Map
-import Control.Applicative
-import Control.Concurrent.MVar
---import Visual
-import Data.Hashable
-import Data.Bits
-import Data.Maybe
-import System.Process
-import Control.Concurrent
+import Sound.Tidal.MIDI.Control
 
-import Sound.Tidal.Stream
-import Sound.Tidal.Pattern
-import Sound.Tidal.Parse
-
-channel = Event.Channel 0
-
-keys :: OscShape
-keys = OscShape {path = "/note",
-                 params = [ I "note" Nothing,
-                            F "dur" (Just (0.05)),
-                            F "vel" (Just (0.5)),
-                            F "portamento" (Just (-1)),
-                            F "expression" (Just (-1)),
-                            F "voice" (Just (-1)),
-                            F "octave" (Just (-1)),
-                            F "detune" (Just (-1)),
-                            F "vcoegint" (Just (-1)),
-                            F "kcutoff" (Just (-1)),
-                            F "vcfegint" (Just (-1)),
-                            F "lforate" (Just (-1)),
-                            F "lfopitchint" (Just (-1)),
-                            F "lfocutoffint" (Just (-1)),
-                            F "attack" (Just (-1)),
-                            F "decay" (Just (-1)),
-                            F "sustain" (Just (-1)),
-                            F "dtime" (Just (-1)),
-                            F "dfeedback" (Just (-1))
+keys :: ControllerShape
+keys = ControllerShape { params = [
+                            mCC "portamento" 5,
+                            mCC "expression" 11,
+                            mCC "voice" 40,
+                            mCC "octave" 41,
+                            mCC "detune" 42,
+                            mCC "vcoegint" 43,
+                            mCC "kcutoff" 44,
+                            mCC "vcfegint" 45,
+                            mCC "lforate" 46,
+                            mCC "lfopitchint" 47,
+                            mCC "lfocutoffint" 48,
+                            mCC "attack" 49,
+                            mCC "decay" 50,
+                            mCC "sustain" 51,
+                            mCC "dtime" 52,
+                            mCC "dfeedback" 53
                           ],
-                 cpsStamp = False,
-                 timestamp = NoStamp,
-                 latency = 0,
-                 namedParams = False,
-                 preamble = []
-                }
+                         duration = ("dur", 0.05),
+                         velocity = ("vel", 0.5),
+                         latency = 0.1
+                       }
 
-keyStream = stream "127.0.0.1" 7303 keys
+oscKeys = toOscShape keys
 
-note         = makeI keys "note"
-dur          = makeF keys "dur"
-vel          = makeF keys "vel"
-portamento   = makeF keys "portamento"
-expression   = makeF keys "expression"
-octave       = makeF keys "octave"
-voice        = makeF keys "voice"
-detune       = makeF keys "detune"
-vcoegint     = makeF keys "vcoegint"
-kcutoff      = makeF keys "kcutoff"
-vcfegint     = makeF keys "vcfegint"
-lforate      = makeF keys "lforate"
-lfopitchint  = makeF keys "lfopitchint"
-lfocutoffint = makeF keys "lfocutoffint"
-attack       = makeF keys "attack"
-decay        = makeF keys "decay"
-sustain      = makeF keys "sustain"
-dtime        = makeF keys "dtime"
-dfeedback    = makeF keys "dfeedback"
-
-
-keynames = map name (tail $ tail $ params keys)
-
-keyproxy latency midiport = 
-   do h <- SndSeq.openDefault SndSeq.Block
-      Client.setName (h :: SndSeq.T SndSeq.OutputMode) "Tidal"
-      c <- Client.getId h
-      p <- Port.createSimple h "out"
-           (Port.caps [Port.capRead, Port.capSubsRead]) Port.typeMidiGeneric
-      conn <- Connect.createTo h p =<< Addr.parse h midiport
-      x <- udpServer "127.0.0.1" 7303
-      forkIO $ loop h conn x
-      return ()
-         where loop h conn x = do m <- recvMessage x
-                                  act h conn m
-                                  loop h conn x
-               act h conn (Just (Message "/note" (note:dur:vel:ctrls))) = 
-                   do -- print $ "Got note " ++ show note
-                      let note' = (fromJust $ d_get note) :: Int
-                          dur' = (fromJust $ d_get dur) :: Float
-                          vel' = (fromJust $ d_get vel) :: Float
-                          ctrls' = (map (fromJust . d_get) ctrls) :: [Float]
-                      sendmidi latency h conn (fromIntegral note', dur', vel') ctrls'
-                      return ()
-
-
-sendmidi latency h conn (note,dur,vel) ctrls =
-  do forkIO $ do threadDelay latency
-                 Event.outputDirect h $ noteOn conn note (fromIntegral . floor . (* 127) $ vel)
-                 threadDelay (floor $ 1000000 * dur)
-                 Event.outputDirect h $ noteOff conn note
-                 return ()
-     let ctrls' = map (floor . (* 127)) ctrls
-         ctrls'' = filter ((>=0) . snd) (zip keynames ctrls')
-         --ctrls''' = map (\x -> (x, fromJust $ lookup x ctrls'')) usectrls
-     --putStrLn $ show ctrls''
-     sequence_ $ map (\(name, ctrl) -> Event.outputDirect h $ makeCtrl conn (ctrlN name ctrl)) ctrls''
-     return ()
-
-ctrlN "portamento" v    = (5, v)
-ctrlN "expression" v    = (11, v)
-ctrlN "voice" v         = (40, v)
-ctrlN "octave" v        = (41, v)
-ctrlN "detune" v        = (42, v)
-ctrlN "vcoegint" v      = (43, v)
-ctrlN "kcutoff" v        = (44, v)
-ctrlN "vcfegint" v      = (45, v)
-ctrlN "lforate" v       = (46, v)
-ctrlN "lfopitchint" v   = (47, v)
-ctrlN "lfocutoffint" v  = (48, v)
-ctrlN "attack" v        = (49, v)
-ctrlN "decay" v         = (50, v)
-ctrlN "sustain" v       = (51, v)
-ctrlN "dtime" v         = (52, v)
-ctrlN "dfeedback" v     = (53, v)
-ctrlN s _               = error $ "no match for " ++ s
-
-
-
-
-noteOn :: Connect.T -> Word8 -> Word8 -> Event.T
-noteOn conn val vel = 
-  Event.forConnection conn 
-  $ Event.NoteEv Event.NoteOn
-  $ Event.simpleNote channel
-                     (Event.Pitch (val))
-                     (Event.Velocity vel)
-
-noteOff :: Connect.T -> Word8 -> Event.T
-noteOff conn val = 
-  Event.forConnection conn 
-  $ Event.NoteEv Event.NoteOff
-  $ Event.simpleNote channel
-                     (Event.Pitch (val))
-                     (Event.normalVelocity)
-
-makeCtrl :: Connect.T -> (Word32, GHC.Int.Int32) -> Event.T
-makeCtrl conn (c, n) = 
-  Event.forConnection conn 
-  $ Event.CtrlEv Event.Controller $ Event.Ctrl 
-                                    channel 
-                                    (Event.Parameter c) 
-                                    (Event.Value n)
+note = makeI oscKeys "note"
+dur  = makeF oscKeys "dur"
+por  = makeF oscKeys "portamento"
+expr = makeF oscKeys "expression"
+oct  = makeF oscKeys "octave"
+voi  = makeF oscKeys "voice"
+det  = makeF oscKeys "detune"
+vco  = makeF oscKeys "vcoegint"
+ctf  = makeF oscKeys "kcutoff"
+vcf  = makeF oscKeys "vcfegint"
+lfo  = makeF oscKeys "lforate"
+lfop = makeF oscKeys "lfopitchint"
+lfoc = makeF oscKeys "lfocutoffint"
+att  = makeF oscKeys "attack"
+dec  = makeF oscKeys "decay"
+sus  = makeF oscKeys "sustain"
+dt   = makeF oscKeys "dtime"
+df   = makeF oscKeys "dfeedback"
