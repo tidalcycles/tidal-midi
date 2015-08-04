@@ -64,7 +64,7 @@ messageLoop stream shape ch port = do
                 return()
 makeStream shape port = S.stream "127.0.0.1" port shape
 
-keyproxy latency deviceName targets = do
+midiproxy latency deviceName targets = do
   let keyStreams = map (\(shape, channel) -> makeStream (C.toOscShape shape) (channel + 7303)) targets
   deviceID <- getIDForDeviceName deviceName
   case deviceID of

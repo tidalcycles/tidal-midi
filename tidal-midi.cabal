@@ -13,7 +13,7 @@ category:            Sound
 build-type:          Simple
 cabal-version:       >=1.4
 
-Description: Initial MIDI support for Tidal. Currently only supports Volca Keys and Bass synths, and interface is likely to change significantly.
+Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and other synths. Interface is likely to change significantly.
 
 library
   Exposed-modules: Sound.Tidal.MIDI.Output
