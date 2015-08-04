@@ -2,7 +2,6 @@ module Sound.Tidal.MIDI.Control where
 
 import qualified Sound.Tidal.Stream as S
 
-
 type RangeMapFunc = (Int, Int) -> Float -> Int
 
 data Param = CC { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
@@ -33,15 +32,22 @@ mapRange :: (Int, Int) -> Float -> Int
 mapRange (low, high) = floor . (+ (fromIntegral low)) . (* ratio)
   where ratio = fromIntegral $ high - low
 
-
+mCC :: String -> Int -> Param
 mCC n m = CC {name=n, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
+
+mNRPN :: String -> Int -> Param
 mNRPN n m = NRPN {name=n, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
+
+mrNRPN :: String -> Int -> (Int, Int) -> Double -> Param
 mrNRPN n m r d = NRPN {name=n, midi=m, range=r, vdefault=d, scalef=mapRange }
+
 toKeynames :: ControllerShape -> [String]
 toKeynames shape = map name (params shape)
 
+ctrlN :: Num b => ControllerShape -> String -> b
 ctrlN shape x = fromIntegral $ midi $ paramN shape x
 
+paramN :: ControllerShape -> String -> Param
 paramN shape x
   | x `elem` names = paramX x
   | otherwise = error $ "No such Controller param: " ++ show x
