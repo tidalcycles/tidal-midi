@@ -10,7 +10,7 @@ This _still_ is __experimental__ software
 Currently you will have to clone this repository and install from source:
 
 ```shell
-~$ git clone https://github.com/lennart/tidal-midi.git
+~$ git clone https://github.com/tidalcycles/tidal-midi.git
 ~$ cd tidal-midi
 ~/tidal-midi$ cabal install
 ```
