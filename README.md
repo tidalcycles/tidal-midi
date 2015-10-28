@@ -7,7 +7,21 @@ This _still_ is __experimental__ software
 
 ## Installation
 
-Currently you will have to clone this repository and install from source:
+Simply do
+
+```shell
+~$ cabal install tidal-midi
+```
+
+__Note:__ On OS X with GHC 7.10 it is necessary to reinstall PortMidi again with frameworks correctly linked:
+
+```shell
+cabal install portmidi --ghc-options="-optl-Wl,-framework,CoreMIDI,-framework,CoreAudio" --reinstall --jobs=1 --force-reinstalls
+```
+
+### Installation from source
+
+If you want, you can also install tidal-midi from source. You will have to clone this repository and install from source:
 
 ```shell
 ~$ git clone https://github.com/tidalcycles/tidal-midi.git
