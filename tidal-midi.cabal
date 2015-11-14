@@ -28,5 +28,6 @@ library
                    Sound.Tidal.Rytm
                    Sound.Tidal.Synthino
                    Sound.Tidal.MBase01
+                   Sound.Tidal.MeeblipAnode
 
   Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
