@@ -19,7 +19,7 @@ anode = ControllerShape {params = [
                           mCC "sustain" 64,
                           mCC "oscboct" 65,
                           mCC "sweep" 66,
-                          mCC "lfodest" 67,
+                          mCC "lfodestination" 67,
                           mCC "lforandom" 68,
                           mCC "lforetrigger" 69,
                           mCC "oscbwave" 70
@@ -30,23 +30,23 @@ anode = ControllerShape {params = [
 
 oscAnode = toOscShape anode
 
-note          = makeI oscAnode "note"
-dur           = makeF oscAnode "dur"
-vel           = makeF oscAnode "vel"
-modwheel      = makeF oscAnode "modwheel"
-attack        = makeF oscAnode "attack"
-decay         = makeF oscAnode "decay"
-kcutoff       = makeF oscAnode "kcutoff"
-pulsewidth    = makeF oscAnode "pulsewidth"
-detune        = makeF oscAnode "detune"
-lforate       = makeF oscAnode "lforate"
-lfodepth      = makeF oscAnode "lfodepth"
-portamento    = makeF oscAnode "portamento"
-vcfenvelope   = makeF oscAnode "vcfenvelope"
-sustain       = makeF oscAnode "sustain"
-oscboct       = makeF oscAnode "oscboct"
-sweep         = makeF oscAnode "sweep"
-lfodest       = makeF oscAnode "lfodest"
-lforandom     = makeF oscAnode "lforandom"
-lforetrigger  = makeF oscAnode "lforetrigger"
-oscbwave      = makeF oscAnode "oscbwave"
+note            = makeI oscAnode "note"
+dur             = makeF oscAnode "dur"
+vel             = makeF oscAnode "vel"
+modwheel        = makeF oscAnode "modwheel"
+attack          = makeF oscAnode "attack"
+decay           = makeF oscAnode "decay"
+kcutoff         = makeF oscAnode "kcutoff"
+pulsewidth      = makeF oscAnode "pulsewidth"
+detune          = makeF oscAnode "detune"
+lforate         = makeF oscAnode "lforate"
+lfodepth        = makeF oscAnode "lfodepth"
+portamento      = makeF oscAnode "portamento"
+vcfenvelope     = makeF oscAnode "vcfenvelope"
+sustain         = makeF oscAnode "sustain"
+oscboct         = makeF oscAnode "oscboct"
+sweep           = makeF oscAnode "sweep"
+lfodestination  = makeF oscAnode "lfodestination"
+lforandom       = makeF oscAnode "lforandom"
+lforetrigger    = makeF oscAnode "lforetrigger"
+oscbwave        = makeF oscAnode "oscbwave"
