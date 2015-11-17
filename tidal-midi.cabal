@@ -29,5 +29,6 @@ library
                    Sound.Tidal.Synthino
                    Sound.Tidal.MBase01
                    Sound.Tidal.MeeblipAnode
+                   Sound.Tidal.GenericMIDI
 
   Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
