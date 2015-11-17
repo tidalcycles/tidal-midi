@@ -4,8 +4,8 @@ import Sound.Tidal.Stream (makeI, makeF)
 
 import Sound.Tidal.MIDI.Control
 
-anode :: ControllerShape
-anode = ControllerShape {params = [
+genericmidi :: ControllerShape
+genericmidi = ControllerShape {params = [
 
                           -- Parameters according to the midi specification
                           mCC "bankselect" 0,         -- Bank Select (Controller # 32 more commonly used)
@@ -49,134 +49,134 @@ anode = ControllerShape {params = [
                           mCC "polyon" 127,           -- Poly On (Mono Off)
 
                           -- numbered
-                          mCC "0" 0,
-                          mCC "1" 1,
-                          mCC "2" 2,
-                          mCC "3" 3,
-                          mCC "4" 4,
-                          mCC "5" 5,
-                          mCC "6" 6,
-                          mCC "7" 7,
-                          mCC "8" 8,
-                          mCC "9" 9,
-                          mCC "10" 10,
-                          mCC "11" 11,
-                          mCC "12" 12,
-                          mCC "13" 13,
-                          mCC "14" 14,
-                          mCC "15" 15,
-                          mCC "16" 16,
-                          mCC "17" 17,
-                          mCC "18" 18,
-                          mCC "19" 19,
-                          mCC "20" 20,
-                          mCC "21" 21,
-                          mCC "22" 22,
-                          mCC "23" 23,
-                          mCC "24" 24,
-                          mCC "25" 25,
-                          mCC "26" 26,
-                          mCC "27" 27,
-                          mCC "28" 28,
-                          mCC "29" 29,
-                          mCC "30" 30,
-                          mCC "31" 31,
-                          mCC "32" 32,
-                          mCC "33" 33,
-                          mCC "34" 34,
-                          mCC "35" 35,
-                          mCC "36" 36,
-                          mCC "37" 37,
-                          mCC "38" 38,
-                          mCC "39" 39,
-                          mCC "40" 40,
-                          mCC "41" 41,
-                          mCC "42" 42,
-                          mCC "43" 43,
-                          mCC "44" 44,
-                          mCC "45" 45,
-                          mCC "46" 46,
-                          mCC "47" 47,
-                          mCC "48" 48,
-                          mCC "49" 49,
-                          mCC "50" 50,
-                          mCC "51" 51,
-                          mCC "52" 52,
-                          mCC "53" 53,
-                          mCC "54" 54,
-                          mCC "55" 55,
-                          mCC "56" 56,
-                          mCC "57" 57,
-                          mCC "58" 58,
-                          mCC "59" 59,
-                          mCC "60" 60,
-                          mCC "61" 61,
-                          mCC "62" 62,
-                          mCC "63" 63,
-                          mCC "64" 64,
-                          mCC "65" 65,
-                          mCC "66" 66,
-                          mCC "67" 67,
-                          mCC "68" 68,
-                          mCC "69" 69,
-                          mCC "70" 70,
-                          mCC "71" 71,
-                          mCC "72" 72,
-                          mCC "73" 73,
-                          mCC "74" 74,
-                          mCC "75" 75,
-                          mCC "76" 76,
-                          mCC "77" 77,
-                          mCC "78" 78,
-                          mCC "79" 79,
-                          mCC "80" 80,
-                          mCC "81" 81,
-                          mCC "82" 82,
-                          mCC "83" 83,
-                          mCC "84" 84,
-                          mCC "85" 85,
-                          mCC "86" 86,
-                          mCC "87" 87,
-                          mCC "88" 88,
-                          mCC "89" 89,
-                          mCC "90" 90,
-                          mCC "91" 91,
-                          mCC "92" 92,
-                          mCC "93" 93,
-                          mCC "94" 94,
-                          mCC "95" 95,
-                          mCC "96" 96,
-                          mCC "97" 97,
-                          mCC "98" 98,
-                          mCC "99" 99,
-                          mCC "100" 100,
-                          mCC "101" 101,
-                          mCC "102" 102,
-                          mCC "103" 103,
-                          mCC "104" 104,
-                          mCC "105" 105,
-                          mCC "106" 106,
-                          mCC "107" 107,
-                          mCC "108" 108,
-                          mCC "109" 109,
-                          mCC "110" 110,
-                          mCC "111" 111,
-                          mCC "112" 112,
-                          mCC "113" 113,
-                          mCC "114" 114,
-                          mCC "115" 115,
-                          mCC "116" 116,
-                          mCC "117" 117,
-                          mCC "118" 118,
-                          mCC "119" 119,
-                          mCC "120" 120,
-                          mCC "121" 121,
-                          mCC "122" 122,
-                          mCC "123" 123,
-                          mCC "124" 124,
-                          mCC "125" 125,
-                          mCC "126" 126,
-                          mCC "127" 127
+                          mCC "cc0" 0,
+                          mCC "cc1" 1,
+                          mCC "cc2" 2,
+                          mCC "cc3" 3,
+                          mCC "cc4" 4,
+                          mCC "cc5" 5,
+                          mCC "cc6" 6,
+                          mCC "cc7" 7,
+                          mCC "cc8" 8,
+                          mCC "cc9" 9,
+                          mCC "cc10" 10,
+                          mCC "cc11" 11,
+                          mCC "cc12" 12,
+                          mCC "cc13" 13,
+                          mCC "cc14" 14,
+                          mCC "cc15" 15,
+                          mCC "cc16" 16,
+                          mCC "cc17" 17,
+                          mCC "cc18" 18,
+                          mCC "cc19" 19,
+                          mCC "cc20" 20,
+                          mCC "cc21" 21,
+                          mCC "cc22" 22,
+                          mCC "cc23" 23,
+                          mCC "cc24" 24,
+                          mCC "cc25" 25,
+                          mCC "cc26" 26,
+                          mCC "cc27" 27,
+                          mCC "cc28" 28,
+                          mCC "cc29" 29,
+                          mCC "cc30" 30,
+                          mCC "cc31" 31,
+                          mCC "cc32" 32,
+                          mCC "cc33" 33,
+                          mCC "cc34" 34,
+                          mCC "cc35" 35,
+                          mCC "cc36" 36,
+                          mCC "cc37" 37,
+                          mCC "cc38" 38,
+                          mCC "cc39" 39,
+                          mCC "cc40" 40,
+                          mCC "cc41" 41,
+                          mCC "cc42" 42,
+                          mCC "cc43" 43,
+                          mCC "cc44" 44,
+                          mCC "cc45" 45,
+                          mCC "cc46" 46,
+                          mCC "cc47" 47,
+                          mCC "cc48" 48,
+                          mCC "cc49" 49,
+                          mCC "cc50" 50,
+                          mCC "cc51" 51,
+                          mCC "cc52" 52,
+                          mCC "cc53" 53,
+                          mCC "cc54" 54,
+                          mCC "cc55" 55,
+                          mCC "cc56" 56,
+                          mCC "cc57" 57,
+                          mCC "cc58" 58,
+                          mCC "cc59" 59,
+                          mCC "cc60" 60,
+                          mCC "cc61" 61,
+                          mCC "cc62" 62,
+                          mCC "cc63" 63,
+                          mCC "cc64" 64,
+                          mCC "cc65" 65,
+                          mCC "cc66" 66,
+                          mCC "cc67" 67,
+                          mCC "cc68" 68,
+                          mCC "cc69" 69,
+                          mCC "cc70" 70,
+                          mCC "cc71" 71,
+                          mCC "cc72" 72,
+                          mCC "cc73" 73,
+                          mCC "cc74" 74,
+                          mCC "cc75" 75,
+                          mCC "cc76" 76,
+                          mCC "cc77" 77,
+                          mCC "cc78" 78,
+                          mCC "cc79" 79,
+                          mCC "cc80" 80,
+                          mCC "cc81" 81,
+                          mCC "cc82" 82,
+                          mCC "cc83" 83,
+                          mCC "cc84" 84,
+                          mCC "cc85" 85,
+                          mCC "cc86" 86,
+                          mCC "cc87" 87,
+                          mCC "cc88" 88,
+                          mCC "cc89" 89,
+                          mCC "cc90" 90,
+                          mCC "cc91" 91,
+                          mCC "cc92" 92,
+                          mCC "cc93" 93,
+                          mCC "cc94" 94,
+                          mCC "cc95" 95,
+                          mCC "cc96" 96,
+                          mCC "cc97" 97,
+                          mCC "cc98" 98,
+                          mCC "cc99" 99,
+                          mCC "cc100" 100,
+                          mCC "cc101" 101,
+                          mCC "cc102" 102,
+                          mCC "cc103" 103,
+                          mCC "cc104" 104,
+                          mCC "cc105" 105,
+                          mCC "cc106" 106,
+                          mCC "cc107" 107,
+                          mCC "cc108" 108,
+                          mCC "cc109" 109,
+                          mCC "cc110" 110,
+                          mCC "cc111" 111,
+                          mCC "cc112" 112,
+                          mCC "cc113" 113,
+                          mCC "cc114" 114,
+                          mCC "cc115" 115,
+                          mCC "cc116" 116,
+                          mCC "cc117" 117,
+                          mCC "cc118" 118,
+                          mCC "cc119" 119,
+                          mCC "cc120" 120,
+                          mCC "cc121" 121,
+                          mCC "cc122" 122,
+                          mCC "cc123" 123,
+                          mCC "cc124" 124,
+                          mCC "cc125" 125,
+                          mCC "cc126" 126,
+                          mCC "cc127" 127
                         ],
                         duration = ("dur", 0.05),
                         velocity = ("vel", 0.5),
@@ -185,7 +185,8 @@ anode = ControllerShape {params = [
 oscGenericMIDI = toOscShape genericmidi
 
 note                = makeI oscGenericMIDI "note"
-
+dur             	= makeF oscGenericMIDI "dur"
+vel             	= makeF oscGenericMIDI "vel"
 bankselect          = makeF oscGenericMIDI "bankselect"
 modwheel            = makeF oscGenericMIDI "modwheel"
 breath              = makeF oscGenericMIDI "breath"
@@ -222,131 +223,131 @@ omnion              = makeF oscGenericMIDI "omnion"
 monoon              = makeF oscGenericMIDI "monoon"
 polyon              = makeF oscGenericMIDI "polyon"
 
-0               = makeF oscGenericMIDI "0"
-1               = makeF oscGenericMIDI "1"
-2               = makeF oscGenericMIDI "2"
-3               = makeF oscGenericMIDI "3"
-4               = makeF oscGenericMIDI "4"
-5               = makeF oscGenericMIDI "5"
-6               = makeF oscGenericMIDI "6"
-7               = makeF oscGenericMIDI "7"
-8               = makeF oscGenericMIDI "8"
-9               = makeF oscGenericMIDI "9"
-10              = makeF oscGenericMIDI "10"
-11              = makeF oscGenericMIDI "11"
-12              = makeF oscGenericMIDI "12"
-13              = makeF oscGenericMIDI "13"
-14              = makeF oscGenericMIDI "14"
-15              = makeF oscGenericMIDI "15"
-16              = makeF oscGenericMIDI "16"
-17              = makeF oscGenericMIDI "17"
-18              = makeF oscGenericMIDI "18"
-19              = makeF oscGenericMIDI "19"
-20              = makeF oscGenericMIDI "20"
-21              = makeF oscGenericMIDI "21"
-22              = makeF oscGenericMIDI "22"
-23              = makeF oscGenericMIDI "23"
-24              = makeF oscGenericMIDI "24"
-25              = makeF oscGenericMIDI "25"
-26              = makeF oscGenericMIDI "26"
-27              = makeF oscGenericMIDI "27"
-28              = makeF oscGenericMIDI "28"
-29              = makeF oscGenericMIDI "29"
-30              = makeF oscGenericMIDI "30"
-31              = makeF oscGenericMIDI "31"
-32              = makeF oscGenericMIDI "32"
-33              = makeF oscGenericMIDI "33"
-34              = makeF oscGenericMIDI "34"
-35              = makeF oscGenericMIDI "35"
-36              = makeF oscGenericMIDI "36"
-37              = makeF oscGenericMIDI "37"
-38              = makeF oscGenericMIDI "38"
-39              = makeF oscGenericMIDI "39"
-40              = makeF oscGenericMIDI "40"
-41              = makeF oscGenericMIDI "41"
-42              = makeF oscGenericMIDI "42"
-43              = makeF oscGenericMIDI "43"
-44              = makeF oscGenericMIDI "44"
-45              = makeF oscGenericMIDI "45"
-46              = makeF oscGenericMIDI "46"
-47              = makeF oscGenericMIDI "47"
-48              = makeF oscGenericMIDI "48"
-49              = makeF oscGenericMIDI "49"
-50              = makeF oscGenericMIDI "50"
-51              = makeF oscGenericMIDI "51"
-52              = makeF oscGenericMIDI "52"
-53              = makeF oscGenericMIDI "53"
-54              = makeF oscGenericMIDI "54"
-55              = makeF oscGenericMIDI "55"
-56              = makeF oscGenericMIDI "56"
-57              = makeF oscGenericMIDI "57"
-58              = makeF oscGenericMIDI "58"
-59              = makeF oscGenericMIDI "59"
-60              = makeF oscGenericMIDI "60"
-61              = makeF oscGenericMIDI "61"
-62              = makeF oscGenericMIDI "62"
-63              = makeF oscGenericMIDI "63"
-64              = makeF oscGenericMIDI "64"
-65              = makeF oscGenericMIDI "65"
-66              = makeF oscGenericMIDI "66"
-67              = makeF oscGenericMIDI "67"
-68              = makeF oscGenericMIDI "68"
-69              = makeF oscGenericMIDI "69"
-70              = makeF oscGenericMIDI "70"
-71              = makeF oscGenericMIDI "71"
-72              = makeF oscGenericMIDI "72"
-73              = makeF oscGenericMIDI "73"
-74              = makeF oscGenericMIDI "74"
-75              = makeF oscGenericMIDI "75"
-76              = makeF oscGenericMIDI "76"
-77              = makeF oscGenericMIDI "77"
-78              = makeF oscGenericMIDI "78"
-79              = makeF oscGenericMIDI "79"
-80              = makeF oscGenericMIDI "80"
-81              = makeF oscGenericMIDI "81"
-82              = makeF oscGenericMIDI "82"
-83              = makeF oscGenericMIDI "83"
-84              = makeF oscGenericMIDI "84"
-85              = makeF oscGenericMIDI "85"
-86              = makeF oscGenericMIDI "86"
-87              = makeF oscGenericMIDI "87"
-88              = makeF oscGenericMIDI "88"
-89              = makeF oscGenericMIDI "89"
-90              = makeF oscGenericMIDI "90"
-91              = makeF oscGenericMIDI "91"
-92              = makeF oscGenericMIDI "92"
-93              = makeF oscGenericMIDI "93"
-94              = makeF oscGenericMIDI "94"
-95              = makeF oscGenericMIDI "95"
-96              = makeF oscGenericMIDI "96"
-97              = makeF oscGenericMIDI "97"
-98              = makeF oscGenericMIDI "98"
-99              = makeF oscGenericMIDI "99"
-100             = makeF oscGenericMIDI "100"
-101             = makeF oscGenericMIDI "101"
-102             = makeF oscGenericMIDI "102"
-103             = makeF oscGenericMIDI "103"
-104             = makeF oscGenericMIDI "104"
-105             = makeF oscGenericMIDI "105"
-106             = makeF oscGenericMIDI "106"
-107             = makeF oscGenericMIDI "107"
-108             = makeF oscGenericMIDI "108"
-109             = makeF oscGenericMIDI "109"
-110             = makeF oscGenericMIDI "110"
-111             = makeF oscGenericMIDI "111"
-112             = makeF oscGenericMIDI "112"
-113             = makeF oscGenericMIDI "113"
-114             = makeF oscGenericMIDI "114"
-115             = makeF oscGenericMIDI "115"
-116             = makeF oscGenericMIDI "116"
-117             = makeF oscGenericMIDI "117"
-118             = makeF oscGenericMIDI "118"
-119             = makeF oscGenericMIDI "119"
-120             = makeF oscGenericMIDI "120"
-121             = makeF oscGenericMIDI "121"
-122             = makeF oscGenericMIDI "122"
-123             = makeF oscGenericMIDI "123"
-124             = makeF oscGenericMIDI "124"
-125             = makeF oscGenericMIDI "125"
-126             = makeF oscGenericMIDI "126"
-127             = makeF oscGenericMIDI "127"
+cc0               = makeF oscGenericMIDI "cc0"
+cc1               = makeF oscGenericMIDI "cc1"
+cc2               = makeF oscGenericMIDI "cc2"
+cc3               = makeF oscGenericMIDI "cc3"
+cc4               = makeF oscGenericMIDI "cc4"
+cc5               = makeF oscGenericMIDI "cc5"
+cc6               = makeF oscGenericMIDI "cc6"
+cc7               = makeF oscGenericMIDI "cc7"
+cc8               = makeF oscGenericMIDI "cc8"
+cc9               = makeF oscGenericMIDI "cc9"
+cc10              = makeF oscGenericMIDI "cc10"
+cc11              = makeF oscGenericMIDI "cc11"
+cc12              = makeF oscGenericMIDI "cc12"
+cc13              = makeF oscGenericMIDI "cc13"
+cc14              = makeF oscGenericMIDI "cc14"
+cc15              = makeF oscGenericMIDI "cc15"
+cc16              = makeF oscGenericMIDI "cc16"
+cc17              = makeF oscGenericMIDI "cc17"
+cc18              = makeF oscGenericMIDI "cc18"
+cc19              = makeF oscGenericMIDI "cc19"
+cc20              = makeF oscGenericMIDI "cc20"
+cc21              = makeF oscGenericMIDI "cc21"
+cc22              = makeF oscGenericMIDI "cc22"
+cc23              = makeF oscGenericMIDI "cc23"
+cc24              = makeF oscGenericMIDI "cc24"
+cc25              = makeF oscGenericMIDI "cc25"
+cc26              = makeF oscGenericMIDI "cc26"
+cc27              = makeF oscGenericMIDI "cc27"
+cc28              = makeF oscGenericMIDI "cc28"
+cc29              = makeF oscGenericMIDI "cc29"
+cc30              = makeF oscGenericMIDI "cc30"
+cc31              = makeF oscGenericMIDI "cc31"
+cc32              = makeF oscGenericMIDI "cc32"
+cc33              = makeF oscGenericMIDI "cc33"
+cc34              = makeF oscGenericMIDI "cc34"
+cc35              = makeF oscGenericMIDI "cc35"
+cc36              = makeF oscGenericMIDI "cc36"
+cc37              = makeF oscGenericMIDI "cc37"
+cc38              = makeF oscGenericMIDI "cc38"
+cc39              = makeF oscGenericMIDI "cc39"
+cc40              = makeF oscGenericMIDI "cc40"
+cc41              = makeF oscGenericMIDI "cc41"
+cc42              = makeF oscGenericMIDI "cc42"
+cc43              = makeF oscGenericMIDI "cc43"
+cc44              = makeF oscGenericMIDI "cc44"
+cc45              = makeF oscGenericMIDI "cc45"
+cc46              = makeF oscGenericMIDI "cc46"
+cc47              = makeF oscGenericMIDI "cc47"
+cc48              = makeF oscGenericMIDI "cc48"
+cc49              = makeF oscGenericMIDI "cc49"
+cc50              = makeF oscGenericMIDI "cc50"
+cc51              = makeF oscGenericMIDI "cc51"
+cc52              = makeF oscGenericMIDI "cc52"
+cc53              = makeF oscGenericMIDI "cc53"
+cc54              = makeF oscGenericMIDI "cc54"
+cc55              = makeF oscGenericMIDI "cc55"
+cc56              = makeF oscGenericMIDI "cc56"
+cc57              = makeF oscGenericMIDI "cc57"
+cc58              = makeF oscGenericMIDI "cc58"
+cc59              = makeF oscGenericMIDI "cc59"
+cc60              = makeF oscGenericMIDI "cc60"
+cc61              = makeF oscGenericMIDI "cc61"
+cc62              = makeF oscGenericMIDI "cc62"
+cc63              = makeF oscGenericMIDI "cc63"
+cc64              = makeF oscGenericMIDI "cc64"
+cc65              = makeF oscGenericMIDI "cc65"
+cc66              = makeF oscGenericMIDI "cc66"
+cc67              = makeF oscGenericMIDI "cc67"
+cc68              = makeF oscGenericMIDI "cc68"
+cc69              = makeF oscGenericMIDI "cc69"
+cc70              = makeF oscGenericMIDI "cc70"
+cc71              = makeF oscGenericMIDI "cc71"
+cc72              = makeF oscGenericMIDI "cc72"
+cc73              = makeF oscGenericMIDI "cc73"
+cc74              = makeF oscGenericMIDI "cc74"
+cc75              = makeF oscGenericMIDI "cc75"
+cc76              = makeF oscGenericMIDI "cc76"
+cc77              = makeF oscGenericMIDI "cc77"
+cc78              = makeF oscGenericMIDI "cc78"
+cc79              = makeF oscGenericMIDI "cc79"
+cc80              = makeF oscGenericMIDI "cc80"
+cc81              = makeF oscGenericMIDI "cc81"
+cc82              = makeF oscGenericMIDI "cc82"
+cc83              = makeF oscGenericMIDI "cc83"
+cc84              = makeF oscGenericMIDI "cc84"
+cc85              = makeF oscGenericMIDI "cc85"
+cc86              = makeF oscGenericMIDI "cc86"
+cc87              = makeF oscGenericMIDI "cc87"
+cc88              = makeF oscGenericMIDI "cc88"
+cc89              = makeF oscGenericMIDI "cc89"
+cc90              = makeF oscGenericMIDI "cc90"
+cc91              = makeF oscGenericMIDI "cc91"
+cc92              = makeF oscGenericMIDI "cc92"
+cc93              = makeF oscGenericMIDI "cc93"
+cc94              = makeF oscGenericMIDI "cc94"
+cc95              = makeF oscGenericMIDI "cc95"
+cc96              = makeF oscGenericMIDI "cc96"
+cc97              = makeF oscGenericMIDI "cc97"
+cc98              = makeF oscGenericMIDI "cc98"
+cc99              = makeF oscGenericMIDI "cc99"
+cc100             = makeF oscGenericMIDI "cc100"
+cc101             = makeF oscGenericMIDI "cc101"
+cc102             = makeF oscGenericMIDI "cc102"
+cc103             = makeF oscGenericMIDI "cc103"
+cc104             = makeF oscGenericMIDI "cc104"
+cc105             = makeF oscGenericMIDI "cc105"
+cc106             = makeF oscGenericMIDI "cc106"
+cc107             = makeF oscGenericMIDI "cc107"
+cc108             = makeF oscGenericMIDI "cc108"
+cc109             = makeF oscGenericMIDI "cc109"
+cc110             = makeF oscGenericMIDI "cc110"
+cc111             = makeF oscGenericMIDI "cc111"
+cc112             = makeF oscGenericMIDI "cc112"
+cc113             = makeF oscGenericMIDI "cc113"
+cc114             = makeF oscGenericMIDI "cc114"
+cc115             = makeF oscGenericMIDI "cc115"
+cc116             = makeF oscGenericMIDI "cc116"
+cc117             = makeF oscGenericMIDI "cc117"
+cc118             = makeF oscGenericMIDI "cc118"
+cc119             = makeF oscGenericMIDI "cc119"
+cc120             = makeF oscGenericMIDI "cc120"
+cc121             = makeF oscGenericMIDI "cc121"
+cc122             = makeF oscGenericMIDI "cc122"
+cc123             = makeF oscGenericMIDI "cc123"
+cc124             = makeF oscGenericMIDI "cc124"
+cc125             = makeF oscGenericMIDI "cc125"
+cc126             = makeF oscGenericMIDI "cc126"
+cc127             = makeF oscGenericMIDI "cc127"
