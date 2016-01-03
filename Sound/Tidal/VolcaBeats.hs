@@ -56,7 +56,7 @@ std = makeF oscBeats "stutterDepth"
 dt = makeF oscBeats "tomDecay"
 dch = makeF oscBeats "clHatDecay"
 doh = makeF oscBeats "opHatDecay"
-dhg = makeF oscBeats "hatGrain"
+hg = makeF oscBeats "hatGrain"
 
 noteN :: String -> Int
 noteN "bd"  = 36
