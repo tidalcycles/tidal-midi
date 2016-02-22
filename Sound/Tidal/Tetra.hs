@@ -1,370 +1,357 @@
 module Sound.Tidal.Tetra where
 
-import Sound.Tidal.Stream (makeI, makeF, (|+|), merge, OscPattern)
-
+import Sound.Tidal.Context hiding (latency)
 import Sound.Tidal.MIDI.Control
 
-import Sound.Tidal.Parse
-import Sound.Tidal.Pattern
+-- import Sound.Tidal.Parse
+-- import Sound.Tidal.Pattern
 
-import Control.Applicative
+-- import Control.Applicative
 
 makeSeqTracks = concat $ map makeSeqTrack [0..3]
   where makeSeqTrack t = map (makeSeqStep t) [0..15]
-        makeSeqStep t s = NRPN (makeName t s) (makeCC t s) (0, 127) 0 passThru
-        makeName t s = "seq" ++ (show $ t + 1) ++ "step" ++ (show $ s + 1)
+        makeSeqStep t s = NRPN (snd $ makeName t s) (makeCC t s) (0, 127) 0 passThru
+        makeName t s = pF ("seq" ++ (show $ t + 1) ++ "step" ++ (show $ s + 1)) (Just 0)
         makeCC t s = (t * 16) + (s + 120)
 
-polysynth :: ControllerShape
-polysynth = ControllerShape { params = ([
-                                  mrNRPN "osc1freq" 0 (0, 120) 0.2,
-                                  mrNRPN "osc1detune" 1 (0, 100) 0.5,
-                                  NRPN "osc1shape" 2 (0, 103) 1 passThru,
-                                  mNRPN "osc1glide" 3,
-                                  NRPN "osc1kbd" 4 (0, 1) 1 passThru,
+tetra :: ControllerShape
+tetra = ControllerShape {
+  controls = ([
+                 NRPN osc1freq_p 0 (0, 120) 0.2 passThru,
+                 mrNRPN osc1detune_p 1 (0, 100) 0.5,
+                 NRPN osc1shape_p 2 (0, 103) 1 passThru,
+                 mNRPN osc1glide_p 3,
+                 NRPN osc1kbd_p 4 (0, 1) 1 passThru,
 
-                                  mrNRPN "osc2freq" 5 (0, 120) 0.2,
-                                  mrNRPN "osc2detune" 6 (0, 100) 0.5,
-                                  NRPN "osc2shape" 7 (0, 103) 1 passThru,
-                                  mNRPN "osc2glide" 8,
-                                  NRPN "osc2kbd" 9 (0, 1) 1 passThru,
+                 NRPN osc2freq_p 5 (0, 120) 0.2 passThru,
+                 mrNRPN osc2detune_p 6 (0, 100) 0.5,
+                 NRPN osc2shape_p 7 (0, 103) 1 passThru,
+                 mNRPN osc2glide_p 8,
+                 NRPN osc2kbd_p 9 (0, 1) 1 passThru,
 
-                                  NRPN "oscsync" 10 (0, 1) 0 passThru,
-                                  NRPN "glidemode" 11 (0, 3) 0 passThru,
-                                  NRPN "oscslop" 12 (0, 5) 0 passThru,
-                                  mrNRPN "oscmix" 13 (0, 127) 0.5,
+                 NRPN oscsync_p 10 (0, 1) 0 passThru,
+                 NRPN glidemode_p 11 (0, 3) 0 passThru,
+                 NRPN oscslop_p 12 (0, 5) 0 passThru,
+                 mrNRPN oscmix_p 13 (0, 127) 0.5,
 
-                                  mNRPN "noise" 14,
-                                  mrNRPN "kcutoff" 15 (0, 164) 1,
-                                  mNRPN "kresonance" 16,
-                                  mNRPN "kamt" 17,
-                                  mNRPN "audiomod" 18,
-                                  NRPN "fpoles" 19 (0, 1) 1 passThru,
+                 mNRPN noise_p 14,
+                 mrNRPN cutoff_p 15 (0, 164) 1,
+                 mNRPN resonance_p 16,
+                 mNRPN kamt_p 17,
+                 mNRPN audiomod_p 18,
+                 NRPN fpoles_p 19 (0, 1) 1 passThru,
 
-                                  -- filter envelope
-                                  mrNRPN "famt" 20 (0, 254) 0.5,
-                                  mNRPN "fvel" 21,
-                                  mNRPN "fdel" 22,
-                                  mNRPN "fatk" 23,
-                                  mNRPN "fdcy" 24,
-                                  mNRPN "fsus" 25,
-                                  mNRPN "frel" 26,
-
-
-                                  mNRPN "vcavol" 27,
-                                  mNRPN "outspread" 28,
-                                  mrNRPN "vol" 29 (0, 127) 1, -- max volume by default
-
-                                  mrNRPN "vamt" 30 (0, 127) 1, -- max vca envelope amount
-                                  mNRPN "vvel" 31,
-                                  mNRPN "vdel" 32,
-                                  mNRPN "vatk" 33,
-                                  mrNRPN "vdcy" 34 (0, 127) 0.5,
-                                  mrNRPN "vsus" 35 (0, 127) 0.5,
-                                  mNRPN "vrel" 36,
-
-                                  NRPN "lfo1rate" 37 (0, 166) 0 passThru, -- unsynced
-                                  -- mrNRPN "lfo1step" 37 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo1shape" 38 (0, 4) 0 passThru,
-                                  mNRPN "lfo1amt" 39,
-                                  NRPN "lfo1dest" 40 (0, 43) 0 passThru,
-                                  NRPN "lfo1sync" 41 (0, 1) 0 passThru,
-
-                                  NRPN "lfo2rate" 42 (0, 166) 0 passThru, -- unsynced
-                                  -- mrNRPN "lfo2step" 42 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo2shape" 43 (0, 4) 0 passThru,
-                                  mNRPN "lfo2amt" 44,
-                                  NRPN "lfo2dest" 45 (0, 43) 0 passThru,
-                                  NRPN "lfo2sync" 46 (0, 1) 0 passThru,
-
-                                  NRPN "lfo3rate" 47 (0, 166) 0 passThru, -- unsynced
-                                  -- mrNRPN "lfo3step" 47 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo3shape" 48 (0, 4) 0 passThru,
-                                  mNRPN "lfo3amt" 49,
-                                  NRPN "lfo3dest" 50 (0, 43) 0 passThru,
-                                  NRPN "lfo3sync" 51 (0, 1) 0 passThru,
-
-                                  NRPN "lfo4rate" 52 (0, 166) 0 passThru, -- unsynced
-                                  -- mrNRPN "lfo4step" 52 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
-                                  NRPN "lfo4shape" 53 (0, 4) 0 passThru,
-                                  mNRPN "lfo4amt" 54,
-                                  NRPN "lfo4dest" 55 (0, 43) 0 passThru,
-                                  NRPN "lfo4sync" 56 (0, 1) 0 passThru,
-
-                                  NRPN "emod" 57 (0, 43) 0 passThru,
-                                  mrNRPN "eamt" 58 (0, 254) 0.5,
-                                  mNRPN "evel" 59,
-                                  mNRPN "edel" 60,
-                                  mNRPN "eatk" 61,
-                                  mNRPN "edcy" 62,
-                                  mNRPN "esus" 63,
-                                  mNRPN "erel" 64,
-
-                                  NRPN "mod1src" 65 (0, 20) 0 passThru,
-                                  mrNRPN "mod1amt" 66 (0, 254) 0.5,
-                                  NRPN "mod1dst" 67 (0, 47) 0 passThru,
-
-                                  NRPN "mod2src" 68 (0, 20) 0 passThru,
-                                  mrNRPN "mod2amt" 69 (0, 254) 0.5,
-                                  NRPN "mod2dst" 70 (0, 47) 0 passThru,
-
-                                  NRPN "mod3src" 71 (0, 20) 0 passThru,
-                                  mrNRPN "mod3amt" 72 (0, 254) 0.5,
-                                  NRPN "mod3dst" 73 (0, 47) 0 passThru,
-
-                                  NRPN "mod4src" 74 (0, 20) 0 passThru,
-                                  mrNRPN "mod4amt" 75 (0, 254) 0.5,
-                                  NRPN "mod4dst" 76 (0, 47) 0 passThru,
-
-                                  NRPN "seq1dst" 77 (0, 47) 0 passThru,
-                                  NRPN "seq2dst" 78 (0, 47) 0 passThru,
-                                  NRPN "seq3dst" 79 (0, 47) 0 passThru,
-                                  NRPN "seq4dst" 80 (0, 47) 0 passThru,
-
-                                  mrNRPN "mwhl" 81 (0, 254) 0.5,
-                                  NRPN "mwhldst" 82 (0, 47) 0 passThru,
-
-                                  mrNRPN "aftt" 83 (0, 254) 0.5,
-                                  NRPN "afttdst" 84 (0, 47) 0 passThru,
-
-                                  mrNRPN "breath" 85 (0, 254) 0.5,
-                                  NRPN "breathdst" 86 (0, 47) 0 passThru,
-
-                                  mrNRPN "mvel" 87 (0, 254) 0.5,
-                                  NRPN "mveldst" 88 (0, 47) 0 passThru,
-
-                                  mrNRPN "foot" 89 (0, 254) 0.5,
-                                  NRPN "footdst" 90 (0, 47) 0 passThru,
-
-                                  NRPN "kbpm" 91 (30, 250) 0 passThru,
-                                  NRPN "clockdiv" 92 (0, 12) 0 passThru, -- TODO: document values
-
-                                  NRPN "bendrng" 93 (0, 12) 0 passThru,
-
-                                  NRPN "sqntrig" 94 (0, 4) 0 passThru, -- TODO: document values
-                                  NRPN "unisonkey" 95 (0, 5) 0 passThru, -- TODO: document values
-                                  NRPN "unisonmode" 96 (0, 4) 0 passThru, -- TODO: document values
-                                  NRPN "arpmode" 97 (0, 14) 0 passThru,
-
-                                  NRPN "erepeat" 98 (0, 1) 0 passThru,
-                                  NRPN "unison" 99 (0, 1) 0 passThru,
+                 -- filter envelope
+                 mrNRPN famt_p 20 (0, 254) 0.5,
+                 mNRPN fvel_p 21,
+                 mNRPN fdel_p 22,
+                 mNRPN fatk_p 23,
+                 mNRPN fdcy_p 24,
+                 mNRPN fsus_p 25,
+                 mNRPN frel_p 26,
 
 
-                                  NRPN "arp" 100 (0, 1) 0 passThru,
-                                  NRPN "sqn" 101 (0, 1) 0 passThru,
+                 mNRPN vcavol_p 27,
+                 mNRPN outspread_p 28,
+                 mrNRPN gain_p 29 (0, 127) 1, -- max volume by default
 
-                                  NRPN "mcr1" 105 (0, 183) 0 passThru,
-                                  NRPN "mcr2" 106 (0, 183) 0 passThru,
-                                  NRPN "mcr3" 107 (0, 183) 0 passThru,
-                                  NRPN "mcr4" 108 (0, 183) 0 passThru,
+                 mrNRPN vamt_p 30 (0, 127) 1, -- max vca envelope amount
+                 mNRPN vvel_p 31,
+                 mNRPN vdel_p 32,
+                 mNRPN attack_p 33,
+                 mrNRPN decay_p 34 (0, 127) 0.5,
+                 mrNRPN sustain_p 35 (0, 127) 0.5,
+                 mNRPN release_p 36,
 
-                                  mNRPN "fbgain" 110,
+                 NRPN lfo1rate_p 37 (0, 166) 0 passThru, -- unsynced
+                 -- mrNRPN "lfo1step" 37 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                 NRPN lfo1shape_p 38 (0, 4) 0 passThru,
+                 mNRPN lfo1amt_p 39,
+                 NRPN lfo1dest_p 40 (0, 43) 0 passThru,
+                 NRPN lfo1sync_p 41 (0, 1) 0 passThru,
 
-                                  mrNRPN "btnfreq" 111 (0, 127) 0.25,
-                                  mrNRPN "btnvel" 112 (0, 127) 1,
-                                  NRPN "btnmode" 113 (0, 1) 0 passThru,
+                 NRPN lfo2rate_p 42 (0, 166) 0 passThru, -- unsynced
+                 -- mrNRPN "lfo2step" 42 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                 NRPN lfo2shape_p 43 (0, 4) 0 passThru,
+                 mNRPN lfo2amt_p 44,
+                 NRPN lfo2dest_p 45 (0, 43) 0 passThru,
+                 NRPN lfo2sync_p 46 (0, 1) 0 passThru,
 
-                                  mNRPN "sub1vol" 114,
-                                  mNRPN "sub2vol" 115,
+                 NRPN lfo3rate_p 47 (0, 166) 0 passThru, -- unsynced
+                 -- mrNRPN "lfo3step" 47 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                 NRPN lfo3shape_p 48 (0, 4) 0 passThru,
+                 mNRPN lfo3amt_p 49,
+                 NRPN lfo3dest_p 50 (0, 43) 0 passThru,
+                 NRPN lfo3sync_p 51 (0, 1) 0 passThru,
 
-                                  mNRPN "fbvol" 116,
+                 NRPN lfo4rate_p 52 (0, 166) 0 passThru, -- unsynced
+                 -- mrNRPN "lfo4step" 52 (151, 166) 0, -- (bpm / 32) - 16 bpm-cycles
+                 NRPN lfo4shape_p 53 (0, 4) 0 passThru,
+                 mNRPN lfo4amt_p 54,
+                 NRPN lfo4dest_p 55 (0, 43) 0 passThru,
+                 NRPN lfo4sync_p 56 (0, 1) 0 passThru,
 
-                                  -- left out: editor byte,
+                 NRPN emod_p 57 (0, 43) 0 passThru,
+                 mrNRPN eamt_p 58 (0, 254) 0.5,
+                 mNRPN evel_p 59,
+                 mNRPN edel_p 60,
+                 mNRPN eatk_p 61,
+                 mNRPN edcy_p 62,
+                 mNRPN esus_p 63,
+                 mNRPN erel_p 64,
 
-                                  mrNRPN "ksplitpoint" 118 (0, 127) 0.5,
-                                  NRPN "kmode" 119 (0, 2) 0 passThru, -- TODO: document values
-                                  mCC "notesoff" 123,
-                                  mCC "ccreset" 121,
-                                  mCC "damp" 64
+                 NRPN mod1src_p 65 (0, 20) 0 passThru,
+                 mrNRPN mod1amt_p 66 (0, 254) 0.5,
+                 NRPN mod1dst_p 67 (0, 47) 0 passThru,
 
-                          ] ++ makeSeqTracks),
-                         duration = ("dur", 0.2),
-                         velocity = ("vel", 0.5),
-                         latency = 0.04
+                 NRPN mod2src_p 68 (0, 20) 0 passThru,
+                 mrNRPN mod2amt_p 69 (0, 254) 0.5,
+                 NRPN mod2dst_p 70 (0, 47) 0 passThru,
+
+                 NRPN mod3src_p 71 (0, 20) 0 passThru,
+                 mrNRPN mod3amt_p 72 (0, 254) 0.5,
+                 NRPN mod3dst_p 73 (0, 47) 0 passThru,
+
+                 NRPN mod4src_p 74 (0, 20) 0 passThru,
+                 mrNRPN mod4amt_p 75 (0, 254) 0.5,
+                 NRPN mod4dst_p 76 (0, 47) 0 passThru,
+
+                 NRPN seq1dst_p 77 (0, 47) 0 passThru,
+                 NRPN seq2dst_p 78 (0, 47) 0 passThru,
+                 NRPN seq3dst_p 79 (0, 47) 0 passThru,
+                 NRPN seq4dst_p 80 (0, 47) 0 passThru,
+
+                 mrNRPN mwhl_p 81 (0, 254) 0.5,
+                 NRPN mwhldst_p 82 (0, 47) 0 passThru,
+
+                 mrNRPN aftt_p 83 (0, 254) 0.5,
+                 NRPN afttdst_p 84 (0, 47) 0 passThru,
+
+                 mrNRPN breath_p 85 (0, 254) 0.5,
+                 NRPN breathdst_p 86 (0, 47) 0 passThru,
+
+                 mrNRPN mvel_p 87 (0, 254) 0.5,
+                 NRPN mveldst_p 88 (0, 47) 0 passThru,
+
+                 mrNRPN foot_p 89 (0, 254) 0.5,
+                 NRPN footdst_p 90 (0, 47) 0 passThru,
+
+                 NRPN kbpm_p 91 (30, 250) 0 passThru,
+                 NRPN clockdiv_p 92 (0, 12) 0 passThru, -- TODO: document values
+
+                 NRPN bendrng_p 93 (0, 12) 0 passThru,
+
+                 NRPN sqntrig_p 94 (0, 4) 0 passThru, -- TODO: document values
+                 NRPN unisonkey_p 95 (0, 5) 0 passThru, -- TODO: document values
+                 NRPN unisonmode_p 96 (0, 4) 0 passThru, -- TODO: document values
+                 NRPN arpmode_p 97 (0, 14) 0 passThru,
+
+                 NRPN erepeat_p 98 (0, 1) 0 passThru,
+                 NRPN unison_p 99 (0, 1) 0 passThru,
+
+
+                 NRPN arp_p 100 (0, 1) 0 passThru,
+                 NRPN sqn_p 101 (0, 1) 0 passThru,
+
+                 NRPN mcr1_p 105 (0, 183) 0 passThru,
+                 NRPN mcr2_p 106 (0, 183) 0 passThru,
+                 NRPN mcr3_p 107 (0, 183) 0 passThru,
+                 NRPN mcr4_p 108 (0, 183) 0 passThru,
+
+                 mNRPN fbgain_p 110,
+
+                 mrNRPN btnfreq_p 111 (0, 127) 0.25,
+                 mrNRPN btnvel_p 112 (0, 127) 1,
+                 NRPN btnmode_p 113 (0, 1) 0 passThru,
+
+                 mNRPN sub1vol_p 114,
+                 mNRPN sub2vol_p 115,
+
+                 mNRPN fbvol_p 116,
+
+                 -- left out: editor byte,
+
+                 mrNRPN ksplitpoint_p 118 (0, 127) 0.5,
+                 NRPN kmode_p 119 (0, 2) 0 passThru, -- TODO: document values
+                 mCC mute_p 123,
+                 mCC ccreset_p 121,
+                 mCC damp_p 64
+
+              ] ++ makeSeqTracks),
+                         latency = 0.01
                        }
 
-oscPolysynth = toOscShape polysynth
-
-note            = makeI oscPolysynth "note"
-
-dur             = makeF oscPolysynth "dur"
-vel             = makeF oscPolysynth "vel"
-notesoff = makeF oscPolysynth "notesoff"
-ccreset = makeF oscPolysynth "ccreset"
-damp = makeF oscPolysynth "damp"
+tetraShape = toShape tetra
 
 
-osc1freq      = makeF oscPolysynth "osc1freq"
-osc1detune      = makeF oscPolysynth "osc1detune"
-osc1shape     = makeF oscPolysynth "osc1shape"
-osc1glide     = makeF oscPolysynth "osc1glide"
-osc1kbd     = makeF oscPolysynth "osc1kbd"
+(ccreset, ccreset_p)       = pF "ccreset" (Just 0)
+(damp, damp_p)             = pF "damp" (Just 0)
 
-osc2freq      = makeF oscPolysynth "osc2freq"
-osc2detune      = makeF oscPolysynth "osc2detune"
-osc2shape     = makeF oscPolysynth "osc2shape"
-osc2glide     = makeF oscPolysynth "osc2glide"
-osc2kbd     = makeF oscPolysynth "osc2kbd"
 
-oscsync     = makeF oscPolysynth "oscsync"
-glidemode     = makeF oscPolysynth "glidemode"
-oscslop     = makeF oscPolysynth "oscslop"
-oscmix      = makeF oscPolysynth "oscmix"
+(osc1freq, osc1freq_p)     = pF "osc1freq" (Just 0)
+(osc1detune, osc1detune_p) = pF "osc1detune" (Just 0)
+(osc1shape, osc1shape_p)   = pF "osc1shape" (Just 0)
+(osc1glide, osc1glide_p)   = pF "osc1glide" (Just 0)
+(osc1kbd, osc1kbd_p)       = pF "osc1kbd" (Just 0)
 
-noise     = makeF oscPolysynth "noise"
-kcutoff     = makeF oscPolysynth "kcutoff"
-kresonance      = makeF oscPolysynth "kresonance"
-kamt      = makeF oscPolysynth "kamt"
-audiomod      = makeF oscPolysynth "audiomod"
-fpoles      = makeF oscPolysynth "fpoles"
-twopole         = fpoles (p "0")
-fourpole        = fpoles (p "1")
+(osc2freq, osc2freq_p)     = pF "osc2freq" (Just 0)
+(osc2detune, osc2detune_p) = pF "osc2detune" (Just 0)
+(osc2shape, osc2shape_p)   = pF "osc2shape" (Just 0)
+(osc2glide, osc2glide_p)   = pF "osc2glide" (Just 0)
+(osc2kbd, osc2kbd_p)       = pF "osc2kbd" (Just 0)
+
+(oscsync, oscsync_p)       = pF "oscsync" (Just 0)
+(glidemode, glidemode_p)   = pF "glidemode" (Just 0)
+(oscslop, oscslop_p)       = pF "oscslop" (Just 0)
+(oscmix, oscmix_p)         = pF "oscmix" (Just 0)
+
+(noise, noise_p)           = pF "noise" (Just 0)
+(kamt, kamt_p)             = pF "kamt" (Just 0)
+(audiomod, audiomod_p)     = pF "audiomod" (Just 0)
+(fpoles, fpoles_p)         = pF "fpoles" (Just 0)
+twopole                    = fpoles (p "0")
+fourpole                   = fpoles (p "1")
 
 -- filter envelope
-famt      = makeF oscPolysynth "famt"
-fvel      = makeF oscPolysynth "fvel"
-fdel      = makeF oscPolysynth "fdel"
-fatk      = makeF oscPolysynth "fatk"
-fdcy      = makeF oscPolysynth "fdcy"
-fsus      = makeF oscPolysynth "fsus"
-frel      = makeF oscPolysynth "frel"
+(famt, famt_p)             = pF "famt" (Just 0)
+(fvel, fvel_p)             = pF "fvel" (Just 0)
+(fdel, fdel_p)             = pF "fdel" (Just 0)
+(fatk, fatk_p)             = pF "fatk" (Just 0)
+(fdcy, fdcy_p)             = pF "fdcy" (Just 0)
+(fsus, fsus_p)             = pF "fsus" (Just 0)
+(frel, frel_p)             = pF "frel" (Just 0)
 
 
-vcavol      = makeF oscPolysynth "vcavol"
-outspread     = makeF oscPolysynth "outspread"
-vol     = makeF oscPolysynth "vol"
+(vcavol, vcavol_p)         = pF "vcavol" (Just 0)
+(outspread, outspread_p)   = pF "outspread" (Just 0)
 
-vamt      = makeF oscPolysynth "vamt"
-vvel      = makeF oscPolysynth "vvel"
-vdel      = makeF oscPolysynth "vdel"
-vatk      = makeF oscPolysynth "vatk"
-vdcy      = makeF oscPolysynth "vdcy"
-vsus      = makeF oscPolysynth "vsus"
-vrel      = makeF oscPolysynth "vrel"
+(vamt, vamt_p)             = pF "vamt" (Just 0)
+(vvel, vvel_p)             = pF "vvel" (Just 0)
+(vdel, vdel_p)             = pF "vdel" (Just 0)
 
-lfo1rate      = makeF oscPolysynth "lfo1rate"
--- lfo1step      = makeF oscPolysynth "lfo1step"
-lfo1shape     = makeF oscPolysynth "lfo1shape"
-lfo1amt     = makeF oscPolysynth "lfo1amt"
-lfo1dest      = makeF oscPolysynth "lfo1dest"
-lfo1sync      = makeF oscPolysynth "lfo1sync"
+(lfo1rate, lfo1rate_p)     = pF "lfo1rate" (Just 0)
+-- lfo1step                = makeF oscPolysynth "lfo1step"
+(lfo1shape, lfo1shape_p)   = pF "lfo1shape" (Just 0)
+(lfo1amt, lfo1amt_p)       = pF "lfo1amt" (Just 0)
+(lfo1dest, lfo1dest_p)     = pF "lfo1dest" (Just 0)
+(lfo1sync, lfo1sync_p)     = pF "lfo1sync" (Just 0)
 
-lfo2rate      = makeF oscPolysynth "lfo2rate"
--- lfo2step      = makeF oscPolysynth "lfo2step"
-lfo2shape     = makeF oscPolysynth "lfo2shape"
-lfo2amt     = makeF oscPolysynth "lfo2amt"
-lfo2dest      = makeF oscPolysynth "lfo2dest"
-lfo2sync      = makeF oscPolysynth "lfo2sync"
+(lfo2rate, lfo2rate_p)     = pF "lfo2rate" (Just 0)
+-- lfo2step                = makeF oscPolysynth "lfo2step"
+(lfo2shape, lfo2shape_p)   = pF "lfo2shape" (Just 0)
+(lfo2amt, lfo2amt_p)       = pF "lfo2amt" (Just 0)
+(lfo2dest, lfo2dest_p)     = pF "lfo2dest" (Just 0)
+(lfo2sync, lfo2sync_p)     = pF "lfo2sync" (Just 0)
 
-lfo3rate      = makeF oscPolysynth "lfo3rate"
--- lfo3step      = makeF oscPolysynth "lfo3step"
-lfo3shape     = makeF oscPolysynth "lfo3shape"
-lfo3amt     = makeF oscPolysynth "lfo3amt"
-lfo3dest      = makeF oscPolysynth "lfo3dest"
-lfo3sync      = makeF oscPolysynth "lfo3sync"
+(lfo3rate, lfo3rate_p)     = pF "lfo3rate" (Just 0)
+-- lfo3step                = makeF oscPolysynth "lfo3step"
+(lfo3shape, lfo3shape_p)   = pF "lfo3shape" (Just 0)
+(lfo3amt, lfo3amt_p)       = pF "lfo3amt" (Just 0)
+(lfo3dest, lfo3dest_p)     = pF "lfo3dest" (Just 0)
+(lfo3sync, lfo3sync_p)     = pF "lfo3sync" (Just 0)
 
-lfo4rate      = makeF oscPolysynth "lfo4rate"
--- lfo4step      = makeF oscPolysynth "lfo4step"
-lfo4shape     = makeF oscPolysynth "lfo4shape"
-lfo4amt     = makeF oscPolysynth "lfo4amt"
-lfo4dest      = makeF oscPolysynth "lfo4dest"
-lfo4sync      = makeF oscPolysynth "lfo4sync"
+(lfo4rate, lfo4rate_p)     = pF "lfo4rate" (Just 0)
+-- lfo4step                = makeF oscPolysynth "lfo4step"
+(lfo4shape, lfo4shape_p)   = pF "lfo4shape" (Just 0)
+(lfo4amt, lfo4amt_p)       = pF "lfo4amt" (Just 0)
+(lfo4dest, lfo4dest_p)     = pF "lfo4dest" (Just 0)
+(lfo4sync, lfo4sync_p)     = pF "lfo4sync" (Just 0)
 
-emod      = makeF oscPolysynth "emod"
-eamt      = makeF oscPolysynth "eamt"
-evel      = makeF oscPolysynth "evel"
-edel      = makeF oscPolysynth "edel"
-eatk      = makeF oscPolysynth "eatk"
-edcy      = makeF oscPolysynth "edcy"
-esus      = makeF oscPolysynth "esus"
-erel      = makeF oscPolysynth "erel"
+(emod, emod_p)             = pF "emod" (Just 0)
+(eamt, eamt_p)             = pF "eamt" (Just 0)
+(evel, evel_p)             = pF "evel" (Just 0)
+(edel, edel_p)             = pF "edel" (Just 0)
+(eatk, eatk_p)             = pF "eatk" (Just 0)
+(edcy, edcy_p)             = pF "edcy" (Just 0)
+(esus, esus_p)             = pF "esus" (Just 0)
+(erel, erel_p)             = pF "erel" (Just 0)
 
-mod1src     = makeF oscPolysynth "mod1src"
-mod1amt     = makeF oscPolysynth "mod1amt"
-mod1dst     = makeF oscPolysynth "mod1dst"
+(mod1src, mod1src_p)       = pF "mod1src" (Just 0)
+(mod1amt, mod1amt_p)       = pF "mod1amt" (Just 0)
+(mod1dst, mod1dst_p)       = pF "mod1dst" (Just 0)
 
-mod2src     = makeF oscPolysynth "mod2src"
-mod2amt     = makeF oscPolysynth "mod2amt"
-mod2dst     = makeF oscPolysynth "mod2dst"
+(mod2src, mod2src_p)       = pF "mod2src" (Just 0)
+(mod2amt, mod2amt_p)       = pF "mod2amt" (Just 0)
+(mod2dst, mod2dst_p)       = pF "mod2dst" (Just 0)
 
-mod3src     = makeF oscPolysynth "mod3src"
-mod3amt     = makeF oscPolysynth "mod3amt"
-mod3dst     = makeF oscPolysynth "mod3dst"
+(mod3src, mod3src_p)       = pF "mod3src" (Just 0)
+(mod3amt, mod3amt_p)       = pF "mod3amt" (Just 0)
+(mod3dst, mod3dst_p)       = pF "mod3dst" (Just 0)
 
-mod4src     = makeF oscPolysynth "mod4src"
-mod4amt     = makeF oscPolysynth "mod4amt"
-mod4dst     = makeF oscPolysynth "mod4dst"
+(mod4src, mod4src_p)       = pF "mod4src" (Just 0)
+(mod4amt, mod4amt_p)       = pF "mod4amt" (Just 0)
+(mod4dst, mod4dst_p)       = pF "mod4dst" (Just 0)
 
-seq1dst     = makeF oscPolysynth "seq1dst"
-seq2dst     = makeF oscPolysynth "seq2dst"
-seq3dst     = makeF oscPolysynth "seq3dst"
-seq4dst     = makeF oscPolysynth "seq4dst"
+(seq1dst, seq1dst_p)       = pF "seq1dst" (Just 0)
+(seq2dst, seq2dst_p)       = pF "seq2dst" (Just 0)
+(seq3dst, seq3dst_p)       = pF "seq3dst" (Just 0)
+(seq4dst, seq4dst_p)       = pF "seq4dst" (Just 0)
 
 
-mwhl    = makeF oscPolysynth "mwhl"
-mwhldst = makeF oscPolysynth "mwhldst"
+(mwhl, mwhl_p)             = pF "mwhl" (Just 0)
+(mwhldst, mwhldst_p)       = pF "mwhldst" (Just 0)
 
-aftt    = makeF oscPolysynth "aftt"
-afttdst = makeF oscPolysynth "afttdst"
+(aftt, aftt_p)             = pF "aftt" (Just 0)
+(afttdst, afttdst_p)       = pF "afttdst" (Just 0)
 
-breath    = makeF oscPolysynth "breath"
-breathdst = makeF oscPolysynth "breathdst"
+(breath, breath_p)         = pF "breath" (Just 0)
+(breathdst, breathdst_p)   = pF "breathdst" (Just 0)
 
-mvel    = makeF oscPolysynth "mvel"
-mveldst = makeF oscPolysynth "mveldst"
+(mvel, mvel_p)             = pF "mvel" (Just 0)
+(mveldst, mveldst_p)       = pF "mveldst" (Just 0)
 
-foot    = makeF oscPolysynth "foot"
-footdst = makeF oscPolysynth "footdst"
+(foot, foot_p)             = pF "foot" (Just 0)
+(footdst, footdst_p)       = pF "footdst" (Just 0)
 
-bendrng = makeF oscPolysynth "bendrng"
+(bendrng, bendrng_p)       = pF "bendrng" (Just 0)
 
 -- left out: modwheel, breath, footctrl, pressure, velocity
 
-kbpm      = makeF oscPolysynth "kbpm"
-clockdiv      = makeF oscPolysynth "clockdiv"
+(kbpm, kbpm_p)             = pF "kbpm" (Just 0)
+(clockdiv, clockdiv_p)     = pF "clockdiv" (Just 0)
 
 -- left out: pitchbend range
 
-sqntrig     = makeF oscPolysynth "sqntrig"
-unisonkey     = makeF oscPolysynth "unisonkey"
-unisonmode      = makeF oscPolysynth "unisonmode"
-arpmode     = makeF oscPolysynth "arpmode"
+(sqntrig, sqntrig_p)       = pF "sqntrig" (Just 0)
+(unisonkey, unisonkey_p)   = pF "unisonkey" (Just 0)
+(unisonmode, unisonmode_p) = pF "unisonmode" (Just 0)
+(arpmode, arpmode_p)       = pF "arpmode" (Just 0)
 
-erepeat     = makeF oscPolysynth "erepeat"
-unison      = makeF oscPolysynth "unison"
+(erepeat, erepeat_p)       = pF "erepeat" (Just 0)
+(unison, unison_p)         = pF "unison" (Just 0)
 
 
-arp     = makeF oscPolysynth "arp"
-sqn     = makeF oscPolysynth "sqn"
+(arp, arp_p)               = pF "arp" (Just 0)
+(sqn, sqn_p)               = pF "sqn" (Just 0)
 
-mcr1      = makeF oscPolysynth "mcr1"
-mcr2      = makeF oscPolysynth "mcr2"
-mcr3      = makeF oscPolysynth "mcr3"
-mcr4      = makeF oscPolysynth "mcr4"
+(mcr1, mcr1_p)             = pF "mcr1" (Just 0)
+(mcr2, mcr2_p)             = pF "mcr2" (Just 0)
+(mcr3, mcr3_p)             = pF "mcr3" (Just 0)
+(mcr4, mcr4_p)             = pF "mcr4" (Just 0)
 
-fbgain      = makeF oscPolysynth "fbgain"
+(fbgain, fbgain_p)         = pF "fbgain" (Just 0)
 
-btnfreq     = makeF oscPolysynth "btnfreq"
-btnvel      = makeF oscPolysynth "btnvel"
-btnmode     = makeF oscPolysynth "btnmode"
+(btnfreq, btnfreq_p)       = pF "btnfreq" (Just 0)
+(btnvel, btnvel_p)         = pF "btnvel" (Just 0)
+(btnmode, btnmode_p)       = pF "btnmode" (Just 0)
 
-sub1vol     = makeF oscPolysynth "sub1vol"
-sub2vol     = makeF oscPolysynth "sub2vol"
+(sub1vol, sub1vol_p)       = pF "sub1vol" (Just 0)
+(sub2vol, sub2vol_p)       = pF "sub2vol" (Just 0)
 
-fbvol     = makeF oscPolysynth "fbvol"
+(fbvol, fbvol_p)           = pF "fbvol" (Just 0)
 
-ksplitpoint     = makeF oscPolysynth "ksplitpoint"
-kmode     = makeF oscPolysynth "kmode"
+(ksplitpoint, ksplitpoint_p)     = pF "ksplitpoint" (Just 0)
+(kmode, kmode_p)     = pF "kmode" (Just 0)
 knormal         = kmode (p "0")
 kstack          = kmode (p "0.5")
 ksplit          = kmode (p "1")
 
 -- sequences
 
-seqtrack1 = map (makeF oscPolysynth . (\x -> "seq1step" ++ show x)) [1..16]
-seqtrack2 = map (makeF oscPolysynth . (\x -> "seq2step" ++ show x)) [1..16]
-seqtrack3 = map (makeF oscPolysynth . (\x -> "seq3step" ++ show x)) [1..16]
-seqtrack4 = map (makeF oscPolysynth . (\x -> "seq4step" ++ show x)) [1..16]
+seqtrack1 = map ((fst . (flip pF $ (Just 0))) . (\x -> "seq1step" ++ show x)) [1..16]
+seqtrack2 = map ((fst . (flip pF $ (Just 0))) . (\x -> "seq2step" ++ show x)) [1..16]
+seqtrack3 = map ((fst . (flip pF $ (Just 0))) . (\x -> "seq3step" ++ show x)) [1..16]
+seqtrack4 = map ((fst . (flip pF $ (Just 0))) . (\x -> "seq4step" ++ show x)) [1..16]
 
 
 seqpatterns p' = map onlyValues events
@@ -385,13 +372,13 @@ sqnp4 d p' = sqnp (seq4dst $ p $ show d) seqtrack4 p'
 
 -- adsr
 
-atk p' = vatk p' |+| fatk p' |+| eatk p'
-dcy p' = vdcy p' |+| fdcy p' |+| edcy p'
-sus p' = vsus p' |+| fsus p' |+| esus p'
-rel p' = vrel p' |+| frel p' |+| erel p'
+atk' p' = attack p' |+| fatk p' |+| eatk p'
+dcy' p' = decay p' |+| fdcy p' |+| edcy p'
+sus' p' = sustain p' |+| fsus p' |+| esus p'
+rel' p' = release p' |+| frel p' |+| erel p'
 
-adsr a d s r = atk a |+| dcy d |+| sus s |+| rel r
-asr a d r = atk a |+| dcy d |+| rel r
+adsr a d s r = attack a |+| decay d |+| sustain s |+| release r
+asr a d r = attack a |+| decay d |+| release r
 
 -- lfo
 
@@ -459,12 +446,12 @@ deatk = doublePattern 30
 datk = doublePattern 31
 
 dfdcy = doublePattern 32
-dvdcy = doublePattern 33
+ddecay = doublePattern 33
 dedcy = doublePattern 34
 ddcy = doublePattern 35
 
 dfrel = doublePattern 36
-dvrel = doublePattern 37
+drelease = doublePattern 37
 derel = doublePattern 38
 drel = doublePattern 39
 
@@ -508,23 +495,23 @@ snoise = doublePattern 20
 -- drums
 
 
-snare d p' = note p'
+snare d p' = n p'
   |+| osc1shape zero |+| osc1kbd zero
   |+| osc2shape zero |+| osc2kbd zero
   |+| noise one
-  |+| vrel d |+| vsus zero |+| vdcy d
-  |+| kcutoff (p "1")
+  |+| release d |+| sustain zero |+| decay d
+  |+| cutoff (p "1")
   |+| dur (p "0.01")
   where zero = p "0"
         one = p "1"
 
 
-kick blp p' = note p'
+kick blp p' = n p'
   |+| fourpole
   |+| osc1shape zero |+| osc1kbd zero
   |+| osc2shape zero |+| osc2kbd zero
-  |+| vsus zero |+| vdcy (p "0.95") |+| vrel (p "0.5")
-  |+| kresonance (p "0.99") |+| kcutoff zero
+  |+| sustain zero |+| decay (p "0.95") |+| release (p "0.5")
+  |+| resonance (p "0.99") |+| cutoff zero
   |+| eamt (p "0.8") |+| emod (p "9") |+| edcy blp
   |+| dur (p "0.2")
   where zero = p "0"

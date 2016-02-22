@@ -1,52 +1,40 @@
 module Sound.Tidal.Synthino where
 
-import Sound.Tidal.Stream (makeI, makeF)
-
+import Sound.Tidal.Context hiding (latency)
 import Sound.Tidal.MIDI.Control
 
-keys :: ControllerShape
-keys = ControllerShape { params = [
-                            mCC "attack" 73,
-                            mCC "decay" 75,
-                            mCC "sustain" 79,
-                            mCC "release" 72,
-                            mCC "waveform" 70,
-                            mCC "pitchlforate" 76,
-                            mCC "pitchlfodepth" 1,
-                            mCC "lfowaveform" 12,
-                            mCC "filterlforate" 13,
-                            mCC "filterlfodepth" 91,
-                            mCC "peak" 71,
-                            mCC "kcutoff" 74,
-                            mCC "bpm" 16,
-                            mCC "arplength" 17,
-                            mCC "arptranspose" 18,
-                            mCC "vol" 7,
-                            mCC "off" 123
-                          ],
-                         duration = ("dur", 0.05),
-                         velocity = ("vel", 0.5),
-                         latency = 0.1
-                       }
+synthino :: ControllerShape
+synthino = ControllerShape {
+  controls = [
+     mCC attack_p 73,
+     mCC decay_p 75,
+     mCC sustain_p 79,
+     mCC release_p 72,
+     mCC waveform_p 70,
+     mCC pitchlforate_p 76,
+     mCC pitchlfodepth_p 1,
+     mCC lfowaveform_p 12,
+     mCC filterlforate_p 13,
+     mCC filterlfodepth_p 91,
+     mCC resonance_p 71,
+     mCC cutoff_p 74,
+     mCC bpm_p 16,
+     mCC arplength_p 17,
+     mCC arptranspose_p 18,
+     mCC gain_p 7,
+     mCC mute_p 123
+     ],
+  latency = 0.1
+  }
 
-oscKeys = toOscShape keys
+synthinoShape = toShape synthino
 
-note           = makeI oscKeys "note"
-dur            = makeF oscKeys "dur"
-attack         = makeF oscKeys "attack"
-decay          = makeF oscKeys "decay"
-sustain        = makeF oscKeys "sustain"
-release        = makeF oscKeys "release"
-waveform       = makeF oscKeys "waveform"
-pitchlforate   = makeF oscKeys "pitchlforate"
-pitchlfodepth  = makeF oscKeys "pitchlfodepth"
-lfowaveform    = makeF oscKeys "lfowaveform"
-filterlforate  = makeF oscKeys "filterlforate"
-filterlfodepth = makeF oscKeys "filterlfodepth"
-peak           = makeF oscKeys "peak"
-kcutoff        = makeF oscKeys "kcutoff"
-bpm            = makeF oscKeys "bpm"
-arplength     = makeF oscKeys "arplength"
-arptranspose      = makeF oscKeys "arptranspose"
-vol            = makeF oscKeys "vol"
-off            = makeF oscKeys "off"
+(waveform, waveform_p)             = pF "waveform" (Just 0)
+(pitchlforate, pitchlforate_p)     = pF "pitchlforate" (Just 0)
+(pitchlfodepth, pitchlfodepth_p)   = pF "pitchlfodepth" (Just 0)
+(lfowaveform, lfowaveform_p)       = pF "lfowaveform" (Just 0)
+(filterlforate, filterlforate_p)   = pF "filterlforate" (Just 0)
+(filterlfodepth, filterlfodepth_p) = pF "filterlfodepth" (Just 0)
+(bpm, bpm_p)                       = pF "bpm" (Just 0)
+(arplength, arplength_p)           = pF "arplength" (Just 0)
+(arptranspose, arptranspose_p)     = pF "arptranspose" (Just 0)

@@ -1,34 +1,21 @@
 module Sound.Tidal.MBase01 where
-import Sound.Tidal.Stream (makeI, makeF)
 
+import Sound.Tidal.Context hiding (latency)
 import Sound.Tidal.MIDI.Control
 
 mbase01 :: ControllerShape
-mbase01 = ControllerShape {params = [
-                          mCC "tune" 100,
-                          mCC "pitch" 101,
-                          mCC "decay" 102,
-                          mCC "harmonics" 103,
-                          mCC "pulse" 104,
-                          mCC "noise" 105,
-                          mCC "attack" 106,
-                          mCC "eqlzr" 107
-                        ],
-                        duration = ("dur", 0.05),
-                        velocity = ("vel", 0.5),
-                        latency = 0.1}
+mbase01 = ControllerShape {
+  controls = [
+     mCC detune_p 100,
+     mCC pitch1_p 101,
+     mCC decay_p 102,
+     mCC vcoegint_p 103,
+     mCC vcfegint_p 104,
+     mCC shape_p 105,
+     mCC attack_p 106,
+     mCC voice_p 107
+     ],
+  latency = 0.1
+  }
 
-oscKeys = toOscShape mbase01
-
-note         = makeI oscKeys "note"
-dur          = makeF oscKeys "dur"
-
-
-tune = makeF oscKeys "tune"
-pitch = makeF oscKeys "pitch"
-decay = makeF oscKeys "decay"
-harmonics = makeF oscKeys "harmonics"
-pulse = makeF oscKeys "pulse"
-noise = makeF oscKeys "noise"
-attack = makeF oscKeys "attack"
-eqlzr = makeF oscKeys "eqlzr"
+mbase01Shape = toShape mbase01
