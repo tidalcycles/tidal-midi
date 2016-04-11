@@ -1,5 +1,5 @@
 name:                tidal-midi
-version:             0.1
+version:             0.6
 synopsis:            MIDI support for tidal
 -- description:
 homepage:            http://tidal.lurk.org/
@@ -29,4 +29,4 @@ library
                    Sound.Tidal.Synthino
                    Sound.Tidal.MBase01
 
-  Build-depends: base < 5, tidal, PortMidi, process, hashable, containers, hosc, time, bytestring
+  Build-depends: base < 5, tidal <= 0.6, PortMidi == 0.1.5.2, process, hashable, containers, hosc, time, bytestring
