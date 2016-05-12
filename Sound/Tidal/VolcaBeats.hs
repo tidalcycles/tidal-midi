@@ -1,9 +1,7 @@
 module Sound.Tidal.VolcaBeats where
 
--- import Sound.Tidal.Stream (makeI, makeF)
 import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
-import Control.Applicative
 
 beatsController :: ControllerShape
 beatsController = ControllerShape { controls = [
@@ -32,5 +30,6 @@ beatsController = ControllerShape { controls = [
                                     -- velocity = ("vel", 0.5),
                                     latency = 0.01
                                   }
-                  
+
+-- What is this used for?
 beats = toShape beatsController

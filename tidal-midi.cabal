@@ -17,5 +17,6 @@ Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and oth
 
 library
   Exposed-modules: Sound.Tidal.VolcaBeats
+                   Sound.Tidal.VolcaBass
                    
   Build-depends: base < 5, tidal == 0.8
