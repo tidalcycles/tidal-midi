@@ -6,22 +6,22 @@ import Sound.Tidal.MIDI.Control
 
 keys :: ControllerShape
 keys = ControllerShape { params = [
-                            mCC "portamento" 5,
-                            mCC "expression" 11,
-                            mCC "voice" 40,
-                            mCC "octave" 41,
-                            mCC "detune" 42,
-                            mCC "vcoegint" 43,
-                            mCC "kcutoff" 44,
-                            mCC "vcfegint" 45,
-                            mCC "lforate" 46,
-                            mCC "lfopitchint" 47,
-                            mCC "lfocutoffint" 48,
-                            mCC "attack" 49,
-                            mCC "decay" 50,
-                            mCC "sustain" 51,
-                            mCC "dtime" 52,
-                            mCC "dfeedback" 53
+                            mCC "por" 5,
+                            mCC "expr" 11,
+                            mCC "voi" 40,
+                            mCC "oct" 41,
+                            mCC "det" 42,
+                            mCC "vco" 43,
+                            mCC "ctf" 44,
+                            mCC "vcf" 45,
+                            mCC "lfo" 46,
+                            mCC "lfop" 47,
+                            mCC "lfoc" 48,
+                            mCC "att" 49,
+                            mCC "dec" 50,
+                            mCC "sus" 51,
+                            mCC "dt" 52,
+                            mCC "df" 53
                           ],
                          duration = ("dur", 0.05),
                          velocity = ("vel", 0.5),
@@ -32,19 +32,19 @@ oscKeys = toOscShape keys
 
 note = makeI oscKeys "note"
 dur  = makeF oscKeys "dur"
-por  = makeF oscKeys "portamento"
-expr = makeF oscKeys "expression"
-oct  = makeF oscKeys "octave"
-voi  = makeF oscKeys "voice"
-det  = makeF oscKeys "detune"
-vco  = makeF oscKeys "vcoegint"
-ctf  = makeF oscKeys "kcutoff"
-vcf  = makeF oscKeys "vcfegint"
-lfo  = makeF oscKeys "lforate"
-lfop = makeF oscKeys "lfopitchint"
-lfoc = makeF oscKeys "lfocutoffint"
-att  = makeF oscKeys "attack"
-dec  = makeF oscKeys "decay"
-sus  = makeF oscKeys "sustain"
-dt   = makeF oscKeys "dtime"
-df   = makeF oscKeys "dfeedback"
+por  = makeF oscKeys "por"
+expr = makeF oscKeys "expr"
+oct  = makeF oscKeys "oct"
+voi  = makeF oscKeys "voi"
+det  = makeF oscKeys "det"
+vco  = makeF oscKeys "vco"
+ctf  = makeF oscKeys "ctf"
+vcf  = makeF oscKeys "vcf"
+lfo  = makeF oscKeys "lfo"
+lfop = makeF oscKeys "lfop"
+lfoc = makeF oscKeys "lfoc"
+att  = makeF oscKeys "att"
+dec  = makeF oscKeys "dec"
+sus  = makeF oscKeys "sus"
+dt   = makeF oscKeys "dt"
+df   = makeF oscKeys "df"

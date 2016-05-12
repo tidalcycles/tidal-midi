@@ -7,16 +7,16 @@ import Sound.Tidal.MIDI.Control
 bass :: ControllerShape
 bass = ControllerShape { params = [
                             mCC "slide" 5,
-                            mCC "expression" 11,
-                            mCC "octave" 40,
-                            mCC "lforate" 41,
-                            mCC "lfoint" 42,
-                            mCC "pitch1" 43,
-                            mCC "pitch2" 44,
-                            mCC "pitch3" 45,
-                            mCC "attack" 46,
-                            mCC "decay" 47,
-                            mCC "cutoffegint" 48,
+                            mCC "expr" 11,
+                            mCC "oct" 40,
+                            mCC "lfo" 41,
+                            mCC "lfoi" 42,
+                            mCC "pit1" 43,
+                            mCC "pit2" 44,
+                            mCC "pit3" 45,
+                            mCC "att" 46,
+                            mCC "dec" 47,
+                            mCC "ctf" 48,
                             mCC "gate" 49
                           ],
                          duration = ("dur", 0.05),
@@ -29,14 +29,14 @@ oscBass = toOscShape bass
 note         = makeI oscBass "note"
 dur          = makeF oscBass "dur"
 slide        = makeF oscBass "slide"
-expression   = makeF oscBass "expression"
-octave       = makeF oscBass "octave"
-lforate      = makeF oscBass "lforate"
-lfoint       = makeF oscBass "lfoint"
-pitch1       = makeF oscBass "pitch1"
-pitch2       = makeF oscBass "pitch2"
-pitch3       = makeF oscBass "pitch3"
-attack       = makeF oscBass "attack"
-decay        = makeF oscBass "decay"
-cutoffegint  = makeF oscBass "cutoffegint"
+expr         = makeF oscBass "expr"
+oct          = makeF oscBass "oct"
+lfo          = makeF oscBass "lfo"
+lfoi         = makeF oscBass "lfoi"
+pit1         = makeF oscBass "pit1"
+pit2         = makeF oscBass "pit2"
+pit3         = makeF oscBass "pit3"
+att          = makeF oscBass "att"
+dec          = makeF oscBass "dec"
+ctf          = makeF oscBass "ctf"
 gate         = makeF oscBass "gate"
