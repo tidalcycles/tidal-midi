@@ -1,50 +1,30 @@
 module Sound.Tidal.VolcaKeys where
 
-import Sound.Tidal.Stream (makeI, makeF)
-
+import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
 
-keys :: ControllerShape
-keys = ControllerShape { params = [
-                            mCC "por" 5,
-                            mCC "expr" 11,
-                            mCC "voi" 40,
-                            mCC "oct" 41,
-                            mCC "det" 42,
-                            mCC "vco" 43,
-                            mCC "ctf" 44,
-                            mCC "vcf" 45,
-                            mCC "lfo" 46,
-                            mCC "lfop" 47,
-                            mCC "lfoc" 48,
-                            mCC "att" 49,
-                            mCC "dec" 50,
-                            mCC "sus" 51,
-                            mCC "dt" 52,
-                            mCC "df" 53
+keysController :: ControllerShape
+keysController = ControllerShape { controls = [
+                            mCC portamento_p 5,
+                            mCC expression_p 11,
+                            mCC voice_p 40,        -- voi
+                            mCC octave_p 41,       -- oct
+                            mCC detune_p 42,       -- det
+                            mCC vcoegint_p 43,     -- vco
+                            mCC cutoff_p 44,       -- ctf
+                            mCC vcfegint_p 45,     -- vcf
+                            mCC lfo_p 46,
+                            mCC lfopitchint_p 47,  -- lfop
+                            mCC lfocutoffint_p 48, -- lfoc
+                            mCC attack_p 49,       -- att
+                            mCC decay_p 50,        -- dec
+                            mCC sustain_p 51,      -- sus
+                            mCC delaytime_p 52,    -- delayt
+                            mCC delayfeedback_p 53 -- delayfb
                           ],
-                         duration = ("dur", 0.05),
-                         velocity = ("vel", 0.5),
-                         latency = 0.1
+                          -- duration = ("dur", 0.05),
+                          -- velocity = ("vel", 0.5),
+                         latency = 0.01
                        }
 
-oscKeys = toOscShape keys
-
-note = makeI oscKeys "note"
-dur  = makeF oscKeys "dur"
-por  = makeF oscKeys "por"
-expr = makeF oscKeys "expr"
-oct  = makeF oscKeys "oct"
-voi  = makeF oscKeys "voi"
-det  = makeF oscKeys "det"
-vco  = makeF oscKeys "vco"
-ctf  = makeF oscKeys "ctf"
-vcf  = makeF oscKeys "vcf"
-lfo  = makeF oscKeys "lfo"
-lfop = makeF oscKeys "lfop"
-lfoc = makeF oscKeys "lfoc"
-att  = makeF oscKeys "att"
-dec  = makeF oscKeys "dec"
-sus  = makeF oscKeys "sus"
-dt   = makeF oscKeys "dt"
-df   = makeF oscKeys "df"
+keys = toShape keysController
