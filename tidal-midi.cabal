@@ -19,5 +19,10 @@ library
   Exposed-modules: Sound.Tidal.VolcaBeats
                    Sound.Tidal.VolcaBass
                    Sound.Tidal.VolcaKeys
+                   Sound.Tidal.MIDI.Control
+                   Sound.Tidal.MIDI.Device
+                   Sound.Tidal.MidiStream
+                   Sound.Tidal.Synth
+                   Sound.Tidal.SynthParams
                    
-  Build-depends: base < 5, tidal == 0.8
+  Build-depends: base < 5, tidal == 0.8, PortMidi == 0.1.6.0, time, containers, transformers
