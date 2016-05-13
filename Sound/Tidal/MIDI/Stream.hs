@@ -1,4 +1,4 @@
-module Sound.Tidal.MidiStream (midiStream, midiBackend, midiState, midiSetters, midiDevices) where
+module Sound.Tidal.MIDI.Stream (midiStream, midiBackend, midiState, midiSetters, midiDevices) where
 
 import Control.Monad.Trans.Maybe
 -- generics

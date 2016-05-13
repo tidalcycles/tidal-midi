@@ -4,7 +4,7 @@ Description: Parameters to control synth
 
 In general, synth parameters specify patterns of sounds, and patterns of effects on those sounds. These are the synthesis parameters you can use with the default Dirt synth:
 -}
-module Sound.Tidal.SynthParams (
+module Sound.Tidal.MIDI.SynthParams (
   sound,
   grp,
   accelerate,

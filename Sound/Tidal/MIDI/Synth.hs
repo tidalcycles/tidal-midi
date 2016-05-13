@@ -1,4 +1,4 @@
-module Sound.Tidal.Synth where
+module Sound.Tidal.MIDI.Synth where
 
 import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
