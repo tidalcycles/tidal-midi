@@ -16,7 +16,8 @@ cabal-version:       >=1.4
 Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and other synths. Interface is likely to change significantly.
 
 library
-  Exposed-modules: Sound.Tidal.MIDI.VolcaBeats
+  Exposed-modules: Sound.Tidal.MIDI.Context
+                   Sound.Tidal.MIDI.VolcaBeats
                    Sound.Tidal.MIDI.VolcaBass
                    Sound.Tidal.MIDI.VolcaKeys
                    Sound.Tidal.MIDI.Control
