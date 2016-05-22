@@ -1,4 +1,4 @@
-module Sound.Tidal.MIDI.Stream (midiStream, midiBackend, midiState, midiSetters, midiDevices) where
+module Sound.Tidal.MIDI.Stream (midiStream, midiBackend, midiState, midiSetters, midiDevices,send) where
 
 import Control.Monad.Trans.Maybe
 -- generics
@@ -59,7 +59,6 @@ toMidiEvent s p (VS x) = Nothing -- ignore strings for now, we might 'read' them
 toMidiMap :: ControllerShape -> S.ParamMap -> MidiMap
 toMidiMap s m = Map.mapWithKey (toMidiEvent s) (Map.mapMaybe (id) m)
 
-
 send s ch cshape shape change tick o ctrls (tdur:tnote:trest) = midi
     where
       midi = sendmidi s cshape ch' (note, vel, dur) (change, tick, o, offset) ctrls
@@ -75,7 +74,7 @@ send s ch cshape shape change tick o ctrls (tdur:tnote:trest) = midi
 mkSend cshape channel s = return $ (\ shape change tick (o,m) -> do
                         let defaulted = (S.applyShape' shape m)
                             -- split ParamMap into Properties and Controls
-                            mpartition = fmap (Map.partitionWithKey (\k _ -> (name k) `elem` ["dur", "note", "velocity", "nudge"])) defaulted
+                            mpartition = fmap (Map.partitionWithKey (\k _ -> (name k) `elem` ["dur", "n", "velocity", "nudge"])) defaulted
                             props = fmap fst mpartition
                             ctrls = fmap snd mpartition
                             props' = fmap (Map.toAscList) $ fmap (Map.mapMaybe (id)) props
