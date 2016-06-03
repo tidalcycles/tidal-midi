@@ -267,10 +267,12 @@ sendctrls stream shape ch t ctrls = do
   return ()
 
 sendnote :: Output -> t -> CLong -> (CLong, CLong, Double) -> MIDITime -> IO ()
-sendnote stream shape ch (note,vel, dur) (tempo,tick,onset,offset) = do
-  noteOn stream ch note vel (tempo,tick,onset,offset)
-  noteOff stream ch note (tempo, tick, onset, offset + dur)
-  return ()
+sendnote stream shape ch (note,vel, dur) (tempo,tick,onset,offset) =
+  do
+    noteOn stream ch midinote vel (tempo,tick,onset,offset)
+    noteOff stream ch midinote (tempo, tick, onset, offset + dur)
+    return ()
+  where midinote = note + 60
 
 scheduleTime :: CULong -> UTCTime -> Double -> CULong
 scheduleTime mnow' now' logicalOnset = t
