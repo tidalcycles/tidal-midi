@@ -2,56 +2,73 @@ module Sound.Tidal.MIDI.Control where
 
 import qualified Sound.Tidal.Stream as S
 
-type RangeMapFunc = (Int, Int) -> Float -> Int
+import Sound.Tidal.Params
 
-data Param = CC { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
-           | NRPN { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
-           | SysEx { name :: String, midi :: Int, range :: (Int, Int), vdefault :: Double, scalef :: RangeMapFunc }
+type RangeMapFunc = (Int, Int) -> Double -> Int
 
-data ControllerShape = ControllerShape {params :: [Param],duration :: (String, Double), velocity :: (String, Double), latency :: Double}
+data ControlChange =
+  CC { param :: S.Param,
+       midi :: Int,
+       range :: (Int, Int),
+       vdefault :: Double,
+       scalef :: RangeMapFunc
+     }
+  | NRPN { param :: S.Param,
+           midi :: Int,
+           range :: (Int, Int),
+           vdefault :: Double,
+           scalef :: RangeMapFunc
+         }
+  | SysEx { param :: S.Param,
+            midi :: Int,
+            range :: (Int, Int),
+            vdefault :: Double,
+            scalef :: RangeMapFunc
+          }
 
-toOscShape :: ControllerShape -> S.OscShape
-toOscShape cs =
-  let oscparams = [S.I "note" Nothing] ++ [S.F durn (Just durv), S.F veln (Just velv)] ++ oscparams'
-      oscparams' = [S.F (name p) (Just (-1)) | p <- (params cs)]
-      (durn, durv) = duration cs
-      (veln, velv) = velocity cs
-  in S.OscShape {S.path = "/note",
-                 S.params = oscparams,
-                 S.timestamp = S.MessageStamp,
+data ControllerShape = ControllerShape {
+  controls :: [ControlChange],
+  latency :: Double
+  }
+
+
+toShape :: ControllerShape -> S.Shape
+toShape cs =
+  let params = [dur_p, n_p, velocity_p] ++ params'
+      params' = [param p | p <- (controls cs)]
+  in S.Shape {   S.params = params,
                  S.cpsStamp = False,
-                 S.latency = latency cs,
-                 S.namedParams = False,
-                 S.preamble = []
-                }
+                 S.latency = latency cs
+             }
 
-passThru :: (Int, Int) -> Float -> Int
+passThru :: (Int, Int) -> Double -> Int
 passThru (_, _) = floor -- no sanitizing of range…
 
-mapRange :: (Int, Int) -> Float -> Int
+mapRange :: (Int, Int) -> Double -> Int
 mapRange (low, high) = floor . (+ (fromIntegral low)) . (* ratio)
   where ratio = fromIntegral $ high - low
 
-mCC :: String -> Int -> Param
-mCC n m = CC {name=n, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
+mCC :: S.Param -> Int -> ControlChange
+mCC p m = CC {param=p, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
 
-mNRPN :: String -> Int -> Param
-mNRPN n m = NRPN {name=n, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
+mNRPN :: S.Param -> Int -> ControlChange
+mNRPN p m = NRPN {param=p, midi=m, range=(0, 127), vdefault=0, scalef=mapRange }
 
-mrNRPN :: String -> Int -> (Int, Int) -> Double -> Param
-mrNRPN n m r d = NRPN {name=n, midi=m, range=r, vdefault=d, scalef=mapRange }
+mrNRPN :: S.Param -> Int -> (Int, Int) -> Double -> ControlChange
+mrNRPN p m r d = NRPN {param=p, midi=m, range=r, vdefault=d, scalef=mapRange }
 
-toKeynames :: ControllerShape -> [String]
-toKeynames shape = map name (params shape)
+toParams :: ControllerShape -> [S.Param]
+toParams shape = map param (controls shape)
 
-ctrlN :: Num b => ControllerShape -> String -> b
-ctrlN shape x = fromIntegral $ midi $ paramN shape x
+ctrlN :: Num b => ControllerShape -> S.Param -> Maybe b
+ctrlN shape x = fmap fromIntegral $ fmap midi (paramN shape x)
 
-paramN :: ControllerShape -> String -> Param
+paramN :: ControllerShape -> S.Param -> Maybe ControlChange
 paramN shape x
-  | x `elem` names = paramX x
-  | otherwise = error $ "No such Controller param: " ++ show x
-  where names = toKeynames shape
-        paramX x = head paramX'
-        paramX' = filter ((== x) . name) p
-        p = params shape
+  | x `elem` names = paramX $ matching p
+  | otherwise = Nothing -- error $ "No such Controller param: " ++ show x
+  where names = toParams shape
+        paramX [] = Nothing
+        paramX (h:_) = Just h
+        matching = filter ((== x) . param)
+        p = controls shape

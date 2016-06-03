@@ -1,4 +1,4 @@
-module Sound.Tidal.VolcaKeys where
+module Sound.Tidal.MIDI.VolcaKeys where
 
 import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
