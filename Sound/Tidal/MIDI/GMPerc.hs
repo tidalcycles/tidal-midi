@@ -16,6 +16,14 @@ percController = ControllerShape {
 perc = midinote . (percN <$>)
 
 percN :: String -> Int
+percN "hq" = 27
+percN "sl" = 28
+percN "sps" = 29
+percN "spl" = 30
+percN "st" = 31
+percN "sqc" = 32
+percN "mcl" = 33
+percN "mb" = 34
 percN "abd" = 35
 percN "bd" = 36
 percN "sti" = 37
@@ -63,6 +71,12 @@ percN "mc" = 78
 percN "oc" = 79
 percN "mt" = 80
 percN "ot" = 81
+percN "sha" = 82
+percN "jb" = 83
+percN "bt" = 84
+percN "cas" = 85
+percN "ms" = 86
+percN "os" = 87
 percN _ = 0
 
 -- general shape for stream
