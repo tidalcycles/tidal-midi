@@ -24,6 +24,9 @@ library
                    Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Stream
                    Sound.Tidal.MIDI.Synth
+                   Sound.Tidal.MIDI.Synthino
+                   Sound.Tidal.MIDI.MBase01
+                   Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.SynthParams
-                   
+
   Build-depends: base < 5, tidal == 0.8, PortMidi == 0.1.6.0, time, containers, transformers
