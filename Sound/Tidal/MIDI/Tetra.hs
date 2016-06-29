@@ -1,72 +1,61 @@
+{-# LANGUAGE OverloadedStrings #-}
 module Sound.Tidal.MIDI.Tetra where
-
-import Sound.Tidal.Stream ((|+|),(|=|), merge, ParamPattern)
 
 import Sound.Tidal.MIDI.Control
 
-import Sound.Tidal.Parse
-import Sound.Tidal.Pattern
+import Sound.Tidal.Stream ((|+|),(|=|), merge, ParamPattern)
+import Sound.Tidal.Pattern (Pattern(..), atom)
 import Sound.Tidal.Params
 
-import Control.Applicative
+{-|
+A controller mapping for the analog four-voice synthesizer, TETR4 by Dave Smith Instruments
 
--- sequences
+Rather than being a tutorial on how to write your own mappings for your MIDI devices, this is more like the kitchen sink: it shows what is possible.
 
-makeSeqTracks = []
--- seqtrack1 = map ((Just 0). pF . (\x -> "seq1step" ++ show x)) [1..16]
--- seqtrack2 = map ((Just 0). pF . (\x -> "seq2step" ++ show x)) [1..16]
--- seqtrack3 = map ((Just 0) . pF . (\x -> "seq3step" ++ show x)) [1..16]
--- seqtrack4 = map ((Just 0) . pF . (\x -> "seq4step" ++ show x)) [1..16]
+The DSI TETR4 has four separate voices that can (when set to multi-mode) be controlled via four different MIDI channels. Almost everything you can control directly on the device can be automated via MIDI messages.
 
+To get the most out of this device with tidal, I chose to use the non-registered parameter (NRPN) variant to control it. This allows to use the full spectrum for controls like @cutoff@ that allow more granular stepping than standard MIDI (164 instead of 128 steps).
 
--- seqpatterns p' = map onlyValues events
---   where arc' = arc p'
---         events = arc' (0,1)
---         onlyValues = \(_, _, a) -> p a
+Many parameters diverge from the default ranges of 0 to 127 and therefore this mapping uses the @mapRange@ functionality for controls to allow you to always use double params, e.g.:
 
--- sqnp i t p' = foldr (|+|) i (zipWith ($) t patterns)
---   where patterns = seqpatterns p'
+>>> t1 $ n (run 4) # famt "0.5" # cutoff "0.3" # resonance "0.8"
 
--- sqnp1 d p' = sqnp (seq1dst $ p $ show d) seqtrack1 p'
--- sqnp2 d p' = sqnp (seq2dst $ p $ show d) seqtrack2 p'
--- sqnp3 d p' = sqnp (seq3dst $ p $ show d) seqtrack3 p'
--- sqnp4 d p' = sqnp (seq4dst $ p $ show d) seqtrack4 p'
+while @famt@, @cutoff@ and @resonance@ all have different ranges of operation (0..254, 0..14 and 0..127 respectively)
+
+Some parameters are essentially mode switches and I chose to pass the values you enter into patterns directly through to the resulting control change. The method @passThru@ on control specification simply skips the scaling of values (you can write your own scaler if you want).
+
+For very generic control I reused Tidal's own params, like @cutoff@, @attack@, @gain@, @pan@ and @release@. Sometimes the defaults for Tidal do not make sense for MIDI. See @(_, cutoff_p)@ below the actual controller shape for examples on how to deal with this.
 
 
--- makeSeqTracks = concat $ map makeSeqTrack [0..3]
---   where makeSeqTrack t = map (makeSeqStep t) [0..15]
---         makeSeqStep t s = NRPN (pF (makeName t s) (Just 0)) (makeCC t s) (0, 127) 0 passThru
---         makeName t s = "seq" ++ (show $ t + 1) ++ "step" ++ (show $ s + 1)
---         makeCC t s = (t * 16) + (s + 120)
-
+-}
 tetraController :: ControllerShape
 tetraController = ControllerShape { controls = [
-                                  mrNRPN osc1freq_p 0 (0, 120),
-                                  mrNRPN osc1detune_p 1 (0, 100),
-                                  NRPN osc1shape_p 2 (0, 103) passThru,
+                                  mrNRPN osc1freq_p 0 (0, 120) 0,
+                                  mrNRPN osc1detune_p 1 (0, 100) 0,
+                                  NRPN osc1shape_p 2 (0, 103) 0 passThru,
                                   mNRPN osc1glide_p 3,
-                                  NRPN osc1kbd_p 4 (0, 1) passThru,
+                                  NRPN osc1kbd_p 4 (0, 1) 0 passThru,
 
-                                  mrNRPN osc2freq_p 5 (0, 120),
-                                  mrNRPN osc2detune_p 6 (0, 100),
-                                  NRPN osc2shape_p 7 (0, 103) passThru,
+                                  mrNRPN osc2freq_p 5 (0, 120) 0,
+                                  mrNRPN osc2detune_p 6 (0, 100) 0,
+                                  NRPN osc2shape_p 7 (0, 103) 0 passThru,
                                   mNRPN osc2glide_p 8,
-                                  NRPN osc2kbd_p 9 (0, 1) passThru,
+                                  NRPN osc2kbd_p 9 (0, 1) 0 passThru,
 
-                                  NRPN oscsync_p 10 (0, 1) passThru,
-                                  NRPN glidemode_p 11 (0, 3) passThru,
-                                  NRPN oscslop_p 12 (0, 5) passThru,
-                                  mrNRPN oscmix_p 13 (0, 127),
+                                  NRPN oscsync_p 10 (0, 1) 0 passThru,
+                                  NRPN glidemode_p 11 (0, 3) 0 passThru,
+                                  NRPN oscslop_p 12 (0, 5) 0 passThru,
+                                  mrNRPN oscmix_p 13 (0, 127) 0,
 
                                   mNRPN noise_p 14,
-                                  mrNRPN cutoff_p' 15 (0, 164),
+                                  mrNRPN cutoff_p' 15 (0, 164) 0,
                                   mNRPN resonance_p 16,
                                   mNRPN kamt_p 17,
                                   mNRPN audiomod_p 18,
-                                  NRPN fpoles_p 19 (0, 1) passThru,
+                                  NRPN fpoles_p 19 (0, 1) 0 passThru,
 
                                   -- filter envelope
-                                  mrNRPN famt_p 20 (0, 254),
+                                  mrNRPN famt_p 20 (0, 254) 0,
                                   mNRPN fvel_p 21,
                                   mNRPN fdel_p 22,
                                   mNRPN fatk_p 23,
@@ -79,40 +68,40 @@ tetraController = ControllerShape { controls = [
                                   mNRPN pan_p 28,
                                   mNRPN gain_p 29, -- max volume by default
 
-                                  mrNRPN vamt_p 30 (0, 127), -- max vca envelope amount
+                                  mrNRPN vamt_p 30 (0, 127) 0, -- max vca envelope amount
                                   mNRPN vvel_p 31,
                                   mNRPN vdel_p 32,
                                   mNRPN attack_p' 33,
-                                  mrNRPN decay_p' 34 (0, 127),
-                                  mrNRPN sustain_p' 35 (0, 127),
+                                  mrNRPN decay_p' 34 (0, 127) 0,
+                                  mrNRPN sustain_p' 35 (0, 127) 0,
                                   mNRPN release_p' 36,
 
-                                  NRPN lfo1rate_p 37 (0, 166) passThru,
-                                  NRPN lfo1shape_p 38 (0, 4) passThru,
+                                  NRPN lfo1rate_p 37 (0, 166) 0 passThru,
+                                  NRPN lfo1shape_p 38 (0, 4) 0 passThru,
                                   mNRPN lfo1amt_p 39,
-                                  NRPN lfo1dest_p 40 (0, 43) passThru,
-                                  NRPN lfo1sync_p 41 (0, 1) passThru,
+                                  NRPN lfo1dest_p 40 (0, 43) 0 passThru,
+                                  NRPN lfo1sync_p 41 (0, 1) 0 passThru,
 
-                                  NRPN lfo2rate_p 42 (0, 166) passThru, -- unsynced
-                                  NRPN lfo2shape_p 43 (0, 4) passThru,
+                                  NRPN lfo2rate_p 42 (0, 166) 0 passThru, -- unsynced
+                                  NRPN lfo2shape_p 43 (0, 4) 0 passThru,
                                   mNRPN lfo2amt_p 44,
-                                  NRPN lfo2dest_p 45 (0, 43) passThru,
-                                  NRPN lfo2sync_p 46 (0, 1) passThru,
+                                  NRPN lfo2dest_p 45 (0, 43) 0 passThru,
+                                  NRPN lfo2sync_p 46 (0, 1) 0 passThru,
 
-                                  NRPN lfo3rate_p 47 (0, 166) passThru, -- unsynced
-                                  NRPN lfo3shape_p 48 (0, 4) passThru,
+                                  NRPN lfo3rate_p 47 (0, 166) 0 passThru, -- unsynced
+                                  NRPN lfo3shape_p 48 (0, 4) 0 passThru,
                                   mNRPN lfo3amt_p 49,
-                                  NRPN lfo3dest_p 50 (0, 43) passThru,
-                                  NRPN lfo3sync_p 51 (0, 1) passThru,
+                                  NRPN lfo3dest_p 50 (0, 43) 0 passThru,
+                                  NRPN lfo3sync_p 51 (0, 1) 0 passThru,
 
-                                  NRPN lfo4rate_p 52 (0, 166) passThru, -- unsynced
-                                  NRPN lfo4shape_p 53 (0, 4) passThru,
+                                  NRPN lfo4rate_p 52 (0, 166) 0 passThru, -- unsynced
+                                  NRPN lfo4shape_p 53 (0, 4) 0 passThru,
                                   mNRPN lfo4amt_p 54,
-                                  NRPN lfo4dest_p 55 (0, 43) passThru,
-                                  NRPN lfo4sync_p 56 (0, 1) passThru,
+                                  NRPN lfo4dest_p 55 (0, 43) 0 passThru,
+                                  NRPN lfo4sync_p 56 (0, 1) 0 passThru,
 
-                                  NRPN emod_p 57 (0, 43) passThru,
-                                  mrNRPN eamt_p 58 (0, 254),
+                                  NRPN emod_p 57 (0, 43) 0 passThru,
+                                  mrNRPN eamt_p 58 (0, 254) 0,
                                   mNRPN evel_p 59,
                                   mNRPN edel_p 60,
                                   mNRPN eatk_p 61,
@@ -120,70 +109,70 @@ tetraController = ControllerShape { controls = [
                                   mNRPN esus_p 63,
                                   mNRPN erel_p 64,
 
-                                  NRPN mod1src_p 65 (0, 20) passThru,
-                                  mrNRPN mod1amt_p 66 (0, 254),
-                                  NRPN mod1dst_p 67 (0, 47) passThru,
+                                  NRPN mod1src_p 65 (0, 20) 0 passThru,
+                                  mrNRPN mod1amt_p 66 (0, 254) 0,
+                                  NRPN mod1dst_p 67 (0, 47) 0 passThru,
 
-                                  NRPN mod2src_p 68 (0, 20) passThru,
-                                  mrNRPN mod2amt_p 69 (0, 254),
-                                  NRPN mod2dst_p 70 (0, 47) passThru,
+                                  NRPN mod2src_p 68 (0, 20) 0 passThru,
+                                  mrNRPN mod2amt_p 69 (0, 254) 0,
+                                  NRPN mod2dst_p 70 (0, 47) 0 passThru,
 
-                                  NRPN mod3src_p 71 (0, 20) passThru,
-                                  mrNRPN mod3amt_p 72 (0, 254),
-                                  NRPN mod3dst_p 73 (0, 47) passThru,
+                                  NRPN mod3src_p 71 (0, 20) 0 passThru,
+                                  mrNRPN mod3amt_p 72 (0, 254) 0,
+                                  NRPN mod3dst_p 73 (0, 47) 0 passThru,
 
-                                  NRPN mod4src_p 74 (0, 20) passThru,
-                                  mrNRPN mod4amt_p 75 (0, 254),
-                                  NRPN mod4dst_p 76 (0, 47) passThru,
+                                  NRPN mod4src_p 74 (0, 20) 0 passThru,
+                                  mrNRPN mod4amt_p 75 (0, 254) 0,
+                                  NRPN mod4dst_p 76 (0, 47) 0 passThru,
 
-                                  NRPN seq1dst_p 77 (0, 47) passThru,
-                                  NRPN seq2dst_p 78 (0, 47) passThru,
-                                  NRPN seq3dst_p 79 (0, 47) passThru,
-                                  NRPN seq4dst_p 80 (0, 47) passThru,
+                                  NRPN seq1dst_p 77 (0, 47) 0 passThru,
+                                  NRPN seq2dst_p 78 (0, 47) 0 passThru,
+                                  NRPN seq3dst_p 79 (0, 47) 0 passThru,
+                                  NRPN seq4dst_p 80 (0, 47) 0 passThru,
 
-                                  mrNRPN mwhl_p 81 (0, 254),
-                                  NRPN mwhldst_p 82 (0, 47) passThru,
+                                  mrNRPN mwhl_p 81 (0, 254) 0,
+                                  NRPN mwhldst_p 82 (0, 47) 0 passThru,
 
-                                  mrNRPN aftt_p 83 (0, 254),
-                                  NRPN afttdst_p 84 (0, 47) passThru,
+                                  mrNRPN aftt_p 83 (0, 254) 0,
+                                  NRPN afttdst_p 84 (0, 47) 0 passThru,
 
-                                  mrNRPN breath_p 85 (0, 254),
-                                  NRPN breathdst_p 86 (0, 47) passThru,
+                                  mrNRPN breath_p 85 (0, 254) 0,
+                                  NRPN breathdst_p 86 (0, 47) 0 passThru,
 
-                                  mrNRPN mvel_p 87 (0, 254),
-                                  NRPN mveldst_p 88 (0, 47) passThru,
+                                  mrNRPN mvel_p 87 (0, 254) 0,
+                                  NRPN mveldst_p 88 (0, 47) 0 passThru,
 
-                                  mrNRPN foot_p 89 (0, 254),
-                                  NRPN footdst_p 90 (0, 47) passThru,
+                                  mrNRPN foot_p 89 (0, 254) 0,
+                                  NRPN footdst_p 90 (0, 47) 0 passThru,
 
-                                  NRPN kbpm_p 91 (30, 250) passThru,
-                                  NRPN clockdiv_p 92 (0, 12) passThru, -- TODO: document values
+                                  NRPN kbpm_p 91 (30, 250) 0 passThru,
+                                  NRPN clockdiv_p 92 (0, 12) 0 passThru, -- TODO: document values
 
-                                  NRPN bendrng_p 93 (0, 12) passThru,
+                                  NRPN bendrng_p 93 (0, 12) 0 passThru,
 
-                                  NRPN sqntrig_p 94 (0, 4) passThru, -- TODO: document values
-                                  NRPN unisonkey_p 95 (0, 5) passThru, -- TODO: document values
-                                  NRPN unisonmode_p 96 (0, 4) passThru, -- TODO: document values
-                                  NRPN arpmode_p 97 (0, 14) passThru,
+                                  NRPN sqntrig_p 94 (0, 4) 0 passThru, -- TODO: document values
+                                  NRPN unisonkey_p 95 (0, 5) 0 passThru, -- TODO: document values
+                                  NRPN unisonmode_p 96 (0, 4) 0 passThru, -- TODO: document values
+                                  NRPN arpmode_p 97 (0, 14) 0 passThru,
 
-                                  NRPN erepeat_p 98 (0, 1) passThru,
-                                  NRPN unison_p 99 (0, 1) passThru,
+                                  NRPN erepeat_p 98 (0, 1) 0 passThru,
+                                  NRPN unison_p 99 (0, 1) 0 passThru,
 
 
-                                  NRPN arp_p 100 (0, 1) passThru,
-                                  NRPN sqn_p 101 (0, 1) passThru,
+                                  NRPN arp_p 100 (0, 1) 0 passThru,
+                                  NRPN sqn_p 101 (0, 1) 0 passThru,
 
-                                  NRPN mcr1_p 105 (0, 183) passThru,
-                                  NRPN mcr2_p 106 (0, 183) passThru,
-                                  NRPN mcr3_p 107 (0, 183) passThru,
-                                  NRPN mcr4_p 108 (0, 183) passThru,
+                                  NRPN mcr1_p 105 (0, 183) 0 passThru,
+                                  NRPN mcr2_p 106 (0, 183) 0 passThru,
+                                  NRPN mcr3_p 107 (0, 183) 0 passThru,
+                                  NRPN mcr4_p 108 (0, 183) 0 passThru,
 
                                   
                                   mNRPN shape_p 110,
 
-                                  mrNRPN btnfreq_p 111 (0, 127),
-                                  mrNRPN btnvel_p 112 (0, 127),
-                                  NRPN btnmode_p 113 (0, 1) passThru,
+                                  mrNRPN btnfreq_p 111 (0, 127) 0,
+                                  mrNRPN btnvel_p 112 (0, 127) 0,
+                                  NRPN btnmode_p 113 (0, 1) 0 passThru,
 
                                   mNRPN pitch1_p 114,
                                   mNRPN pitch2_p 115,
@@ -192,14 +181,13 @@ tetraController = ControllerShape { controls = [
 
                                   -- left out: editor byte,
 
-                                  mrNRPN ksplitpoint_p 118 (0, 127),
+                                  mrNRPN ksplitpoint_p 118 (0, 127) 0,
                                   -- each patch has layer a/b
-                                  NRPN kmode_p 119 (0, 2) passThru, -- 0: normal, 1: stack, both layers respond to full key range, 2: split at ksplitpoint
+                                  NRPN kmode_p 119 (0, 2) 0 passThru, -- 0: normal, 1: stack, both layers respond to full key range, 2: split at ksplitpoint
                                   mCC notesoff_p 123,
                                   mCC ccreset_p 121,
                                   mCC damp_p 64
-
-                          ] ++ makeSeqTracks,
+                                  ],
                          latency = 0.2
                        }
 
@@ -231,6 +219,7 @@ tetra = toShape tetraController
 
 (kamt, kamt_p)      = pF "kamt" (Just 0.5)
 
+-- overridden defaults for MIDI
 (_, cutoff_p') = pF "cutoff" (Just 1)
 (_, attack_p') = pF "attack" (Just 0.12)
 (_, release_p') = pF "release" (Just 0.01)
@@ -239,8 +228,8 @@ tetra = toShape tetraController
 
 (audiomod, audiomod_p)      = pF "audiomod" (Just 0)
 (fpoles, fpoles_p)      = pI "fpoles" (Just 0)
-twopole         = fpoles (p "0")
-fourpole        = fpoles (p "1")
+twopole         = fpoles ("0")
+fourpole        = fpoles ("1")
 
 -- filter envelope
 (famt, famt_p) = pF "famt" (Just 0.5)
@@ -365,14 +354,25 @@ fourpole        = fpoles (p "1")
 
 (ksplitpoint, ksplitpoint_p)     = pF "ksplitpoint" (Just 0.5)
 (kmode, kmode_p)     = pF "kmode" (Just 0)
-knormal         = kmode (p "0")
-kstack          = kmode (p "0.5")
-ksplit          = kmode (p "1")
+knormal         = kmode ("0")
+kstack          = kmode ("0.5")
+ksplit          = kmode ("1")
 
 
--- abstractions
+{-| Abstractions
 
+Though not yet finished, these are some examples on how to combine multiple parameters into one single function you can use within your patterns.
+
+Since Tidal 0.7 you can use the @grp@ method to allow things like:
+
+>>> t1 $ n (run 4) # adsr "0.1:0.6:0.3:0.9 0.8:0.3:0.9:0.1"
+
+which alternates between two filter envelope shapes, the first one with a sharp attack and a long decay/release and the latter with a long attack, high sustain and a short release.
+
+-}
 -- adsr
+
+adsr = grp [attack_p,decay_p,sustain_p,release_p]
 
 atk3 = grp [attack_p, fatk_p, eatk_p]
 dcy3 = grp [decay_p, fdcy_p, edcy_p]
@@ -387,8 +387,33 @@ lfosaw = doublePattern 2
 lfopulse = doublePattern 3
 lforand = doublePattern 4
 
-lrate r = min 150 . max 0 <$> p r
-lstep s = min 166 . max 151 . (+150) <$> p s
+{-|
+A hack to handle a param with completely different behavior for certain parts of the range:
+
+@lrate@ is limited from 0 to 150 and specifies values that will produce an lfo frequency
+
+@lstep@ however is essentially limited from 0 to 16 and specifies values that will produce rhythmic lfo based on the _sequence speed_. as taken from the manual:
+
+0: 32 steps
+1: 16 steps
+2: 8 steps
+3: 6 steps
+4: 4 steps
+5: 3 steps
+6: 2 steps
+7: 1.5 steps
+8: 1 step
+9: 2/3 steps
+10: 1/2 step
+11: 1/3 step
+12: 1/4 step
+13: 1/6 step
+14: 1/8 step
+15: 1/16 step
+
+-}
+lrate r = min 150 . max 0 <$> r
+lstep s = min 166 . max 151 . (+150) <$> s
 
 lfo1 s d r a = lfo1shape s |+| lfo1dest d |+| lfo1rate r |+| lfo1amt a
 lfo2 s d r a = lfo2shape s |+| lfo2dest d |+| lfo2rate r |+| lfo2amt a
@@ -404,9 +429,13 @@ mod2 s d a = mod2src s |+| mod2dst d |+| mod2amt a
 mod3 s d a = mod3src s |+| mod3dst d |+| mod3amt a
 mod4 s d a = mod4src s |+| mod4dst d |+| mod4amt a
 
--- mod destination
 
-doublePattern d = (p $ show d) :: Pattern Double
+
+{-| Modulation
+
+named sources and destinations to able to refer them for lfos, mods and also sequences.
+-}
+doublePattern d = (atom d) :: Pattern Double
 
 dosc1 = doublePattern 1
 dosc2 = doublePattern 2
@@ -489,22 +518,70 @@ sexpr = doublePattern 17
 svel = doublePattern 18
 snote = doublePattern 19
 snoise = doublePattern 20
--- drums
-
-snare = fourpole |=| osc1shape (p "0") |+| osc1kbd (p "0")
-  |+| osc2shape (p "0") |+| osc2kbd (p "0")
-  |+| noise (p "1")
-  |+| shape (p "0.7")
-  |+| fbvol (p "0.3")
-  |=| resonance (p "0.2")
-  |+| release (p "0.3") |+| sustain (p "0") |+| decay (p "0.3")
-  |+| cutoff (p "1")
-  |+| dur (p "0.02")
 
 
+{-|
+Presets suck, but I constantly forget how to make drums
+with the TETR4, so here are some defaults (that can mostly be changed when using them)
+to make a snare and a kick.
+
+Use the snare like this:
+
+>>> t1 $ n "0(3,8)" # snare
+
+To make it shorter:
+
+>>> t1 $ n "0(3,8)" # snare |-| release "0.1" |-| decay "0.1"
+-}
+snare = fourpole |=| osc1shape "0" |+| osc1kbd "0"
+  |+| osc2shape "0" |+| osc2kbd "0"
+  |+| noise "1"
+  |+| shape "0.7"
+  |+| fbvol "0.3"
+  |=| resonance "0.2"
+  |+| release "0.3" |+| sustain "0" |+| decay "0.3"
+  |+| cutoff "1"
+  |+| dur "0.02"
+
+
+{-|
+usage would be:
+
+>>> t1 $ n "0 [[0 1] 1]" # kick
+
+you can change the defaults by applying merge operations for certain params:
+
+>>> t1 $ n "0(3,8)" # kick |+| edcy "0.05"
+
+will give the kick more resonance
+
+>>> t1 $ n "0(3,8)" # kick |-| edcy "0.15"
+
+will make it really dry
+-}
 kick = fourpole
-  |+| osc1shape (p "0") |+| osc1kbd (p "0")
-  |+| osc2shape (p "0") |+| osc2kbd (p "0")
-  |+| sustain (p "0") |+| decay (p "0.95") |+| release (p "0.5")
-  |+| resonance (p "0.99") |+| cutoff (p "0.001")
-  |+| eamt (p "0.8") |+| emod (p "9") |+| edcy (p "0.2")
+  |+| osc1shape "0" |+| osc1kbd "0"
+  |+| osc2shape "0" |+| osc2kbd "0"
+  |+| sustain "0" |+| decay "0.95" |+| release "0.5"
+  |+| resonance "0.99" |+| cutoff "0.001"
+  |+| eamt "0.8" |+| emod "9" |+| edcy "0.2"
+
+
+{-|
+Since the TETR4 lacks a high-pass filter, things like snares and especially cymbals are somewhat limited to filtered noise which sounds okish.
+
+Therefore some presets for the different types of sounds you can get from the TETR4 can come in handy and can also be combined and modified with and through others:
+-}
+
+
+{-|
+A chip tune like sound, reminds me of gameboys
+-}
+chip =
+  osc1shape "2"  # osc2shape "2"
+  |+| osc2freq "0.23"
+  # osc1glide "0.05" # osc2glide "0.05"
+  # glidemode "3"
+  # release "0.78"
+
+  
