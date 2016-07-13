@@ -1,8 +1,13 @@
 language: haskell
+cache:
+  directories:
+    - $HOME/.cabal
 ghc:
  - 7.6
  - 7.8
  - 8.0
 before_install:
+ - export PATH=$HOME/.cabal/bin:$PATH
  - sudo apt-get -qq update
  - sudo apt-get install -y libasound2-dev libportmidi-dev
+ - cabal install cabal-install
