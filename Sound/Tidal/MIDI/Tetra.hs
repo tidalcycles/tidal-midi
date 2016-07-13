@@ -3,7 +3,7 @@ module Sound.Tidal.MIDI.Tetra where
 
 import Sound.Tidal.MIDI.Control
 
-import Sound.Tidal.Stream ((|+|),(|=|), merge, ParamPattern)
+import Sound.Tidal.Stream ((|+|),(|=|), (#), merge, ParamPattern)
 import Sound.Tidal.Pattern (Pattern(..), atom)
 import Sound.Tidal.Params
 
@@ -578,7 +578,7 @@ Therefore some presets for the different types of sounds you can get from the TE
 A chip tune like sound, reminds me of gameboys
 -}
 chip =
-  osc1shape "2"  # osc2shape "2"
+  osc1shape "2" # osc2shape "2"
   |+| osc2freq "0.23"
   # osc1glide "0.05" # osc2glide "0.05"
   # glidemode "3"
