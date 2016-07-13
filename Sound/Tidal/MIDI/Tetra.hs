@@ -7,6 +7,7 @@ import Sound.Tidal.Stream ((|+|),(|=|), (#), merge, ParamPattern)
 import Sound.Tidal.Pattern (Pattern(..), atom)
 import Sound.Tidal.Params
 
+import Control.Applicative
 {-|
 A controller mapping for the analog four-voice synthesizer, TETR4 by Dave Smith Instruments
 
