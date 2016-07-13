@@ -2,6 +2,7 @@ module Sound.Tidal.MIDI.GMPerc where
 
 import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
+import Control.Applicative
 
 percController :: ControllerShape
 percController = ControllerShape {
