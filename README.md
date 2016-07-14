@@ -29,10 +29,13 @@ This _still_ is __experimental__ software.
 
 <a name="installation"></a>
 # Installation
-Simply do
+
+Run the following commands to install (`tidal-midi` requires the latest
+  version of `tidal`):
 
 ```shell
 ~$ cabal update
+~$ cabal install tidal
 ~$ cabal install tidal-midi
 ```
 
@@ -66,8 +69,9 @@ import Sound.Tidal.MIDI.Context
 displayOutputDevices >>= putStrLn
 ```
 
-Evalulate both of those above lines separately. They will then output a list of
-MIDI devices in your editor (Atom, Emacs, etc).
+Evalulate both of those above lines separately using `Shift+Enter` in Atom.
+After evaluating the last line, it will output a list of MIDI devices
+in your editor (in Atom, at the bottom output panel).
 
 After listing MIDI devices on your system, take note of the device name you
 will use. Devices names are case-sensitive.
@@ -82,7 +86,8 @@ For the purposes of this guide, we'll assume your device name is "USB MIDI Devic
 ## Boot tidal-midi
 
 Make sure you're currently working in a file with a `.tidal` extension in
-your editor. Then type these three lines of bootup code:
+your editor (it could be the same file from the device list step above).
+Then type these three lines of bootup code:
 
 ```haskell
 import Sound.Tidal.MIDI.Context
