@@ -30,5 +30,6 @@ library
                    Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.Tetra
                    Sound.Tidal.MIDI.SynthParams
+	           Sound.Tidal.MIDI.Output
 
   Build-depends: base < 5, tidal == 0.9, PortMidi == 0.1.6.0, time, containers, transformers
