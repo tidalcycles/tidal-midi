@@ -6,7 +6,12 @@ __PortMIDI__ variant. Should work on OS X, Linux and Windows.
 This _still_ is __experimental__ software.
 
 <ul>
-<li><a href="#installation">Installation</a></li>
+<li><a href="#installation">Installation</a>
+  <ul>
+    <li><a href="#prerequisites">Prerequisites</a></li>
+    <li><a href="#install">Install tidal-midi</a></li>
+  </ul>
+</li>
 <li><a href="#usage">Usage</a>
   <ul>
   <li><a href="#mididevices">MIDI devices on your system</a></li>
@@ -30,13 +35,46 @@ This _still_ is __experimental__ software.
 <a name="installation"></a>
 # Installation
 
-Run the following commands to install (`tidal-midi` requires the latest
-  version of `tidal`):
+<a name="prerequisites"></a>
+## Prerequisites
+
+Depending on your operating system, you will need to install some prerequisites
+first.
+
+### All Systems
+
+`tidal-midi` requires the latest version of `tidal`. Run these two commands
+in your terminal to install the latest version:
 
 ```shell
-~$ cabal update
-~$ cabal install tidal
-~$ cabal install tidal-midi
+cabal update
+cabal install tidal
+```
+
+### Linux
+
+Run the following to install `libasound2-dev` and `libportmidi-dev`:
+
+```shell
+apt-get install libasound2-dev and libportmidi-dev
+```
+
+### Mac OS X
+
+Install PortMIDI:
+
+```shell
+brew install portmidi
+```
+
+<a name="install"></a>
+## Install tidal-midi
+
+Simply do:
+
+```shell
+cabal update
+cabal install tidal-midi
 ```
 
 __Note:__ On OS X with GHC 7.10 it is necessary to reinstall PortMidi again with
