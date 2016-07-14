@@ -31,32 +31,32 @@ For very generic control I reused Tidal's own params, like @cutoff@, @attack@, @
 -}
 tetraController :: ControllerShape
 tetraController = ControllerShape { controls = [
-                                  mrNRPN osc1freq_p 0 (0, 120) 0,
-                                  mrNRPN osc1detune_p 1 (0, 100) 0,
-                                  NRPN osc1shape_p 2 (0, 103) 0 passThru,
+                                  mrNRPN osc1freq_p 0 (0, 120),
+                                  mrNRPN osc1detune_p 1 (0, 100),
+                                  NRPN osc1shape_p 2 (0, 103) passThru,
                                   mNRPN osc1glide_p 3,
-                                  NRPN osc1kbd_p 4 (0, 1) 0 passThru,
+                                  NRPN osc1kbd_p 4 (0, 1) passThru,
 
-                                  mrNRPN osc2freq_p 5 (0, 120) 0,
-                                  mrNRPN osc2detune_p 6 (0, 100) 0,
-                                  NRPN osc2shape_p 7 (0, 103) 0 passThru,
+                                  mrNRPN osc2freq_p 5 (0, 120),
+                                  mrNRPN osc2detune_p 6 (0, 100),
+                                  NRPN osc2shape_p 7 (0, 103) passThru,
                                   mNRPN osc2glide_p 8,
-                                  NRPN osc2kbd_p 9 (0, 1) 0 passThru,
+                                  NRPN osc2kbd_p 9 (0, 1) passThru,
 
-                                  NRPN oscsync_p 10 (0, 1) 0 passThru,
-                                  NRPN glidemode_p 11 (0, 3) 0 passThru,
-                                  NRPN oscslop_p 12 (0, 5) 0 passThru,
-                                  mrNRPN oscmix_p 13 (0, 127) 0,
+                                  NRPN oscsync_p 10 (0, 1) passThru,
+                                  NRPN glidemode_p 11 (0, 3) passThru,
+                                  NRPN oscslop_p 12 (0, 5) passThru,
+                                  mrNRPN oscmix_p 13 (0, 127),
 
                                   mNRPN noise_p 14,
-                                  mrNRPN cutoff_p' 15 (0, 164) 0,
+                                  mrNRPN cutoff_p' 15 (0, 164),
                                   mNRPN resonance_p 16,
                                   mNRPN kamt_p 17,
                                   mNRPN audiomod_p 18,
-                                  NRPN fpoles_p 19 (0, 1) 0 passThru,
+                                  NRPN fpoles_p 19 (0, 1) passThru,
 
                                   -- filter envelope
-                                  mrNRPN famt_p 20 (0, 254) 0,
+                                  mrNRPN famt_p 20 (0, 254),
                                   mNRPN fvel_p 21,
                                   mNRPN fdel_p 22,
                                   mNRPN fatk_p 23,
@@ -69,40 +69,40 @@ tetraController = ControllerShape { controls = [
                                   mNRPN pan_p 28,
                                   mNRPN gain_p 29, -- max volume by default
 
-                                  mrNRPN vamt_p 30 (0, 127) 0, -- max vca envelope amount
+                                  mrNRPN vamt_p 30 (0, 127), -- max vca envelope amount
                                   mNRPN vvel_p 31,
                                   mNRPN vdel_p 32,
                                   mNRPN attack_p' 33,
-                                  mrNRPN decay_p' 34 (0, 127) 0,
-                                  mrNRPN sustain_p' 35 (0, 127) 0,
+                                  mrNRPN decay_p' 34 (0, 127),
+                                  mrNRPN sustain_p' 35 (0, 127),
                                   mNRPN release_p' 36,
 
-                                  NRPN lfo1rate_p 37 (0, 166) 0 passThru,
-                                  NRPN lfo1shape_p 38 (0, 4) 0 passThru,
+                                  NRPN lfo1rate_p 37 (0, 166) passThru,
+                                  NRPN lfo1shape_p 38 (0, 4) passThru,
                                   mNRPN lfo1amt_p 39,
-                                  NRPN lfo1dest_p 40 (0, 43) 0 passThru,
-                                  NRPN lfo1sync_p 41 (0, 1) 0 passThru,
+                                  NRPN lfo1dest_p 40 (0, 43) passThru,
+                                  NRPN lfo1sync_p 41 (0, 1) passThru,
 
-                                  NRPN lfo2rate_p 42 (0, 166) 0 passThru, -- unsynced
-                                  NRPN lfo2shape_p 43 (0, 4) 0 passThru,
+                                  NRPN lfo2rate_p 42 (0, 166) passThru, -- unsynced
+                                  NRPN lfo2shape_p 43 (0, 4) passThru,
                                   mNRPN lfo2amt_p 44,
-                                  NRPN lfo2dest_p 45 (0, 43) 0 passThru,
-                                  NRPN lfo2sync_p 46 (0, 1) 0 passThru,
+                                  NRPN lfo2dest_p 45 (0, 43) passThru,
+                                  NRPN lfo2sync_p 46 (0, 1) passThru,
 
-                                  NRPN lfo3rate_p 47 (0, 166) 0 passThru, -- unsynced
-                                  NRPN lfo3shape_p 48 (0, 4) 0 passThru,
+                                  NRPN lfo3rate_p 47 (0, 166) passThru, -- unsynced
+                                  NRPN lfo3shape_p 48 (0, 4) passThru,
                                   mNRPN lfo3amt_p 49,
-                                  NRPN lfo3dest_p 50 (0, 43) 0 passThru,
-                                  NRPN lfo3sync_p 51 (0, 1) 0 passThru,
+                                  NRPN lfo3dest_p 50 (0, 43) passThru,
+                                  NRPN lfo3sync_p 51 (0, 1) passThru,
 
-                                  NRPN lfo4rate_p 52 (0, 166) 0 passThru, -- unsynced
-                                  NRPN lfo4shape_p 53 (0, 4) 0 passThru,
+                                  NRPN lfo4rate_p 52 (0, 166) passThru, -- unsynced
+                                  NRPN lfo4shape_p 53 (0, 4) passThru,
                                   mNRPN lfo4amt_p 54,
-                                  NRPN lfo4dest_p 55 (0, 43) 0 passThru,
-                                  NRPN lfo4sync_p 56 (0, 1) 0 passThru,
+                                  NRPN lfo4dest_p 55 (0, 43) passThru,
+                                  NRPN lfo4sync_p 56 (0, 1) passThru,
 
-                                  NRPN emod_p 57 (0, 43) 0 passThru,
-                                  mrNRPN eamt_p 58 (0, 254) 0,
+                                  NRPN emod_p 57 (0, 43) passThru,
+                                  mrNRPN eamt_p 58 (0, 254),
                                   mNRPN evel_p 59,
                                   mNRPN edel_p 60,
                                   mNRPN eatk_p 61,
@@ -110,70 +110,70 @@ tetraController = ControllerShape { controls = [
                                   mNRPN esus_p 63,
                                   mNRPN erel_p 64,
 
-                                  NRPN mod1src_p 65 (0, 20) 0 passThru,
-                                  mrNRPN mod1amt_p 66 (0, 254) 0,
-                                  NRPN mod1dst_p 67 (0, 47) 0 passThru,
+                                  NRPN mod1src_p 65 (0, 20) passThru,
+                                  mrNRPN mod1amt_p 66 (0, 254),
+                                  NRPN mod1dst_p 67 (0, 47) passThru,
 
-                                  NRPN mod2src_p 68 (0, 20) 0 passThru,
-                                  mrNRPN mod2amt_p 69 (0, 254) 0,
-                                  NRPN mod2dst_p 70 (0, 47) 0 passThru,
+                                  NRPN mod2src_p 68 (0, 20) passThru,
+                                  mrNRPN mod2amt_p 69 (0, 254),
+                                  NRPN mod2dst_p 70 (0, 47) passThru,
 
-                                  NRPN mod3src_p 71 (0, 20) 0 passThru,
-                                  mrNRPN mod3amt_p 72 (0, 254) 0,
-                                  NRPN mod3dst_p 73 (0, 47) 0 passThru,
+                                  NRPN mod3src_p 71 (0, 20) passThru,
+                                  mrNRPN mod3amt_p 72 (0, 254),
+                                  NRPN mod3dst_p 73 (0, 47) passThru,
 
-                                  NRPN mod4src_p 74 (0, 20) 0 passThru,
-                                  mrNRPN mod4amt_p 75 (0, 254) 0,
-                                  NRPN mod4dst_p 76 (0, 47) 0 passThru,
+                                  NRPN mod4src_p 74 (0, 20) passThru,
+                                  mrNRPN mod4amt_p 75 (0, 254),
+                                  NRPN mod4dst_p 76 (0, 47) passThru,
 
-                                  NRPN seq1dst_p 77 (0, 47) 0 passThru,
-                                  NRPN seq2dst_p 78 (0, 47) 0 passThru,
-                                  NRPN seq3dst_p 79 (0, 47) 0 passThru,
-                                  NRPN seq4dst_p 80 (0, 47) 0 passThru,
+                                  NRPN seq1dst_p 77 (0, 47) passThru,
+                                  NRPN seq2dst_p 78 (0, 47) passThru,
+                                  NRPN seq3dst_p 79 (0, 47) passThru,
+                                  NRPN seq4dst_p 80 (0, 47) passThru,
 
-                                  mrNRPN mwhl_p 81 (0, 254) 0,
-                                  NRPN mwhldst_p 82 (0, 47) 0 passThru,
+                                  mrNRPN mwhl_p 81 (0, 254),
+                                  NRPN mwhldst_p 82 (0, 47) passThru,
 
-                                  mrNRPN aftt_p 83 (0, 254) 0,
-                                  NRPN afttdst_p 84 (0, 47) 0 passThru,
+                                  mrNRPN aftt_p 83 (0, 254),
+                                  NRPN afttdst_p 84 (0, 47) passThru,
 
-                                  mrNRPN breath_p 85 (0, 254) 0,
-                                  NRPN breathdst_p 86 (0, 47) 0 passThru,
+                                  mrNRPN breath_p 85 (0, 254),
+                                  NRPN breathdst_p 86 (0, 47) passThru,
 
-                                  mrNRPN mvel_p 87 (0, 254) 0,
-                                  NRPN mveldst_p 88 (0, 47) 0 passThru,
+                                  mrNRPN mvel_p 87 (0, 254),
+                                  NRPN mveldst_p 88 (0, 47) passThru,
 
-                                  mrNRPN foot_p 89 (0, 254) 0,
-                                  NRPN footdst_p 90 (0, 47) 0 passThru,
+                                  mrNRPN foot_p 89 (0, 254),
+                                  NRPN footdst_p 90 (0, 47) passThru,
 
-                                  NRPN kbpm_p 91 (30, 250) 0 passThru,
-                                  NRPN clockdiv_p 92 (0, 12) 0 passThru, -- TODO: document values
+                                  NRPN kbpm_p 91 (30, 250) passThru,
+                                  NRPN clockdiv_p 92 (0, 12) passThru, -- TODO: document values
 
-                                  NRPN bendrng_p 93 (0, 12) 0 passThru,
+                                  NRPN bendrng_p 93 (0, 12) passThru,
 
-                                  NRPN sqntrig_p 94 (0, 4) 0 passThru, -- TODO: document values
-                                  NRPN unisonkey_p 95 (0, 5) 0 passThru, -- TODO: document values
-                                  NRPN unisonmode_p 96 (0, 4) 0 passThru, -- TODO: document values
-                                  NRPN arpmode_p 97 (0, 14) 0 passThru,
+                                  NRPN sqntrig_p 94 (0, 4) passThru, -- TODO: document values
+                                  NRPN unisonkey_p 95 (0, 5) passThru, -- TODO: document values
+                                  NRPN unisonmode_p 96 (0, 4) passThru, -- TODO: document values
+                                  NRPN arpmode_p 97 (0, 14) passThru,
 
-                                  NRPN erepeat_p 98 (0, 1) 0 passThru,
-                                  NRPN unison_p 99 (0, 1) 0 passThru,
+                                  NRPN erepeat_p 98 (0, 1) passThru,
+                                  NRPN unison_p 99 (0, 1) passThru,
 
 
-                                  NRPN arp_p 100 (0, 1) 0 passThru,
-                                  NRPN sqn_p 101 (0, 1) 0 passThru,
+                                  NRPN arp_p 100 (0, 1) passThru,
+                                  NRPN sqn_p 101 (0, 1) passThru,
 
-                                  NRPN mcr1_p 105 (0, 183) 0 passThru,
-                                  NRPN mcr2_p 106 (0, 183) 0 passThru,
-                                  NRPN mcr3_p 107 (0, 183) 0 passThru,
-                                  NRPN mcr4_p 108 (0, 183) 0 passThru,
+                                  NRPN mcr1_p 105 (0, 183) passThru,
+                                  NRPN mcr2_p 106 (0, 183) passThru,
+                                  NRPN mcr3_p 107 (0, 183) passThru,
+                                  NRPN mcr4_p 108 (0, 183) passThru,
 
                                   
                                   mNRPN shape_p 110,
 
-                                  mrNRPN btnfreq_p 111 (0, 127) 0,
-                                  mrNRPN btnvel_p 112 (0, 127) 0,
-                                  NRPN btnmode_p 113 (0, 1) 0 passThru,
+                                  mrNRPN btnfreq_p 111 (0, 127),
+                                  mrNRPN btnvel_p 112 (0, 127),
+                                  NRPN btnmode_p 113 (0, 1) passThru,
 
                                   mNRPN pitch1_p 114,
                                   mNRPN pitch2_p 115,
@@ -182,9 +182,9 @@ tetraController = ControllerShape { controls = [
 
                                   -- left out: editor byte,
 
-                                  mrNRPN ksplitpoint_p 118 (0, 127) 0,
+                                  mrNRPN ksplitpoint_p 118 (0, 127),
                                   -- each patch has layer a/b
-                                  NRPN kmode_p 119 (0, 2) 0 passThru, -- 0: normal, 1: stack, both layers respond to full key range, 2: split at ksplitpoint
+                                  NRPN kmode_p 119 (0, 2) passThru, -- 0: normal, 1: stack, both layers respond to full key range, 2: split at ksplitpoint
                                   mCC notesoff_p 123,
                                   mCC ccreset_p 121,
                                   mCC damp_p 64
