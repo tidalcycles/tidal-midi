@@ -17,14 +17,15 @@ Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and oth
 
 library
   Exposed-modules: Sound.Tidal.MIDI.Context
+                   Sound.Tidal.MIDI.Device
+                   Sound.Tidal.MIDI.Control
                    Sound.Tidal.MIDI.VolcaBeats
                    Sound.Tidal.MIDI.VolcaBass
                    Sound.Tidal.MIDI.VolcaKeys
-                   Sound.Tidal.MIDI.Control
-                   Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Stream
                    Sound.Tidal.MIDI.Synth
                    Sound.Tidal.MIDI.SynthParams
                    Sound.Tidal.MIDI.System1M
+                   Sound.Tidal.MIDI.KorgKP3
 
   Build-depends: base < 5, tidal == 0.8, PortMidi == 0.1.6.0, time, containers, transformers
