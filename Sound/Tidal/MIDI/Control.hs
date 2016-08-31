@@ -7,7 +7,10 @@ import qualified Sound.Tidal.Stream as S
 import           Sound.Tidal.Tempo (Tempo(cps))
 import qualified Data.Map.Strict as Map
 import           Data.Ratio
-import           Sound.Tidal.Params
+import           Sound.Tidal.Params hiding (n_p)
+
+n_p :: S.Param
+n_p = snd $ pI "n" (Just 128)
 
 {-|
 Map a 'Double' to 'Int' using given min/max values
