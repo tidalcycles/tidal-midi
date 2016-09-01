@@ -3,6 +3,7 @@ Mappings between Tidal's 'Sound.Tidal.Stream.Param's and MIDI control changes
 -}
 module Sound.Tidal.MIDI.Control where
 
+import           Control.Applicative ()
 import qualified Sound.Tidal.Stream as S
 import           Sound.Tidal.Tempo (Tempo(cps))
 import qualified Data.Map.Strict as Map

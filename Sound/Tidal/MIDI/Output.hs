@@ -39,9 +39,10 @@ module Sound.Tidal.MIDI.Output (
                                ) where
 
 -- generics
+import           Control.Applicative ()
 import           Control.Monad
 import           Control.Concurrent
-import           Control.Concurrent.MVar()
+import           Control.Concurrent.MVar ()
 import           Data.Bits
 import           Data.List (sortBy, find, partition)
 import qualified Data.Map as Map
