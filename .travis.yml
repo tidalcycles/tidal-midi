@@ -43,6 +43,8 @@ install:
    fi
  - travis_retry cabal update -v
  - sed -i 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config
+ - git clone --branch 0.9-dev --depth 1 https://github.com/tidalcycles/Tidal ${HOME}/Tidal
+ - cabal install --builddir ${HOME}/Tidal ${HOME}/Tidal/tidal.cabal
  - cabal new-build ${TEST} ${BENCH} --dep
 
 # Here starts the actual work to be performed for the package under test;
