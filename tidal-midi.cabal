@@ -1,5 +1,5 @@
 name:                tidal-midi
-version:             0.8
+version:             0.9
 synopsis:            MIDI support for tidal
 -- description:
 homepage:            http://tidal.lurk.org/
@@ -30,5 +30,6 @@ library
                    Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.Tetra
                    Sound.Tidal.MIDI.SynthParams
+                   Sound.Tidal.MIDI.Output
 
-  Build-depends: base < 5, tidal == 0.8, PortMidi == 0.1.6.0, time, containers, transformers
+  Build-depends: base < 5, tidal == 0.9, PortMidi == 0.1.6.0, time, containers, transformers
