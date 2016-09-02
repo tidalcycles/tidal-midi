@@ -39,7 +39,7 @@ module Sound.Tidal.MIDI.Output (
                                ) where
 
 -- generics
-import           Control.Applicative ()
+import           Control.Applicative ((<$>), (<*>), pure)
 import           Control.Monad
 import           Control.Concurrent
 import           Control.Concurrent.MVar ()
