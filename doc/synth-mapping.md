@@ -104,7 +104,7 @@ devices <- midiDevices
 k1 <- midiStream devices "SimpleSynth virtual input1" 1  keysController
 ```
 
-notice how we passed __keys__ to the midiStream that in turn create a stream for us that we can later use via `k1`, e.g. `k1 $ note "50" |+| modwheel "0.4"`
+notice how we passed __keysController__ to the midiStream that in turn created a stream for us that we can later use via `k1`, e.g. `k1 $ note "50" |+| modwheel "0.4"`
 
 So when we are finished with our new module, we'll use `Sound.Tidal.Streichfett` instead and pass in our own controller shape instead of `keys`. 
 
@@ -114,7 +114,7 @@ First, we need to tell tidal how to use the MIDI context and the synth controlle
 
 ```haskell
 import Sound.Tidal.MIDI.Context
-import Sound.Tidal.MIDI.MiniAtmegatron
+import Sound.Tidal.MIDI.Streichfett
 ```
 
 Then the usual steps to list the midi output devices and create the MIDI devices:
@@ -130,16 +130,16 @@ Finally, we can define our midi stream __f1__:
 f1 <- midiStream devices USB Midi MIDI 1" 1 fettController
 ```
 
-Double check this when we are finished, since otherwise you might be talking to your synth with a wrong controller shape and weird things, or, what would be worse: nothing happens.
+Double check all this when we are finished, since otherwise you might be talking to your synth with a wrong controller shape and weird things, or, what would be worse: _nothing happens_.
 have fun and implement all the parameters!
 
 
 ### Using our custom synth mapping in emacs
 
-To use your mapping, we need to integrate it within emacs. If you already have a setup for tidal-midi for e.g. SimpleSynth, the following changes need to be made within your `tidal.el`. Instead of importing `Sound.Tidal.SimpleSynth` import `Sound.Tidal.Streichfett` and instead of passing `keys` to `keyproxy` pass in `fett`.
+To use your mapping, we need to integrate it within emacs. If you already have a setup for tidal-midi for e.g. SimpleSynth, the following changes need to be made within your `tidal.el`. Instead of importing `Sound.Tidal.SimpleSynth` import `Sound.Tidal.Streichfett` and instead of passing `keysController` to `midiStream` pass in `fettController`.
 
-Restart emacs, start up tidal and try out your new phaser param (assuming k1 is the name of your tidal midi stream):
+Restart emacs, start up tidal and try out your new phaser param (assuming f1 is the name of your tidal midi stream):
 
 ```haskell
-k1 $ note "50(5,8)" |+| slow 3 (phaser sine1)
+f1 $ note "50(5,8)" |+| slow 3 (phaser sine1)
 ```
