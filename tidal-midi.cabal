@@ -27,5 +27,7 @@ library
                    Sound.Tidal.MIDI.SynthParams
                    Sound.Tidal.MIDI.System1M
                    Sound.Tidal.MIDI.KorgKP3
+                   Sound.Tidal.MIDI.MiniAtmegatron
+                   Sound.Tidal.MIDI.JamJarDrums
 
   Build-depends: base < 5, tidal == 0.8, PortMidi == 0.1.6.0, time, containers, transformers
