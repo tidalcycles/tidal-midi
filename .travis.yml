@@ -43,6 +43,7 @@ install:
    fi
  - travis_retry cabal update -v
  - sed -i 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config
+# # TODO: remove all but last line when tidal 0.9 is released
  - git clone --depth 1 --branch 0.9-dev https://github.com/tidalcycles/Tidal
  - pushd Tidal && git show-ref 0.9-dev && popd
  - cabal sandbox init
@@ -56,7 +57,8 @@ script:
  - cabal build   # this builds all libraries and executables (including tests/benchmarks)
  - cabal test
  - cabal check
- - cabal sdist   # tests that a source-distribution can be generated
+# # TODO: enable this again when tidal 0.9 is released
+# - cabal sdist   # tests that a source-distribution can be generated
 
 # Check that the resulting source distribution can be built & installed.
 # If there are no other `.tar.gz` files in `dist`, this can be even simpler:
