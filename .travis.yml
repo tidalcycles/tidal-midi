@@ -47,7 +47,7 @@ install:
  - pushd Tidal && git show-ref 0.9-dev && popd
  - cabal sandbox init
  - cabal sandbox add-source Tidal
-
+ - cabal install --only-dependencies
 # Here starts the actual work to be performed for the package under test;
 # any command which exits with a non-zero exit code causes the build to fail.
 script:
