@@ -7,6 +7,7 @@ cache:
   directories:
     - $HOME/.cabal/packages
     - $HOME/.cabal/store
+    - $HOME/.cabsnap
 
 before_cache:
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/build-reports.log
@@ -42,9 +43,8 @@ install:
  - travis_retry cabal update -v
  - sed -i 's/^jobs:/-- jobs:/' ${HOME}/.cabal/config
  - git clone --depth 1 --branch 0.9-dev https://github.com/tidalcycles/Tidal
- - pushd Tidal && git show-ref 0.9-dev && cabal install --dry -v > installplan.txt && popd
- - cat Tidal/installplan.txt > installplan.txt
- - sed -i -e '1,/^Resolving /d' Tidal/installplan.txt > installplan.txt
+ - pushd Tidal && git show-ref 0.9-dev && popd
+ - cabal sandbox add-source Tidal
  - cabal install --only-dependencies --enable-tests --enable-benchmarks --dry -v >> installplan.txt
  - sed -i -e '1,/^Resolving /d' installplan.txt; cat installplan.txt
 
