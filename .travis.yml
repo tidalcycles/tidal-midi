@@ -7,6 +7,7 @@ cache:
   directories:
     - $HOME/.ghc
     - $HOME/.cabal
+    - .cabal-sandbox
 
 before_cache:
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/build-reports.log
@@ -59,11 +60,10 @@ script:
 # # TODO: enable this again when tidal 0.9 is released
 # - cabal check
 # - cabal sdist   # tests that a source-distribution can be generated
-
 # Check that the resulting source distribution can be built & installed.
 # If there are no other `.tar.gz` files in `dist`, this can be even simpler:
 # `cabal install --force-reinstalls dist/*-*.tar.gz`
- - SRC_TGZ=$(cabal info . | awk '{print $2;exit}').tar.gz &&
-   (cd dist && cabal install --force-reinstalls "$SRC_TGZ")
+# - SRC_TGZ=$(cabal info . | awk '{print $2;exit}').tar.gz &&
+#   (cd dist && cabal install --force-reinstalls "$SRC_TGZ")
 
 # EOF
