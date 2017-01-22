@@ -107,18 +107,20 @@ After that do a ```cabal install``` within tidal-midi source.
 
 ### Recap: tidal-midi boot
 
-Maybe you remember: we `import Sound.Tidal.MIDI.Context` to make tidal-midi work. This also gives us a simple synth that defines its own `ControllerShape` named __keysController__.
+Maybe you remember: we `import Sound.Tidal.MIDI.Context` to make tidal-midi work. This also gives us a simple synth that defines its own `ControllerShape` named __synthController__.
 
-So without having a custom tidal mapping for a synthesizer we just needed to create a stream to use from within Haskell. This stream wrote messages any simple synth could understand, and the __keysController__ shape told tidal how to do it:
+So without having a custom tidal mapping for a synthesizer we just needed to create a stream to use from within Haskell. This stream wrote messages any simple synth could understand, and the __synthController__ shape told tidal how to do it:
 
 ```haskell
 devices <- midiDevices
-k1 <- midiStream devices "SimpleSynth virtual input1" 1  keysController
+k1 <- midiStream devices "USB MIDI Device" 1  synthController
 ```
 
-notice how we passed __keysController__ to the midiStream that in turn created a stream for us that we can later use via `k1`, e.g. `k1 $ note "50" |+| modwheel "0.4"`
+notice how we passed __synthController__ to the midiStream that in turn created a stream for us that we can later use via `k1`, e.g. `k1 $ note "50" |+| modwheel "0.4"`
 
-So when we are finished with our new module, we'll `import Sound.Tidal.MIDI.Streichfett` as well and pass in our own controller shape instead of `keysController`.
+So when you are finished with your new module, additionally `import Sound.Tidal.MIDI.YourSynthName` pass in your own controller shape `yourSynthNameController` instead of `synthController`.
+
+In the following example, we stick to `Streichfett` as _your synth name_.
 
 ### Using the Streichfett module
 
@@ -139,10 +141,11 @@ devices <- midiDevices
 Finally, we can define our midi stream `f1`:
 
 ```haskell
-f1 <- midiStream devices USB Midi MIDI 1" 1 fettController
+f1 <- midiStream devices "USB Midi MIDI 1" 1 fettController
 ```
 
-Double check all this when we are finished, since otherwise you might be talking to your synth with a wrong controller shape and weird things, or, what would be worse: _nothing happens_.
+Double check the device **name** **channel** and `ControllerShape` when you are finished,  
+otherwise weird things, or, what would be worse: _nothing happens_.
 
 Then try out your new param:
 
@@ -155,6 +158,6 @@ Have fun and implement all the parameters but remember to reinstall via `cabal i
 
 ### Using our custom synth mapping in emacs
 
-To use your mapping, we need to integrate it within emacs. If you already have a setup for tidal-midi the following changes need to be made within your `tidal.el`. In addition to importing `Sound.Tidal.MIDI.Context` import `Sound.Tidal.MIDI.Streichfett` and create a new stream `f1` and pass `fettController` to `midiStream` instead of `keysController`.
+To use your mapping, we need to integrate it within emacs. If you already have a setup for tidal-midi the following changes need to be made within your `tidal.el`. In addition to importing `Sound.Tidal.MIDI.Context` import `Sound.Tidal.MIDI.Streichfett` and create a new stream `f1` and pass `fettController` to `midiStream` instead of `synthController`.
 
 Restart emacs, start up tidal and try out the Streichfett specific phaser param on `f1`.
