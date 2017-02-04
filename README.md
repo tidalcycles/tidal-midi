@@ -1,4 +1,4 @@
-#tidal-midi [![Build Status](https://travis-ci.org/tidalcycles/tidal-midi.svg?branch=master)](https://travis-ci.org/tidalcycles/tidal-midi)
+#tidal-midi [![Build Status](https://travis-ci.org/tidalcycles/tidal-midi.svg?branch=0.9-dev)](https://travis-ci.org/tidalcycles/tidal-midi)
 A [TidalCycles](http://tidalcycles.org) module for sending patterns over MIDI.
 
 __PortMIDI__ variant. Should work on OS X, Linux and Windows.
