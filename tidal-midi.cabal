@@ -21,6 +21,7 @@ library
                    Sound.Tidal.MIDI.VolcaBeats
                    Sound.Tidal.MIDI.VolcaBass
                    Sound.Tidal.MIDI.VolcaKeys
+                   Sound.Tidal.MIDI.VolcaFM
                    Sound.Tidal.MIDI.Control
                    Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Stream
