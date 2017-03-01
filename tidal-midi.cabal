@@ -26,6 +26,7 @@ library
                    Sound.Tidal.MIDI.VolcaKeys
                    Sound.Tidal.MIDI.Stream
                    Sound.Tidal.MIDI.Synth
+                   Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.SynthParams
                    Sound.Tidal.MIDI.System1M
                    Sound.Tidal.MIDI.KorgKP3
