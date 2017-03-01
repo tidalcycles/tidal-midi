@@ -87,9 +87,8 @@ computeTiming :: Tempo -- ^ the current playback speed
 this will be utilized to calculate the note's absolute duration with regard to current cycle length __Note__: this will ignore the specified duration of the Tidal param 'Sound.Tidal.Params.dur' -}
               -> MIDINoteShape -- ^ A map of 'Sound.Tidal.Stream.Param's that describes the note to be played
               -> ((Int,Int,Ratio Integer), Double) -- ^ A tuple of a 'Sound.Tidal.MIDI.Output.TimedNote' triplet and the value for 'nudge' to offset this note by
-computeTiming tempo duration m = ((n', v', d'), nudge')
+computeTiming tempo duration note' = ((n', v', d'), nudge')
   where
-    note' = Map.mapMaybe id m
     unit' = S.svalue $ note' Map.! unit_p    
     v' = mapRange (0, 127) $ S.fvalue $ note' Map.! velocity_p
     n' = S.ivalue $  note' Map.! n_p

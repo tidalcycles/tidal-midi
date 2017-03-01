@@ -413,7 +413,7 @@ toMidiValue _ _ (VS _) = Nothing -- ignore strings for now, we might 'read' them
 
 -- | Translates generic params into midi params
 toMidiMap :: ControllerShape -> S.ParamMap -> MidiMap
-toMidiMap s m = Map.mapWithKey (toMidiValue s) (Map.mapMaybe id m)
+toMidiMap s m = Map.mapWithKey (toMidiValue s) m
 
 -- | Keep only params that are in a given shape, replace missing with defaults
 cutShape :: S.Shape -> ParamMap -> Maybe ParamMap
