@@ -32,6 +32,7 @@ library
                    Sound.Tidal.MIDI.MBase01
                    Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.Tetra
+                   Sound.Tidal.MIDI.Ambika
                    Sound.Tidal.MIDI.SynthParams
                    Sound.Tidal.MIDI.Output
                    Sound.Tidal.MIDI.CC
