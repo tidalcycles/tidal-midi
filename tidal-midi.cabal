@@ -20,10 +20,9 @@ Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and oth
 library
   Exposed-modules: Sound.Tidal.MIDI.Context
                    Sound.Tidal.MIDI.Control
-                   Sound.Tidal.MIDI.Device              
+                   Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Stream
                    Sound.Tidal.MIDI.Output
-                   Sound.Tidal.MIDI.SynthParams
                    Sound.Tidal.MIDI.CC
                    Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.Synth
