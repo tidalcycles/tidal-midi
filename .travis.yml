@@ -5,8 +5,9 @@ sudo: false
 
 cache:
   directories:
-    - $HOME/.cabal/packages
-    - $HOME/.cabal/store
+    - $HOME/.ghc
+    - $HOME/.cabal
+    - .cabal-sandbox
 
 before_cache:
   - rm -fv $HOME/.cabal/packages/hackage.haskell.org/build-reports.log

@@ -1,5 +1,5 @@
 name:                tidal-midi
-version:             0.8.2
+version:             0.9
 synopsis:            MIDI support for tidal
 -- description:
 homepage:            http://tidal.lurk.org/
@@ -19,18 +19,27 @@ Description: MIDI support for Tidal. Supports Volca Keys, Bass and Beats and oth
 
 library
   Exposed-modules: Sound.Tidal.MIDI.Context
-                   Sound.Tidal.MIDI.Device
                    Sound.Tidal.MIDI.Control
+                   Sound.Tidal.MIDI.Device              
+                   Sound.Tidal.MIDI.Stream
+                   Sound.Tidal.MIDI.Output
+                   Sound.Tidal.MIDI.SynthParams
+                   Sound.Tidal.MIDI.CC
+                   Sound.Tidal.MIDI.GMPerc
+                   Sound.Tidal.MIDI.Synth
+                   Sound.Tidal.MIDI.Synthino
+                   Sound.Tidal.MIDI.MBase01                   
+                   Sound.Tidal.MIDI.Tetra
+                   Sound.Tidal.MIDI.Ambika
+                   Sound.Tidal.MIDI.MiniAtmegatron
                    Sound.Tidal.MIDI.VolcaBeats
                    Sound.Tidal.MIDI.VolcaBass
                    Sound.Tidal.MIDI.VolcaKeys
-                   Sound.Tidal.MIDI.Stream
-                   Sound.Tidal.MIDI.Synth
-                   Sound.Tidal.MIDI.SynthParams
+                   Sound.Tidal.MIDI.VolcaFM
                    Sound.Tidal.MIDI.System1M
                    Sound.Tidal.MIDI.KorgKP3
 
-  Build-depends: base < 5, tidal == 0.8.2, PortMidi == 0.1.6.0, time, containers, transformers
+  Build-depends: base < 5, tidal == 0.9, PortMidi == 0.1.6.0, time, containers, transformers
 
 source-repository head
   type:     git
