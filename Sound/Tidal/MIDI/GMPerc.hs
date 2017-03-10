@@ -1,17 +1,14 @@
 module Sound.Tidal.MIDI.GMPerc where
 
-import Sound.Tidal.Params
-import Sound.Tidal.MIDI.Control
 import Control.Applicative
+import Sound.Tidal.MIDI.Control
+import Sound.Tidal.Params
 
-percController :: ControllerShape
-percController = ControllerShape {
-  controls = [
-     mCC balance_p 10,
-     mCC reverb_p 91,
-     mCC chorus_p 93
-     ],
-  latency = 0.1
+gmpercController :: ControllerShape
+gmpercController =
+  ControllerShape
+  { controls = [mCC balance_p 10, mCC reverb_p 91, mCC chorus_p 93]
+  , latency = 0.1
   }
 
 perc = midinote . (percN <$>)
@@ -81,8 +78,10 @@ percN "os" = 87
 percN _ = 0
 
 -- general shape for stream
-percShape = toShape percController
+gmperc = toShape gmpercController
 
 (balance, balance_p) = pF "balance" (Just 0)
+
 (reverb, reverb_p) = pF "reverb" (Just 0)
+
 (chorus, chorus_p) = pF "chorus" (Just 0)
