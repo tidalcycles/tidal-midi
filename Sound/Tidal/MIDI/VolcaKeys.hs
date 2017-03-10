@@ -3,8 +3,8 @@ module Sound.Tidal.MIDI.VolcaKeys where
 import Sound.Tidal.MIDI.Control
 import Sound.Tidal.Params
 
-keysController :: ControllerShape
-keysController =
+volcakeysController :: ControllerShape
+volcakeysController =
   ControllerShape
   { controls =
       [ mCC portamento_p 5
@@ -27,4 +27,4 @@ keysController =
   , latency = 0.1
   }
 
-keys = toShape keysController
+volcakeys = toShape volcakeysController

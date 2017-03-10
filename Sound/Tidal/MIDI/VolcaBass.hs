@@ -3,8 +3,8 @@ module Sound.Tidal.MIDI.VolcaBass where
 import Sound.Tidal.MIDI.Control
 import Sound.Tidal.Params
 
-bassController :: ControllerShape
-bassController =
+volcabassController :: ControllerShape
+volcabassController =
   ControllerShape
   { controls =
       [ mCC slide_p 5
@@ -23,4 +23,4 @@ bassController =
   , latency = 0.1
   }
 
-bass = toShape bassController
+volcabass = toShape volcabassController
