@@ -27,7 +27,8 @@ library
                    Sound.Tidal.MIDI.GMPerc
                    Sound.Tidal.MIDI.Synth
                    Sound.Tidal.MIDI.Synthino
-                   Sound.Tidal.MIDI.MBase01                   
+                   Sound.Tidal.MIDI.Blofeld
+                   Sound.Tidal.MIDI.MBase01
                    Sound.Tidal.MIDI.Tetra
                    Sound.Tidal.MIDI.Ambika
                    Sound.Tidal.MIDI.MiniAtmegatron
