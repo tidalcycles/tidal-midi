@@ -8,10 +8,13 @@ import qualified Sound.Tidal.Stream as S
 import           Sound.Tidal.Tempo (Tempo(cps))
 import qualified Data.Map.Strict as Map
 import           Data.Ratio
-import           Sound.Tidal.Params hiding (n_p)
+import           Sound.Tidal.Params hiding (n_p, legato_p)
 
 n_p :: S.Param
 n_p = snd $ pI "n" (Just 128)
+
+legato_p :: S.Param
+legato_p = snd $ pF "legato" (Just $ negate 1.0)
 
 {-|
 Map a 'Double' to 'Int' using given min/max values
@@ -72,7 +75,8 @@ midiShape = S.Shape {
      n_p,
      nudge_p,
      velocity_p,     
-     unit_p
+     unit_p,
+     legato_p
      ],
   S.latency = 0,
   S.cpsStamp = False
@@ -89,12 +93,13 @@ this will be utilized to calculate the note's absolute duration with regard to c
               -> ((Int,Int,Ratio Integer), Double) -- ^ A tuple of a 'Sound.Tidal.MIDI.Output.TimedNote' triplet and the value for 'nudge' to offset this note by
 computeTiming tempo duration note' = ((n', v', d'), nudge')
   where
-    unit' = S.svalue $ note' Map.! unit_p    
+    legato' = realToFrac $ S.fvalue $ note' Map.! legato_p
+    unit' = if (legato' <= 0) then (head $ S.svalue $ note' Map.! unit_p) else 'c'
     v' = mapRange (0, 127) $ S.fvalue $ note' Map.! velocity_p
     n' = S.ivalue $  note' Map.! n_p
     d' = case unit' of
-      "rate" -> byRate
-      "cycle" -> (+) (-0.001) $ (/) duration $ realToFrac $ cps tempo
+      'r'-> byRate
+      'c' -> (+) (-0.001) $ (*) (abs legato') $ (/) duration $ realToFrac $ cps tempo
       _ -> byRate
     byRate = realToFrac $ S.fvalue $ note' Map.! dur_p
 
