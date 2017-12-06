@@ -1,5 +1,5 @@
 name:                tidal-midi
-version:             0.9.3
+version:             0.9.5.1
 synopsis:            MIDI support for tidal
 -- description:
 homepage:            http://tidal.lurk.org/
@@ -38,8 +38,9 @@ library
                    Sound.Tidal.MIDI.VolcaFM
                    Sound.Tidal.MIDI.System1M
                    Sound.Tidal.MIDI.KorgKP3
+                   Sound.Tidal.MIDI.JP08
 
-  Build-depends: base < 5, tidal >= 0.9.3, PortMidi == 0.1.6.0, time, containers, transformers
+  Build-depends: base < 5, tidal >= 0.9.5, PortMidi >= 0.1.6.0, time, containers, transformers
 
 source-repository head
   type:     git
