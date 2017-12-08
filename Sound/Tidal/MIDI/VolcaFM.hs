@@ -15,7 +15,7 @@ volcafmController =
       , mCC cardecay_p 45
       , mCC lfo_p 46
       , mCC lfopitchint_p 47
-      , mCC algtm_p 48
+      , mCC algrtm_p 48
       , mCC arp_p 49
       , mCC arpdiv_p 50
       ]
@@ -30,7 +30,9 @@ volcafmController =
 
 (cardecay, cardecay_p) = pF "cardecay" (Just 0)
 
-(algtm, algtm_p) = pF "algtm" (Just 0)
+(algrtm, algrtm_p) = pF "algrtm" (Just 0)
+algtm = algrtm
+algorithm = algrtm
 
 (arp, arp_p) = pF "arp" (Just 0)
 
