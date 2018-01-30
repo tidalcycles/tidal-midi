@@ -1,7 +1,7 @@
 module Sound.Tidal.MIDI.Blofeld where
 
-import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
+import Sound.Tidal.Params 
 
 -- Blofeld midi mapping --
 
@@ -152,7 +152,7 @@ import Sound.Tidal.MIDI.Control
 (ft_ctrl, ft_ctrl_p) = pF "ft_ctrl" (Just 0)
 (gl_rate, gl_rate_p) = pF "gl_rate" (Just 0)
 (ch_vol, ch_vol_p) = pF "ch_vol" (Just 0)
-(pan, pan_p) = pF "pan" (Just 0)
+(pan_, pan__p) = pF "pan" (Just 0)
 (arp_rng, arp_rng_p) = pF "arp_rng" (Just 0)
 (arp_len, arp_len_p) = pF "arp_len" (Just 0)
 (arp_act, arp_act_p) = pF "arp_act" (Just 0)
@@ -273,7 +273,7 @@ blofeldController = ControllerShape {
 	mCC ft_ctrl_p 4,
 	mCC gl_rate_p 5,
 	mCC ch_vol_p 7,
-	mCC Sound.Tidal.MIDI.Blofeld.pan_p 10,
+	mCC pan__p 10,
 	mCC arp_rng_p 12,
 	mCC arp_len_p 13,
 	mCC arp_act_p 14,
@@ -387,4 +387,4 @@ blofeldController = ControllerShape {
   ],
   latency = 0.1 }
 
-shape = toShape blofeldController
+blofeld = toShape blofeldController
