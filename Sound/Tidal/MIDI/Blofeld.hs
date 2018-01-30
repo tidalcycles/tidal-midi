@@ -1,4 +1,4 @@
-module Sound.Tidal.MIDI.BlofeldCustom where
+module Sound.Tidal.MIDI.Blofeld where
 
 import Sound.Tidal.Params
 import Sound.Tidal.MIDI.Control
@@ -273,14 +273,14 @@ blofeldController = ControllerShape {
 	mCC ft_ctrl_p 4,
 	mCC gl_rate_p 5,
 	mCC ch_vol_p 7,
-	mCC Sound.Tidal.MIDI.BlofeldCustom.pan_p 10,
+	mCC Sound.Tidal.MIDI.Blofeld.pan_p 10,
 	mCC arp_rng_p 12,
 	mCC arp_len_p 13,
 	mCC arp_act_p 14,
-	mCC lfo1shape_p 15 (0, 5) passThru -- 0..5 - sine,triangle,square,saw,random,sample&hold,
-	mCC lfo1speed_p 16,
-	mCC lfo1sync_p 17 (0, 1) passThru -- 0 off, 1 on,
-	mCC lfo1delay_p 18,
+	CC lfo1shape_p 15 (0, 5) passThru -- 0..5 - sine,triangle,square,saw,random,sample&hold
+	,mCC lfo1speed_p 16,
+	CC lfo1sync_p 17 (0, 1) passThru -- 0 off, 1 on
+	,mCC lfo1delay_p 18,
 	mCC lfo2shape_p 19,
 	mCC lfo2speed_p 20,
 	mCC lfo2sync_p 21,
@@ -289,12 +289,12 @@ blofeldController = ControllerShape {
 	mCC lfo3speed_p 24,
 	mCC lfo3sync_p 25,
 	mCC lfo3delay_p 26,
-	mCC osc1oct_p 27 (16, 112) passThru -- 16, 28, 40 .. 112 - 128' .. 1/2',
-	mCC osc1semi_p 28 (52, 76) passThru -- 52 .. 76 - -12 - +12 semitones,
-	mCC osc1detune_p 29,
+	CC osc1oct_p 27 (16, 112) passThru -- 16, 28, 40 .. 112 - 128' .. 1/2'
+	,CC osc1semi_p 28 (52, 76) passThru -- 52 .. 76 - -12 - +12 semitones
+	,mCC osc1detune_p 29,
 	mCC osc1fm_p 30,
-	mCC osc1shape_p 31 (0, 5) passThru -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2,
-	mCC bank_sel_p 32,
+	CC osc1shape_p 31 (0, 5) passThru -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
+	,mCC bank_sel_p 32,
 	mCC osc1pw_p 33,
 	mCC osc1pwm_p 34,
 	mCC osc2oct_p 35,
