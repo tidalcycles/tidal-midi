@@ -57,6 +57,8 @@ $ note "[7,14] ~ 4 9"
 # ae_rel "0.5"
 # osc1shape "4"
 ```
+* [Complete List](blofeld.md)
+
 
 ## DSI Tetra
 <a name="dsi-tetra"></a>
