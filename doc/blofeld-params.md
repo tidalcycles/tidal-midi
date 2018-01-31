@@ -7,7 +7,7 @@
 |  foot control  | ft_ctrl |
 |  glide rate  | gl_rate |
 |  channel volume  | ch_vol |
-|  pan  | pan |
+|  pan  | pan_ |
 |  arp range  | arp_rng |
 |  arp length  | arp_len |
 |  arp active  | arp_act |
