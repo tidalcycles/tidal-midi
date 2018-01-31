@@ -189,6 +189,15 @@ m1 $ note "0 2" # dur "0.05 0.2"
 m1 $ note "0 2" # dur (scale 0.05 0.3 $ slow 1.5 tri1)
 ```
 
+Alternatively, the `legato` parameter tells Tidal to scale the note
+duration to fill it's "slot" in the pattern.  For example, the following
+will give four notes each a quarter cycle in duration (values of legato
+  greater or less than one will multiply the duration):
+
+```haskell
+m1 $ note "0 1 0 2" # legato "1"
+```
+
 `velocity` has a range from *0 to 1*, and equates to MIDI values *0 to 127*:
 
 ```haskell
