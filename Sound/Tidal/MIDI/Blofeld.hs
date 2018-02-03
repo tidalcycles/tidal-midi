@@ -5,147 +5,147 @@ import Sound.Tidal.Params
 
 -- Blofeld midi mapping --
 
--- mod wheel:		MIDI CC 1,	0...127
--- breath control:	MIDI CC 2, 	0...127
--- foot control:	MIDI CC 4,	0...127
--- glide rate:		MIDI CC 5,	0...127
--- channel volume:	MIDI CC 7,	0...127
--- pan: 		MIDI CC 10,	0...127
+-- mod wheel:           MIDI CC 1,      0...127
+-- breath control:      MIDI CC 2,      0...127
+-- foot control:        MIDI CC 4,      0...127
+-- glide rate:          MIDI CC 5,      0...127
+-- channel volume:      MIDI CC 7,      0...127
+-- pan:                 MIDI CC 10,     0...127
 --
--- arp range: 		MIDI CC 12,	0...9	
--- arp length: 		MIDI CC 13,	0...15	
--- arp active: 		MIDI CC 14,	0...3	
+-- arp range:           MIDI CC 12,     0...9   
+-- arp length:          MIDI CC 13,     0...15  
+-- arp active:          MIDI CC 14,     0...3   
 --
--- lfo 1 shape:		MIDI CC 15,	0...5	
--- lfo 1 speed:		MIDI CC 16,	0...127	
--- lfo 1 sync:		MIDI CC 17,	0...1	
--- lfo 1 delay:		MIDI CC 18,	0...127	
+-- lfo 1 shape:         MIDI CC 15,     0...5   
+-- lfo 1 speed:         MIDI CC 16,     0...127 
+-- lfo 1 sync:          MIDI CC 17,     0...1   
+-- lfo 1 delay:         MIDI CC 18,     0...127 
 --
--- lfo 2 shape:		MIDI CC 19,	0...5	
--- lfo 2 speed:		MIDI CC 20,	0...127	
--- lfo 2 sync:		MIDI CC 21,	0...1	
--- lfo 2 delay:		MIDI CC 22,	0...127	
+-- lfo 2 shape:         MIDI CC 19,     0...5   
+-- lfo 2 speed:         MIDI CC 20,     0...127 
+-- lfo 2 sync:          MIDI CC 21,     0...1   
+-- lfo 2 delay:         MIDI CC 22,     0...127 
 --
--- lfo 3 shape:		MIDI CC 23,	0...5	
--- lfo 3 speed:		MIDI CC 24,	0...127	
--- lfo 3 sync:		MIDI CC 25,	0...1	
--- lfo 3 delay:		MIDI CC 26,	0...127	
+-- lfo 3 shape:         MIDI CC 23,     0...5   
+-- lfo 3 speed:         MIDI CC 24,     0...127 
+-- lfo 3 sync:          MIDI CC 25,     0...1   
+-- lfo 3 delay:         MIDI CC 26,     0...127 
 --
--- osc 1 octave:	MIDI CC 27,	16,28,40...112
--- osc 1 semitone:	MIDI CC 28,	52...76
--- osc 1 detune:	MIDI CC 29,	0...127
--- osc 1 fm:		MIDI CC 30,	0...127
--- osc 1 shape:		MIDI CC 31,	0...5
+-- osc 1 octave:        MIDI CC 27,     16,28,40...112
+-- osc 1 semitone:      MIDI CC 28,     52...76
+-- osc 1 detune:        MIDI CC 29,     0...127
+-- osc 1 fm:            MIDI CC 30,     0...127
+-- osc 1 shape:         MIDI CC 31,     0...5
 --
--- bank select LSB:	MIDI CC 32,	0...n
+-- bank select LSB:     MIDI CC 32,     0...n
 --
--- osc 1 pw:		MIDI CC 33, 	0...127
--- osc 1 pwm:		MIDI CC 34, 	0...127
+-- osc 1 pw:            MIDI CC 33,     0...127
+-- osc 1 pwm:           MIDI CC 34,     0...127
 --
--- osc 2 octave:	MIDI CC 35,	16,28,40...112
--- osc 2 semitone:	MIDI CC 36,	52...76
--- osc 2 detune:	MIDI CC 37,	0...127
--- osc 2 fm:		MIDI CC 38,	0...127
--- osc 2 shape:		MIDI CC 39,	0...5
--- osc 2 pw:		MIDI CC 40, 	0...127
--- osc 2 pwm:		MIDI CC 41, 	0...127
+-- osc 2 octave:        MIDI CC 35,     16,28,40...112
+-- osc 2 semitone:      MIDI CC 36,     52...76
+-- osc 2 detune:        MIDI CC 37,     0...127
+-- osc 2 fm:            MIDI CC 38,     0...127
+-- osc 2 shape:         MIDI CC 39,     0...5
+-- osc 2 pw:            MIDI CC 40,     0...127
+-- osc 2 pwm:           MIDI CC 41,     0...127
 --
--- osc 3 octave:	MIDI CC 42,	16,28,40...112
--- osc 3 semitone:	MIDI CC 43,	52...76
--- osc 3 detune:	MIDI CC 44,	0...127
--- osc 3 fm:		MIDI CC 45,	0...127
--- osc 3 shape:		MIDI CC 46,	0...5
--- osc 3 pw:		MIDI CC 47, 	0...127
--- osc 3 pwm:		MIDI CC 48, 	0...127
+-- osc 3 octave:        MIDI CC 42,     16,28,40...112
+-- osc 3 semitone:      MIDI CC 43,     52...76
+-- osc 3 detune:        MIDI CC 44,     0...127
+-- osc 3 fm:            MIDI CC 45,     0...127
+-- osc 3 shape:         MIDI CC 46,     0...5
+-- osc 3 pw:            MIDI CC 47,     0...127
+-- osc 3 pwm:           MIDI CC 48,     0...127
 --
--- sync:		MIDI CC 49,	0...1
--- pitchmod:		MIDI CC 50,	0...127
--- glide mode:		MIDI CC 51,	0...9
+-- sync:                MIDI CC 49,     0...1
+-- pitchmod:            MIDI CC 50,     0...127
+-- glide mode:          MIDI CC 51,     0...9
 --
--- osc 1 level:		MIDI CC 52, 	0...127
--- osc 1 balance:	MIDI CC 53, 	0...127
+-- osc 1 level:         MIDI CC 52,     0...127
+-- osc 1 balance:       MIDI CC 53,     0...127
 --
--- ringmod level: 	MIDI CC 54, 	0...127
--- ringmod bal: 	MIDI CC 55, 	0...127
+-- ringmod level:       MIDI CC 54,     0...127
+-- ringmod bal:         MIDI CC 55,     0...127
 --
--- osc 2 level:		MIDI CC 56, 	0...127
--- osc 2 balance:	MIDI CC 57, 	0...127
+-- osc 2 level:         MIDI CC 56,     0...127
+-- osc 2 balance:       MIDI CC 57,     0...127
 --
--- osc 3 level:		MIDI CC 58, 	0...127
--- osc 3 balance:	MIDI CC 59, 	0...127
+-- osc 3 level:         MIDI CC 58,     0...127
+-- osc 3 balance:       MIDI CC 59,     0...127
 --
--- noise level:		MIDI CC 60, 	0...127
--- noise balance:	MIDI CC 61, 	0...127
--- noise colour:	MIDI CC 62, 	0...127
+-- noise level:         MIDI CC 60,     0...127
+-- noise balance:       MIDI CC 61,     0...127
+-- noise colour:        MIDI CC 62,     0...127
 --
--- sustain pedal:	MIDI CC 64,	0...127
--- glide active:	MIDI CC 65,	0...127
--- sostenuto:		MIDI CC 66,	0...127
+-- sustain pedal:       MIDI CC 64,     0...127
+-- glide active:        MIDI CC 65,     0...127
+-- sostenuto:           MIDI CC 66,     0...127
 --
--- routing:		MIDI CC 67,	0...127
--- filter 1 type:	MIDI CC 68,	0...10
--- filter 1 cutoff:	MIDI CC 69,	0...127
--- filter 1 resonance:	MIDI CC 70,	0...127
--- filter 1 drive:	MIDI CC 71,	0...127
--- filter 1 keytrack:	MIDI CC 72,	0...127
--- filter 1 env amnt:	MIDI CC 73,	0...127
--- filter 1 env vel:	MIDI CC 74,	0...127
--- filter 1 cutoff mod:	MIDI CC 75,	0...127
--- filter 1 fm:		MIDI CC 76,	0...127
--- filter 1 pan:	MIDI CC 77,	0...127
--- filter 1 panmod:	MIDI CC 78,	0...127
+-- routing:             MIDI CC 67,     0...127
+-- filter 1 type:       MIDI CC 68,     0...10
+-- filter 1 cutoff:     MIDI CC 69,     0...127
+-- filter 1 resonance:  MIDI CC 70,     0...127
+-- filter 1 drive:      MIDI CC 71,     0...127
+-- filter 1 keytrack:   MIDI CC 72,     0...127
+-- filter 1 env amnt:   MIDI CC 73,     0...127
+-- filter 1 env vel:    MIDI CC 74,     0...127
+-- filter 1 cutoff mod: MIDI CC 75,     0...127
+-- filter 1 fm:         MIDI CC 76,     0...127
+-- filter 1 pan:        MIDI CC 77,     0...127
+-- filter 1 panmod:     MIDI CC 78,     0...127
 --
--- filter 2 type:	MIDI CC 79,	0...10
--- filter 2 cutoff:	MIDI CC 80,	0...127
--- filter 2 resonance:	MIDI CC 81,	0...127
--- filter 2 drive:	MIDI CC 82,	0...127
--- filter 2 keytrack:	MIDI CC 83,	0...127
--- filter 2 env amnt:	MIDI CC 84,	0...127
--- filter 2 env vel:	MIDI CC 85,	0...127
--- filter 2 cutoff mod:	MIDI CC 86,	0...127
--- filter 2 fm:		MIDI CC 87,	0...127
--- filter 2 pan:	MIDI CC 88,	0...127
--- filter 2 panmod:	MIDI CC 89,	0...127
+-- filter 2 type:       MIDI CC 79,     0...10
+-- filter 2 cutoff:     MIDI CC 80,     0...127
+-- filter 2 resonance:  MIDI CC 81,     0...127
+-- filter 2 drive:      MIDI CC 82,     0...127
+-- filter 2 keytrack:   MIDI CC 83,     0...127
+-- filter 2 env amnt:   MIDI CC 84,     0...127
+-- filter 2 env vel:    MIDI CC 85,     0...127
+-- filter 2 cutoff mod: MIDI CC 86,     0...127
+-- filter 2 fm:         MIDI CC 87,     0...127
+-- filter 2 pan:        MIDI CC 88,     0...127
+-- filter 2 panmod:     MIDI CC 89,     0...127
 --
--- amp volume:		MIDI CC 90,	0...127
--- amp velocity:	MIDI CC 91,	0...127
--- amp mod:		MIDI CC 92,	0...127
+-- amp volume:          MIDI CC 90,     0...127
+-- amp velocity:        MIDI CC 91,     0...127
+-- amp mod:             MIDI CC 92,     0...127
 --
--- fx 1 mix:		MIDI CC 93,	0...127
--- fx 2 mix:		MIDI CC 94,	0...127
+-- fx 1 mix:            MIDI CC 93,     0...127
+-- fx 2 mix:            MIDI CC 94,     0...127
 --
--- fe attack:		MIDI CC 95,	0...127
--- fe decay:		MIDI CC 96,	0...127
--- fe sustain:		MIDI CC 97,	0...127
--- fe decay 2:		MIDI CC 98,	0...127
--- fe sustain 2:	MIDI CC 99,	0...127
--- fe release:		MIDI CC 100,	0...127
+-- fe attack:           MIDI CC 95,     0...127
+-- fe decay:            MIDI CC 96,     0...127
+-- fe sustain:          MIDI CC 97,     0...127
+-- fe decay 2:          MIDI CC 98,     0...127
+-- fe sustain 2:        MIDI CC 99,     0...127
+-- fe release:          MIDI CC 100,    0...127
 --
--- ae attack:		MIDI CC 101,	0...127
--- ae decay:		MIDI CC 102,	0...127
--- ae sustain:		MIDI CC 103,	0...127
--- ae decay 2:		MIDI CC 104,	0...127
--- ae sustain 2:	MIDI CC 105,	0...127
--- ae release:		MIDI CC 106,	0...127
+-- ae attack:           MIDI CC 101,    0...127
+-- ae decay:            MIDI CC 102,    0...127
+-- ae sustain:          MIDI CC 103,    0...127
+-- ae decay 2:          MIDI CC 104,    0...127
+-- ae sustain 2:        MIDI CC 105,    0...127
+-- ae release:          MIDI CC 106,    0...127
 --
--- e3 attack:		MIDI CC 107,	0...127
--- e3 decay:		MIDI CC 108,	0...127
--- e3 sustain:		MIDI CC 109,	0...127
--- e3 decay 2:		MIDI CC 110,	0...127
--- e3 sustain 2:	MIDI CC 111,	0...127
--- e3 release:		MIDI CC 112,	0...127
+-- e3 attack:           MIDI CC 107,    0...127
+-- e3 decay:            MIDI CC 108,    0...127
+-- e3 sustain:          MIDI CC 109,    0...127
+-- e3 decay 2:          MIDI CC 110,    0...127
+-- e3 sustain 2:        MIDI CC 111,    0...127
+-- e3 release:          MIDI CC 112,    0...127
 --
--- e4 attack:		MIDI CC 113,	0...127
--- e4 decay:		MIDI CC 114,	0...127
--- e4 sustain:		MIDI CC 115,	0...127
--- e4 decay 2:		MIDI CC 116,	0...127
--- e4 sustain 2:	MIDI CC 117,	0...127
--- e4 release:		MIDI CC 118,	0...127
+-- e4 attack:           MIDI CC 113,    0...127
+-- e4 decay:            MIDI CC 114,    0...127
+-- e4 sustain:          MIDI CC 115,    0...127
+-- e4 decay 2:          MIDI CC 116,    0...127
+-- e4 sustain 2:        MIDI CC 117,    0...127
+-- e4 release:          MIDI CC 118,    0...127
 --
--- all sounds off:	MIDI CC 120, 	0
--- reset all controls:	MIDI CC 121, 	0
--- local control:	MIDI CC 122,	0...127
--- all notes off:	MIDI CC 123, 	0
+-- all sounds off:      MIDI CC 120,    0
+-- reset all controls:  MIDI CC 121,    0
+-- local control:       MIDI CC 122,    0...127
+-- all notes off:       MIDI CC 123,    0
 
 (mod_w, mod_w_p) = pF "mod_w" (Just 0)
 (br_ctrl, br_ctrl_p) = pF "br_ctrl" (Just 0)
@@ -268,122 +268,122 @@ import Sound.Tidal.Params
 blofeldController :: ControllerShape
 blofeldController = ControllerShape {
   controls = [
-	mCC mod_w_p 1,
-	mCC br_ctrl_p 2,
-	mCC ft_ctrl_p 4,
-	mCC gl_rate_p 5,
-	mCC ch_vol_p 7,
-	mCC pan__p 10,
-	mCC arp_rng_p 12,
-	mCC arp_len_p 13,
-	mCC arp_act_p 14,
-	CC lfo1shape_p 15 (0, 5) passThru -- 0..5 - sine,triangle,square,saw,random,sample&hold
-	,mCC lfo1speed_p 16,
-	CC lfo1sync_p 17 (0, 1) passThru -- 0 off, 1 on
-	,mCC lfo1delay_p 18,
-	mCC lfo2shape_p 19,
-	mCC lfo2speed_p 20,
-	mCC lfo2sync_p 21,
-	mCC lfo2delay_p 22,
-	mCC lfo3shape_p 23,
-	mCC lfo3speed_p 24,
-	mCC lfo3sync_p 25,
-	mCC lfo3delay_p 26,
-	CC osc1oct_p 27 (16, 112) passThru -- 16, 28, 40 .. 112 - 128' .. 1/2'
-	,CC osc1semi_p 28 (52, 76) passThru -- 52 .. 76 - -12 - +12 semitones
-	,mCC osc1detune_p 29,
-	mCC osc1fm_p 30,
-	CC osc1shape_p 31 (0, 5) passThru -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
-	,mCC bank_sel_p 32,
-	mCC osc1pw_p 33,
-	mCC osc1pwm_p 34,
-	mCC osc2oct_p 35,
-	mCC osc2semi_p 36,
-	mCC osc2detune_p 37,
-	mCC osc2fm_p 38,
-	mCC osc2shape_p 39,
-	mCC osc2pw_p 40,
-	mCC osc2pwm_p 41,
-	mCC osc3oct_p 42,
-	mCC osc3semi_p 43,
-	mCC osc3detune_p 44,
-	mCC osc3fm_p 45,
-	mCC osc3shape_p 46,
-	mCC osc3pw_p 47,
-	mCC osc3pwm_p 48,
-	mCC sync_p 49,
-	mCC pitchmod_p 50,
-	mCC glide_mode_p 51,
-	mCC osc1lvl_p 52,
-	mCC osc1bal_p 53,
-	mCC ringmod_lvl_p 54,
-	mCC ringmod_bal_p 55,
-	mCC osc2lvl_p 56,
-	mCC osc2bal_p 57,
-	mCC osc3lvl_p 58,
-	mCC osc3bal_p 59,
-	mCC noise_lvl_p 60,
-	mCC noise_bal_p 61,
-	mCC noise_col_p 62,
-	mCC sus_ped_p 64,
-	mCC glide_act_p 65,
-	mCC sostenuto_p 66,
-	mCC routing_p 67,
-	mCC fil1tp_p 68,
-	mCC fil1cut_p 69,
-	mCC fil1res_p 70,
-	mCC fil1drv_p 71,
-	mCC fil1key_p 72,
-	mCC fil1enva_p 73,
-	mCC fil1envv_p 74,
-	mCC fil1cutmo_p 75,
-	mCC fil1fm_p 76,
-	mCC fil1pan_p 77,
-	mCC fil1panmod_p 78,
-	mCC fil2tp_p 79,
-	mCC fil2cut_p 80,
-	mCC fil2res_p 81,
-	mCC fil2drv_p 82,
-	mCC fil2key_p 83,
-	mCC fil2enva_p 84,
-	mCC fil2envv_p 85,
-	mCC fil2cutmo_p 86,
-	mCC fil2fm_p 87,
-	mCC fil2pan_p 88,
-	mCC fil2panmod_p 89,
-	mCC amp_vol_p 90,
-	mCC amp_vel_p 91,
-	mCC amp_mod_p 92,
-	mCC fx1mix_p 93,
-	mCC fx2mix_p 94,
-	mCC fe_att_p 95,
-	mCC fe_dec_p 96,
-	mCC fe_sus_p 97,
-	mCC fe_dec2_p 98,
-	mCC fe_sus2_p 99,
-	mCC fe_rel_p 100,
-	mCC ae_att_p 101,
-	mCC ae_dec_p 102,
-	mCC ae_sus_p 103,
-	mCC ae_dec2_p 104,
-	mCC ae_sus2_p 105,
-	mCC ae_rel_p 106,
-	mCC e3_att_p 107,
-	mCC e3_dec_p 108,
-	mCC e3_sus_p 109,
-	mCC e3_dec2_p 110,
-	mCC e3_sus2_p 111,
-	mCC e3_rel_p 112,
-	mCC e4_att_p 113,
-	mCC e4_dec_p 114,
-	mCC e4_sus_p 115,
-	mCC e4_dec2_p 116,
-	mCC e4_sus2_p 117,
-	mCC e4_rel_p 118,
-	mCC soff_p 120,
-	mCC res_ctrl_p 121,
-	mCC loc_cont_p 122,
-	mCC noff_p 123
+        mCC mod_w_p 1,
+        mCC br_ctrl_p 2,
+        mCC ft_ctrl_p 4,
+        mCC gl_rate_p 5,
+        mCC ch_vol_p 7,
+        mCC pan__p 10,
+        mCC arp_rng_p 12,
+        mCC arp_len_p 13,
+        mCC arp_act_p 14,
+        CC lfo1shape_p 15 (0, 5) passThru -- 0..5 - sine,triangle,square,saw,random,sample&hold
+        ,mCC lfo1speed_p 16,
+        CC lfo1sync_p 17 (0, 1) passThru -- 0 off, 1 on
+        ,mCC lfo1delay_p 18,
+        mCC lfo2shape_p 19,
+        mCC lfo2speed_p 20,
+        mCC lfo2sync_p 21,
+        mCC lfo2delay_p 22,
+        mCC lfo3shape_p 23,
+        mCC lfo3speed_p 24,
+        mCC lfo3sync_p 25,
+        mCC lfo3delay_p 26,
+        CC osc1oct_p 27 (16, 112) passThru -- 16, 28, 40 .. 112 - 128' .. 1/2'
+        ,CC osc1semi_p 28 (52, 76) passThru -- 52 .. 76 - -12 - +12 semitones
+        ,mCC osc1detune_p 29,
+        mCC osc1fm_p 30,
+        CC osc1shape_p 31 (0, 5) passThru -- 0..5 - pulse, saw, tri, sine, alt 1, alt 2
+        ,mCC bank_sel_p 32,
+        mCC osc1pw_p 33,
+        mCC osc1pwm_p 34,
+        mCC osc2oct_p 35,
+        mCC osc2semi_p 36,
+        mCC osc2detune_p 37,
+        mCC osc2fm_p 38,
+        mCC osc2shape_p 39,
+        mCC osc2pw_p 40,
+        mCC osc2pwm_p 41,
+        mCC osc3oct_p 42,
+        mCC osc3semi_p 43,
+        mCC osc3detune_p 44,
+        mCC osc3fm_p 45,
+        mCC osc3shape_p 46,
+        mCC osc3pw_p 47,
+        mCC osc3pwm_p 48,
+        mCC sync_p 49,
+        mCC pitchmod_p 50,
+        mCC glide_mode_p 51,
+        mCC osc1lvl_p 52,
+        mCC osc1bal_p 53,
+        mCC ringmod_lvl_p 54,
+        mCC ringmod_bal_p 55,
+        mCC osc2lvl_p 56,
+        mCC osc2bal_p 57,
+        mCC osc3lvl_p 58,
+        mCC osc3bal_p 59,
+        mCC noise_lvl_p 60,
+        mCC noise_bal_p 61,
+        mCC noise_col_p 62,
+        mCC sus_ped_p 64,
+        mCC glide_act_p 65,
+        mCC sostenuto_p 66,
+        mCC routing_p 67,
+        mCC fil1tp_p 68,
+        mCC fil1cut_p 69,
+        mCC fil1res_p 70,
+        mCC fil1drv_p 71,
+        mCC fil1key_p 72,
+        mCC fil1enva_p 73,
+        mCC fil1envv_p 74,
+        mCC fil1cutmo_p 75,
+        mCC fil1fm_p 76,
+        mCC fil1pan_p 77,
+        mCC fil1panmod_p 78,
+        mCC fil2tp_p 79,
+        mCC fil2cut_p 80,
+        mCC fil2res_p 81,
+        mCC fil2drv_p 82,
+        mCC fil2key_p 83,
+        mCC fil2enva_p 84,
+        mCC fil2envv_p 85,
+        mCC fil2cutmo_p 86,
+        mCC fil2fm_p 87,
+        mCC fil2pan_p 88,
+        mCC fil2panmod_p 89,
+        mCC amp_vol_p 90,
+        mCC amp_vel_p 91,
+        mCC amp_mod_p 92,
+        mCC fx1mix_p 93,
+        mCC fx2mix_p 94,
+        mCC fe_att_p 95,
+        mCC fe_dec_p 96,
+        mCC fe_sus_p 97,
+        mCC fe_dec2_p 98,
+        mCC fe_sus2_p 99,
+        mCC fe_rel_p 100,
+        mCC ae_att_p 101,
+        mCC ae_dec_p 102,
+        mCC ae_sus_p 103,
+        mCC ae_dec2_p 104,
+        mCC ae_sus2_p 105,
+        mCC ae_rel_p 106,
+        mCC e3_att_p 107,
+        mCC e3_dec_p 108,
+        mCC e3_sus_p 109,
+        mCC e3_dec2_p 110,
+        mCC e3_sus2_p 111,
+        mCC e3_rel_p 112,
+        mCC e4_att_p 113,
+        mCC e4_dec_p 114,
+        mCC e4_sus_p 115,
+        mCC e4_dec2_p 116,
+        mCC e4_sus2_p 117,
+        mCC e4_rel_p 118,
+        mCC soff_p 120,
+        mCC res_ctrl_p 121,
+        mCC loc_cont_p 122,
+        mCC noff_p 123
   ],
   latency = 0.1 }
 
