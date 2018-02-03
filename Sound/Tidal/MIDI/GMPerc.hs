@@ -13,7 +13,7 @@ gmpercController =
 
 perc = midinote . (percN <$>)
 
-percN :: String -> Int
+percN :: Num a => String -> a
 percN "hq" = 27
 percN "sl" = 28
 percN "sps" = 29
