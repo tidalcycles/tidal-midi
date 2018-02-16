@@ -19,7 +19,7 @@ volcakickController =
       , mCC time_p 48
       , mCC accent_p 49
       ]
-  , latency = 0.1
+  , latency = 0.3
   }
 
 (pulsecolour, pulsecolour_p) = pF "pulsecolour" (Just 0)
