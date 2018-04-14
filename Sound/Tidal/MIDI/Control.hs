@@ -11,7 +11,7 @@ import           Data.Ratio
 import           Sound.Tidal.Params hiding (n_p, legato_p)
 
 n_p :: S.Param
-n_p = snd $ pI "n" (Just 128)
+n_p = snd $ pF "n" (Just 128)
 
 legato_p :: S.Param
 legato_p = snd $ pF "legato" (Just $ negate 1.0)
@@ -96,7 +96,7 @@ computeTiming tempo duration note' = ((n', v', d'), nudge')
     legato' = realToFrac $ S.fvalue $ note' Map.! legato_p
     unit' = if (legato' <= 0) then (head $ S.svalue $ note' Map.! unit_p) else 'c'
     v' = mapRange (0, 127) $ S.fvalue $ note' Map.! velocity_p
-    n' = S.ivalue $  note' Map.! n_p
+    n' = floor $ S.fvalue $  note' Map.! n_p
     d' = case unit' of
       'r'-> byRate
       'c' -> (+) (-0.001) $ (*) (abs legato') $ (/) duration $ realToFrac $ cps tempo
