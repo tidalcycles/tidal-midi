@@ -50,8 +50,15 @@ import Sound.Tidal.MIDI.Context
 import Sound.Tidal.Blofeld
 
 devices <- midiDevices
-m1 <- midiStream devices "USB MIDI Device" 1 keysController
+m1 <- midiStream devices "USB MIDI Device" 1 blofeldController
+
+m1
+$ note "[7,14] ~ 4 9"
+# ae_rel "0.5"
+# osc1shape "4"
 ```
+* [Complete List](blofeld-params.md)
+
 
 ## DSI Tetra
 <a name="dsi-tetra"></a>
