@@ -41,7 +41,7 @@ ambikaController =
       , mCC lfo3rate_p 61
       , mCC lfo3shape_p 62
       , mCC hold_p 64
-      , mCC legato_p 68
+      , mCC mlegato_p 68
       , mCC env1s_p 70
       , mCC f1res_p 71
       , mCC env1r_p 72
@@ -140,6 +140,8 @@ ambikaSynth = toShape ambikaController
 (lfo4rate, lfo4rate_p) = pF "lfo4rate" (Just 0)
 
 (lfo4shape, lfo4shape_p) = pF "lfo4shape" (Just 0)
+
+(mlegato, mlegato_p) = pF "mlegato" (Just 0)
 
 (env1a, env1a_p) = pF "env1a" (Just 0)
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0
+- add support for `legato` parameter to automatically scale note durations
+
 ## 0.9
 
 - normalize Shape names as lowercased Controller Module name, e.g.
