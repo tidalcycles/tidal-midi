@@ -121,7 +121,7 @@ circuitController = ControllerShape { controls = [
 		mCC synth2_mix_p 14
 	],
 
- latency = 0.5
+ latency = 1.5 
 }
 
 circuit = toShape circuitController
