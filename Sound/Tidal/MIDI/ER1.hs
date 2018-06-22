@@ -14,7 +14,7 @@ er1Controller = ControllerShape { controls = [
 		mCC part1_decay_p 8,
 		mCC part1_level_p 7,
 		mCC part1_pan_p 1,
-		mCC part1_low_boost 0,
+		mCC part1_low_boost_p 0,
 
 		-- part 2
 		mCC part2_pitch_p 12,
@@ -25,7 +25,7 @@ er1Controller = ControllerShape { controls = [
 		mCC part2_decay_p 18,
 		mCC part2_level_p 17,
 		mCC part2_pan_p 11,
-		mCC part2_low_boost 10,
+		mCC part2_low_boost_p 10,
 
 		-- part 3
 		mCC part3_pitch_p 22,
@@ -36,7 +36,7 @@ er1Controller = ControllerShape { controls = [
 		mCC part3_decay_p 28,
 		mCC part3_level_p 27,
 		mCC part3_pan_p 21,
-		mCC part3_low_boost 20,
+		mCC part3_low_boost_p 20,
 
 		-- part 4
 		mCC part4_pitch_p 32,
@@ -47,7 +47,7 @@ er1Controller = ControllerShape { controls = [
 		mCC part4_decay_p 38,
 		mCC part4_level_p 37,
 		mCC part4_pan_p 31,
-		mCC part4_low_boost 30
+		mCC part4_low_boost_p 30
 
 	],
 
