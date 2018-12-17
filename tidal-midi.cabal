@@ -40,7 +40,7 @@ library
                    Sound.Tidal.MIDI.KorgKP3
                    Sound.Tidal.MIDI.VolcaKick
 
-  Build-depends: base < 5, tidal >= 0.9.9, PortMidi >= 0.1.6.0, time, containers, transformers
+  Build-depends: base < 5, tidal >= 0.9.9, PortMidi >= 0.1.6.0 && <0.2, time, containers, transformers
 
 source-repository head
   type:     git
