@@ -1,4 +1,13 @@
-#tidal-midi [![Build Status](https://travis-ci.org/tidalcycles/tidal-midi.svg?branch=master)](https://travis-ci.org/tidalcycles/tidal-midi)
+
+# Deprecated
+
+This package is not currently maintained.  
+
+Instead, we recommend using SuperDirt MIDI. Please refer to [this SuperDirt MIDI guide](https://tidalcycles.org/index.php/MIDI) to start using it. 
+
+# tidal-midi 
+
+[![Build Status](https://travis-ci.org/tidalcycles/tidal-midi.svg?branch=master)](https://travis-ci.org/tidalcycles/tidal-midi)
 
 A [TidalCycles](http://tidalcycles.org) module for sending patterns over MIDI.
 
