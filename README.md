@@ -1,9 +1,10 @@
 
-# Deprecated
+# Not Maintained
 
-This package is not currently maintained.  
+This package is not actively maintained. Please visit [https://tidalcycles.org/index.php/Community](https://tidalcycles.org/index.php/Community) if you are interested in becoming a maintainer.
 
-Instead, we recommend using SuperDirt MIDI. Please refer to [this SuperDirt MIDI guide](https://tidalcycles.org/index.php/MIDI) to start using it. 
+In the meantime, we recommend using SuperDirt MIDI. Please refer to [this SuperDirt MIDI guide](https://tidalcycles.org/index.php/MIDI) to start using it. 
+
 
 # tidal-midi 
 
