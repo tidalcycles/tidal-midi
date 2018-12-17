@@ -38,6 +38,7 @@ library
                    Sound.Tidal.MIDI.VolcaFM
                    Sound.Tidal.MIDI.System1M
                    Sound.Tidal.MIDI.KorgKP3
+                   Sound.Tidal.MIDI.VolcaKick
 
   Build-depends: base < 5, tidal >= 0.9.9, PortMidi >= 0.1.6.0, time, containers, transformers
 
